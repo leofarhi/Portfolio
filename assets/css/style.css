@@ -132,7 +132,10 @@ input, textarea {
 
 :focus { outline-color: var(--orange-yellow-crayola); }
 
-html { font-family: var(--ff-poppins); }
+html {
+  font-family: var(--ff-poppins);
+  overflow-y: scroll;
+}
 
 body { background: var(--smoky-black); }
 
@@ -1419,4 +1422,37 @@ main {
 
   .timeline-text { max-width: 700px; }
 
+}
+
+
+/*-----------------------------------*\
+  #FULL-BG IMAGE (cover)
+\*-----------------------------------*/
+
+/* Remplace le fond par une image plein écran, ratio conservé, crop autorisé */
+body {
+  /* mets ton chemin d'image ici */
+  background-image: url("../images/Background.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;           /* clé: recouvre sans bande noire */
+  background-color: var(--smoky-black); /* fallback si l'image ne charge pas */
+  background-attachment: fixed;     /* effet "parallax" léger sur desktop */
+}
+
+/* iOS/Android gèrent mal background-attachment: fixed */
+@media (max-width: 1024px) {
+  body { background-attachment: scroll; }
+}
+
+/* Légère couche sombre pour préserver la lisibilité du thème */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(1200px 600px at 50% 10%, rgba(0,0,0,0.35), rgba(0,0,0,0.65)),
+    rgba(0,0,0,0.45);
+  z-index: 0;
 }
