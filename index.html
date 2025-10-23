@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Léo FARHI - Personal Portfolio</title>
+  <link rel="shortcut icon" href="./assets/images/logo.ico" type="image/x-icon">
+  <link rel="stylesheet" href="./assets/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+  <main>
+
+    <aside class="sidebar" data-sidebar>
+      <div class="sidebar-info">
+        <figure class="avatar-box">
+          <img src="./assets/images/my-avatar.png" alt="Léo FARHI" width="80">
+        </figure>
+        <div class="info-content">
+          <h1 class="name" title="Léo FARHI">Léo FARHI</h1>
+          <p class="title" style="margin-top: 5px">Développeur de logiciels</p>
+          <p class="title" style="margin-top: 5px">Développeur de jeux</p>
+          <p class="title" style="margin-top: 5px">Développeur Full-Stack</p>
+        </div>
+    </aside>
+
+    <div class="main-content">
+
+      <nav class="navbar">
+        <ul class="navbar-list">
+          <li class="navbar-item">
+            <button class="navbar-link active" data-nav-link data-target="about">À propos</button>
+          </li>
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link data-target="resume">Mon parcours</button>
+          </li>
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link data-target="portfolio">Portfolio</button>
+          </li>
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link data-target="links">Liens externes</button>
+          </li>
+        </ul>
+      </nav>
+
+      <article class="about active" data-page="about">
+        <header>
+          <h2 class="h2 article-title">À propos de moi</h2>
+        </header>
+
+        <section class="about-text">
+          <p>
+            Je suis programmeur informatique, actuellement étudiant à l'école 42 Paris.
+            <br>
+            Passionné d'informatique depuis mon enfance, j'ai commencé à programmer à l'âge de 11 ans, et je n'ai jamais cessé depuis d'explorer de nouveaux horizons technologiques.
+          </p>
+
+          <p>
+            Au fil des années, j'ai eu l'occasion de découvrir et de pratiquer de nombreux langages de programmation :
+            Scratch, Basic Casio, Python, C, C++, C#, OCaml, Rust, ASM, Java, JavaScript, PHP, HTML, et bien d'autres.
+            Cette diversité m'a permis de développer une grande flexibilité d'apprentissage et une compréhension profonde des différents paradigmes de programmation.
+          </p>
+
+          <p>
+            Avec plus de <span id="experience-years"></span> ans d'expérience, j'ai conçu une multitude de projets allant de jeux vidéo à moteurs de rendu complets.
+            J'ai notamment créé mes propres moteurs 2D, 2.5D, 3D, isométriques et en raycasting,
+            en programmant leurs systèmes de rendu de A à Z pour en comprendre le fonctionnement interne.
+            <br>
+            Mon travail sur les calculatrices Casio, aux ressources extrêmement limitées,
+            m'a appris à optimiser mon code au maximum et à structurer mes projets de façon rigoureuse;
+             une compétence que je considère aujourd'hui comme l'une de mes plus grandes forces.
+          </p>
+
+          <p>
+            Je maîtrise également des outils tels que Unity (depuis 2015), Blender, Vulkan, OpenGL et SDL2,
+            et j'ai participé à plusieurs projets collaboratifs, notamment dans le cadre de mes études à 42.
+          </p>
+
+          <p>
+            Au-delà du développement de jeux, je suis passionné par les sciences,
+            et plus particulièrement par le cerveau humain et les intelligences artificielles.
+            J'ai expérimenté la conception de réseaux de neurones maison (sans bibliothèques externes)
+            ainsi que des approches comme l'apprentissage génétique et la simulation de vie.
+            J'ai aussi exploré des outils modernes tels que Keras, TensorFlow, PyTorch,
+            et je m'intéresse de près aux modèles de génération de contenu comme ChatGPT, Midjourney, Sora, Stable Diffusion ou RVC Voice.
+          </p>
+
+          <p>
+            Enfin, je m'investis également dans des projets électroniques avec Arduino et Raspberry Pi,
+            que ce soit pour des systèmes de domotique, des interfaces interactives, ou même un plateau de jeu intelligent pour JDR.
+          </p>
+
+          <p>
+            En résumé, je suis un explorateur des sciences et de la technologie, animé par le désir de comprendre,
+            concevoir et repousser les limites de ce que l'informatique permet de réaliser.
+          </p>
+        </section>
+
+        <section class="service">
+          <h3 class="h3 service-title">Ce que je fais</h3>
+          <ul class="service-list">
+            <li class="service-item">
+              <div class="service-icon-box">
+                <img src="./assets/images/icon-engine.svg" alt="icon moteur de jeu" width="40">
+              </div>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Développement de moteurs de jeu</h4>
+                <p class="service-item-text">
+                  Conception complète de moteurs 2D, 3D, isométriques ou raycasting, avec des systèmes de rendu développés from-scratch
+                  en C/C++ pour comprendre et maîtriser chaque aspect du pipeline graphique.
+                </p>
+              </div>
+            </li>
+
+            <li class="service-item">
+              <div class="service-icon-box">
+                <img src="./assets/images/icon-optimize.svg" alt="icon optimisation" width="40">
+              </div>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Optimisation & architecture logicielle</h4>
+                <p class="service-item-text">
+                  Développement sur plateformes limitées (Casio, Raspberry Pi) m'ayant permis d'acquérir une expertise en optimisation,
+                  structuration du code et gestion fine de la mémoire pour atteindre des performances maximales.
+                </p>
+              </div>
+            </li>
+
+            <li class="service-item">
+              <div class="service-icon-box">
+                <img src="./assets/images/icon-ai.svg" alt="icon intelligence artificielle" width="40">
+              </div>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Intelligence Artificielle & simulation</h4>
+                <p class="service-item-text">
+                  Conception de réseaux de neurones personnalisés (sans bibliothèque), exploration de l'apprentissage génétique et
+                  expérimentation de modèles modernes avec TensorFlow, PyTorch et Keras.
+                </p>
+              </div>
+            </li>
+
+            <li class="service-item">
+              <div class="service-icon-box">
+                <img src="./assets/images/icon-electronics.svg" alt="icon électronique" width="40">
+              </div>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Électronique & systèmes embarqués</h4>
+                <p class="service-item-text">
+                  Réalisation de projets à base d'Arduino et Raspberry Pi : domotique, interfaces interactives, et prototypes matériels
+                  intégrant logiciels et capteurs physiques.
+                </p>
+              </div>
+            </li>
+          </ul>
+        </section>
+      </article>
+
+      <article class="resume" data-page="resume">
+        <header>
+          <h2 class="h2 article-title">Mon parcours</h2>
+        </header>
+
+        <section class="timeline">
+          <div class="title-wrapper">
+            <div class="icon-box">
+              <ion-icon name="book-outline"></ion-icon>
+            </div>
+            <h3 class="h3">Formation</h3>
+          </div>
+
+          <ol class="timeline-list">
+            <li class="timeline-item">
+              <h4 class="h4 timeline-item-title">École 42 Paris — Titre RNCP niveaux 6 & 7 (ingénierie logicielle)</h4>
+              <span>2024 — Présent</span>
+              <p class="timeline-text">
+                Pédagogie par projets et peer-learning. Réalisations notables : <em>Minishell</em>, <em>Webserv</em>,
+                moteurs 2D/3D personnels, optimisation bas niveau (C/C++), et travaux sur IA/NN. Collaboration, code review,
+                gestion de versions et autonomie technique au cœur du cursus.
+              </p>
+            </li>
+
+            <li class="timeline-item">
+              <h4 class="h4 timeline-item-title">Prépa informatique — EPITA Paris (Niveau 2)</h4>
+              <span>2020 — 2023</span>
+              <p class="timeline-text">
+                Bases solides en algorithmique, structures de données, programmation (C, Python, Rust, ASM), projets encadrés,
+                méthode scientifique et travail en équipe. Initiation aux systèmes, réseaux et génie logiciel.
+              </p>
+            </li>
+
+            <li class="timeline-item">
+              <h4 class="h4 timeline-item-title">Baccalauréat S — Sciences de l'Ingénieur (mention « Assez bien »)</h4>
+              <span>Juin 2020</span>
+              <p class="timeline-text">
+                Lycée Claude-Bernard, Paris.
+              </p>
+            </li>
+
+            <li class="timeline-item">
+              <h4 class="h4 timeline-item-title">Diplôme National du Brevet</h4>
+              <span>Juin 2017</span>
+              <p class="timeline-text">
+                Collège Claude-Bernard, Paris.
+              </p>
+            </li>
+          </ol>
+        </section>
+
+        <section class="timeline">
+          <div class="title-wrapper">
+            <div class="icon-box">
+              <ion-icon name="book-outline"></ion-icon>
+            </div>
+            <h3 class="h3">Expérience</h3>
+          </div>
+
+          <ol class="timeline-list">
+            <li class="timeline-item">
+              <h4 class="h4 timeline-item-title">Stage — Service Informatique, CARMF</h4>
+              <span>2023 — 2 mois | Paris</span>
+              <p class="timeline-text">
+                Stage réalisé dans le cadre de la formation à l'EPITA. Conception et développement d'applications internes en <strong>PHP</strong>.
+                Travail en équipe sur l'optimisation des systèmes et l'automatisation des processus métier.
+              </p>
+            </li>
+
+            <li class="timeline-item">
+              <h4 class="h4 timeline-item-title">Emploi saisonnier — Service Courrier, CARMF</h4>
+              <span>2019 — 1 mois | Paris</span>
+              <p class="timeline-text">
+                Gestion, tri et distribution du courrier interne. Organisation logistique quotidienne et respect des délais de traitement.
+              </p>
+            </li>
+
+            <li class="timeline-item">
+              <h4 class="h4 timeline-item-title">Stage d'observation — Synchrotron SOLEIL</h4>
+              <span>2017 — 5 jours | Saclay (Essonne)</span>
+              <p class="timeline-text">
+                Découverte du fonctionnement d'un accélérateur de particules et observation des équipes de recherche.
+                Participation à des expériences scientifiques et initiation aux technologies de pointe utilisées dans le domaine.
+              </p>
+            </li>
+          </ol>
+        </section>
+
+        <section class="skill">
+          <h3 class="h3 skills-title">Compétences</h3>
+
+          <ul class="skills-list content-card">
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">Unity</h5>
+                <data value="85">85%</data>
+              </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 85%;"></div>
+              </div>
+            </li>
+
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">Optimisation & Architecture Logicielle</h5>
+                <data value="90">90%</data>
+              </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 90%;"></div>
+              </div>
+            </li>
+
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">Développement de moteurs de jeux (2D / 3D)</h5>
+                <data value="85">85%</data>
+              </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 85%;"></div>
+              </div>
+            </li>
+
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">Programmation bas niveau & embarquée (ASM / Casio / Raspberry Pi / Arduino)</h5>
+                <data value="80">80%</data>
+              </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 80%;"></div>
+              </div>
+            </li>
+
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">Intelligence Artificielle & Réseaux de neurones</h5>
+                <data value="55">55%</data>
+              </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 55%;"></div>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <br>
+
+        <section class="skill">
+          <h3 class="h3 skills-title">Langages de programmation</h3>
+
+          <ul class="skills-list content-card">
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">C / C++ / C#</h5>
+                <data value="90">90%</data>
+              </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 90%;"></div>
+              </div>
+              <p class="timeline-text" style="margin-top: 5px; font-size: 0.9em;">
+                Langages principaux, utilisés quotidiennement pour le développement de moteurs de jeux, d'outils et d'applications.
+                Solide maîtrise de la programmation orientée objet, de l'optimisation bas niveau et de la gestion mémoire.
+              </p>
+            </li>
+
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">Python</h5>
+                <data value="90">90%</data>
+              </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 90%;"></div>
+              </div>
+              <p class="timeline-text" style="margin-top: 5px; font-size: 0.9em;">
+                Utilisé régulièrement pour l'IA, les outils internes, Flask, et des projets de simulation ou d'automatisation.
+              </p>
+            </li>
+
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">Scratch</h5>
+                <data value="100">100%</data>
+              </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 100%;"></div>
+              </div>
+              <p class="timeline-text" style="margin-top: 5px; font-size: 0.9em;">
+                Premier langage appris à l'âge de 11 ans. Base de ma logique algorithmique et de mon approche visuelle de la programmation.
+              </p>
+            </li>
+
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">Basic Casio / OCaml / Java / Rust</h5>
+                <data value="75">75%</data>
+              </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 75%;"></div>
+              </div>
+              <p class="timeline-text" style="margin-top: 5px; font-size: 0.9em;">
+                Moins pratiqués récemment, mais niveau avancé atteint à l'époque.  
+                Expérience approfondie en algorithmique.
+              </p>
+            </li>
+
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">JavaScript / PHP / HTML</h5>
+                <data value="50">50%</data>
+              </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 50%;"></div>
+              </div>
+              <p class="timeline-text" style="margin-top: 5px; font-size: 0.9em;">
+                Connaissances de base acquises à travers divers projets et cours.  
+                Utilisation ponctuelle pour le web et les scripts d'intégration, sans pratique régulière.
+              </p>
+            </li>
+
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">Assembleur (ASM)</h5>
+                <data value="65">65%</data>
+              </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 65%;"></div>
+              </div>
+              <p class="timeline-text" style="margin-top: 5px; font-size: 0.9em;">
+                Pratiqué sur différents environnements : processeurs étudiés à EPITA,  
+                utilisation avec Cheat Engine pour la manipulation mémoire, et au sein de projets à l'école 42.
+              </p>
+            </li>
+          </ul>
+        </section>
+      </article>
+
+      <article class="portfolio" data-page="portfolio">
+        <header>
+          <h2 class="h2 article-title">Portfolio</h2>
+        </header>
+
+        <section class="projects">
+          <ul class="filter-list" id="pf-filter"></ul>
+
+          <div class="filter-select-box">
+            <button class="filter-select" id="pf-select-toggle">
+              <div class="select-value" id="pf-select-value">Tous</div>
+              <div class="select-icon"><ion-icon name="chevron-down"></ion-icon></div>
+            </button>
+            <ul class="select-list" id="pf-select-list"></ul>
+          </div>
+
+          <ul class="project-list" id="pf-list"></ul>
+        </section>
+      </article>
+
+      <article class="project-article" data-page="project-detail">
+        <header>
+          <h2 class="h2 article-title" id="pj-title"></h2>
+        </header>
+
+        <section class="about-text">
+          <p id="pj-description"></p>
+        </section>
+
+        <figure class="project-hero" id="pj-hero" style="display:none">
+          <img id="pj-hero-img" src="" alt="Aperçu principal du projet">
+        </figure>
+
+        <div id="pj-sections"></div>
+
+        <section class="project-section" id="pj-gallery" style="display:none">
+          <h3 class="h3">Galerie</h3>
+          <div class="project-thumbs has-scrollbar" id="pj-thumbs"></div>
+        </section>
+      </article>
+
+      <div class="modal-container image-modal" id="img-modal" aria-hidden="true">
+        <div class="overlay" id="img-overlay"></div>
+        <section class="modal-box">
+          <button class="modal-close-btn" id="img-close" aria-label="Fermer">
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+          <div class="modal-body">
+            <img id="img-full" src="" alt="Aperçu en grand">
+          </div>
+        </section>
+      </div>
+
+      <article class="blog" data-page="links">
+        <header>
+          <h2 class="h2 article-title">Liens externes</h2>
+        </header>
+
+        <section class="blog-posts">
+          <ul class="blog-posts-list">
+            <li class="blog-post-item">
+              <a href="https://github.com/leofarhi">
+                <figure class="blog-banner-box">
+                  <img src="./assets/images/blog-1.jpg" alt="GitHub" loading="lazy">
+                </figure>
+                <div class="blog-content">
+                  <h3 class="h3 blog-item-title">GitHub</h3>
+                  <p class="blog-text">
+                    Plongez dans les entrailles de mes projets sur GitHub
+                  </p>
+                </div>
+              </a>
+            </li>
+
+            <li class="blog-post-item">
+              <a href="https://farhi.itch.io/">
+                <figure class="blog-banner-box">
+                  <img src="./assets/images/blog-2.jpg" alt="Itch.io" loading="lazy">
+                </figure>
+                <div class="blog-content">
+                  <h3 class="h3 blog-item-title">Itch.io</h3>
+                  <p class="blog-text">
+                    Explorez mes mondes et expériences de jeu sur Itch.io
+                  </p>
+                </div>
+              </a>
+            </li>
+
+            <li class="blog-post-item">
+              <a href="https://www.planet-casio.com/Fr/compte/voir_profil.php?membre=farhi">
+                <figure class="blog-banner-box">
+                  <img src="./assets/images/blog-3.jpg" alt="Planète Casio" loading="lazy">
+                </figure>
+                <div class="blog-content">
+                  <h3 class="h3 blog-item-title">Planète Casio</h3>
+                  <p class="blog-text">
+                    Redécouvrez mes créations rétro sur Planète Casio
+                  </p>
+                </div>
+              </a>
+            </li>
+
+            <li class="blog-post-item">
+              <a href="https://www.linkedin.com/in/leofarhi/">
+                <figure class="blog-banner-box">
+                  <img src="./assets/images/blog-4.jpg" alt="LinkedIn" loading="lazy">
+                </figure>
+                <div class="blog-content">
+                  <h3 class="h3 blog-item-title">LinkedIn</h3>
+                  <p class="blog-text">
+                    Parcourez mon parcours et mes collaborations sur LinkedIn
+                  </p>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </section>
+      </article>
+
+    </div>
+  </main>
+
+  <script src="./assets/js/script.js"></script>
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+  <script>
+    const startDate = new Date(2013, 5);
+    const today = new Date();
+    let years = today.getFullYear() - startDate.getFullYear();
+    const monthDiff = today.getMonth() - startDate.getMonth();
+    if (monthDiff < 0) years--;
+    document.getElementById("experience-years").textContent = years;
+  </script>
+
+  <script src="./assets/data/projects-data.js"></script>
+  <script>
+    const el = document.createElement('script');
+    el.type = 'application/json';
+    el.id = 'projects-json';
+    el.textContent = JSON.stringify(window.PROJECTS_DATA, null, 2);
+    document.head.appendChild(el);
+  </script>
+
+</body>
+</html>

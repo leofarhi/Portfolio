@@ -1,0 +1,45 @@
+<svg width="40" height="32" viewBox="0 0 40 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- BG & frame -->
+  <path opacity="0.15" fill-rule="evenodd" clip-rule="evenodd" d="M3 1C1.89543 1 1 1.89543 1 3V28C1 29.1046 1.89543 30 3 30H37C38.1046 30 39 29.1046 39 28V3C39 1.89543 38.1046 1 37 1H3ZM36 9H4V28H36V9Z" fill="url(#p0)"/>
+  <path d="M37.6172 0.375H2.38281C1.06903 0.375 0 1.44403 0 2.75781V29.2422C0 30.556 1.06903 31.625 2.38281 31.625H37.6172C38.931 31.625 40 30.556 40 29.2422V2.75781C40 1.44403 38.931 0.375 37.6172 0.375ZM38.4375 29.2422C38.4375 29.6945 38.0695 30.0625 37.6172 30.0625H2.38281C1.93054 30.0625 1.5625 29.6945 1.5625 29.2422V2.75781C1.5625 2.30554 1.93054 1.9375 2.38281 1.9375H37.6172C38.0695 1.9375 38.4375 2.30554 38.4375 2.75781V29.2422Z" fill="url(#p1)"/>
+  <path d="M14.922 5.792H35.078c.431 0 .781-.35.781-.781 0-.431-.35-.781-.781-.781H14.922c-.432 0-.781.35-.781.781 0 .431.349.781.781.781Z" fill="url(#p2)"/>
+  <!-- trois points -->
+  <path d="M4.7 5.79a.78.78 0 1 0 0-1.56.78.78 0 0 0 0 1.56Z" fill="url(#p3)"/>
+  <path d="M7.84 5.79a.78.78 0 1 0 0-1.56.78.78 0 0 0 0 1.56Z" fill="url(#p4)"/>
+  <path d="M10.96 5.79a.78.78 0 1 0 0-1.56.78.78 0 0 0 0 1.56Z" fill="url(#p5)"/>
+  <!-- Jauge demi-cercle -->
+  <path d="M10 22a10 10 0 1 1 20 0" stroke="url(#p6)" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+  <!-- graduations -->
+  <path d="M20 10v3M26 11.5l-1 2.4M14 11.5l1 2.4M30 15l-2 1.4M10 15l2 1.4" stroke="url(#p6)" stroke-width="1.2" stroke-linecap="round"/>
+  <!-- aiguille + flèche -->
+  <circle cx="20" cy="22" r="2" fill="url(#p7)"/>
+  <path d="M20 22L28 14M28 14l-1.4 0M28 14l0 1.4" stroke="url(#p6)" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- base -->
+  <rect x="6" y="24" width="28" height="2" rx="1" fill="url(#p6)" opacity="0.3"/>
+  <defs>
+    <linearGradient id="p0" x1="3.15" y1="1" x2="26.69" y2="35.05" gradientUnits="userSpaceOnUse">
+      <stop offset="0.259336" stop-color="#FFDB6E"/><stop offset="1" stop-color="#FFBC5E"/>
+    </linearGradient>
+    <linearGradient id="p1" x1="2.27" y1="0.375" x2="27.83" y2="36.511" gradientUnits="userSpaceOnUse">
+      <stop offset="0.259336" stop-color="#FFDB6E"/><stop offset="1" stop-color="#FFBC5E"/>
+    </linearGradient>
+    <linearGradient id="p2" x1="15.37" y1="4.229" x2="15.55" y2="6.929" gradientUnits="userSpaceOnUse">
+      <stop offset="0.259336" stop-color="#FFDB6E"/><stop offset="1" stop-color="#FFBC5E"/>
+    </linearGradient>
+    <linearGradient id="p3" x1="4.02" y1="4.229" x2="5.37" y2="5.719" gradientUnits="userSpaceOnUse">
+      <stop offset="0.259336" stop-color="#FFDB6E"/><stop offset="1" stop-color="#FFBC5E"/>
+    </linearGradient>
+    <linearGradient id="p4" x1="7.15" y1="4.229" x2="8.49" y2="5.719" gradientUnits="userSpaceOnUse">
+      <stop offset="0.259336" stop-color="#FFDB6E"/><stop offset="1" stop-color="#FFBC5E"/>
+    </linearGradient>
+    <linearGradient id="p5" x1="10.27" y1="4.229" x2="11.62" y2="5.719" gradientUnits="userSpaceOnUse">
+      <stop offset="0.259336" stop-color="#FFDB6E"/><stop offset="1" stop-color="#FFBC5E"/>
+    </linearGradient>
+    <linearGradient id="p6" x1="10" y1="9" x2="30" y2="26" gradientUnits="userSpaceOnUse">
+      <stop offset="0.259336" stop-color="#FFDB6E"/><stop offset="1" stop-color="#FFBC5E"/>
+    </linearGradient>
+    <linearGradient id="p7" x1="18" y1="20" x2="24" y2="26" gradientUnits="userSpaceOnUse">
+      <stop offset="0.259336" stop-color="#FFDB6E"/><stop offset="1" stop-color="#FFBC5E"/>
+    </linearGradient>
+  </defs>
+</svg>
