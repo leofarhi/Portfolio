@@ -531,12 +531,49 @@
 
   <script src="./assets/data/projects-data.js"></script>
   <script>
+    // Mappe un chemin relatif -> URL RAW GitHub (pour GitHub Pages uniquement)
+    const isGhPages = /github\.io$/i.test(location.hostname);
+    const toRaw = (p) => {
+      if (!p) return p;
+      if (/^https?:\/\//i.test(p)) return p; // déjà absolu
+      const clean = String(p).replace(/^(\.\/|\/)+/, ''); // retire "./" ou "/" initiaux
+      return `https://github.com/leofarhi/Portfolio/raw/refs/heads/main/${clean}`;
+    };
+
+    // Clone léger pour ne pas modifier l'objet source
+    const data = (window.structuredClone
+      ? structuredClone(window.PROJECTS_DATA)
+      : JSON.parse(JSON.stringify(window.PROJECTS_DATA)));
+
+    if (isGhPages && data && Array.isArray(data.projects)) {
+      data.projects.forEach(p => {
+        // champs racine
+        if (p.icon)  p.icon  = toRaw(p.icon);
+        if (p.media) p.media = toRaw(p.media);
+        if (Array.isArray(p.medias)) p.medias = p.medias.map(toRaw);
+
+        // compat éventuelle (si présents dans tes données)
+        if (p.image)  p.image  = toRaw(p.image);
+        if (Array.isArray(p.images)) p.images = p.images.map(toRaw);
+
+        // sections
+        if (Array.isArray(p.sections)) {
+          p.sections.forEach(s => {
+            if (Array.isArray(s.medias)) s.medias = s.medias.map(toRaw);
+            if (Array.isArray(s.images)) s.images = s.images.map(toRaw); // compat éventuelle
+          });
+        }
+      });
+    }
+
+    // Injecte le JSON final (transformé sur github.io, inchangé ailleurs)
     const el = document.createElement('script');
     el.type = 'application/json';
     el.id = 'projects-json';
-    el.textContent = JSON.stringify(window.PROJECTS_DATA, null, 2);
+    el.textContent = JSON.stringify(isGhPages ? data : window.PROJECTS_DATA, null, 2);
     document.head.appendChild(el);
   </script>
+
 
 </body>
 </html>
