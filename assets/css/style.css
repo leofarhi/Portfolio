@@ -944,6 +944,8 @@ main {
 }
 
 .modal-close-btn {
+  z-index: 9999;
+  pointer-events: auto;
   position: absolute;
   top: 15px;
   right: 15px;
@@ -977,6 +979,7 @@ main {
   align-items: center;
   justify-content: center;
   background: var(--bg-gradient-jet);
+  pointer-events: none;
 }
 
 .image-modal .modal-body img {
@@ -984,6 +987,7 @@ main {
   height: 100%;
   object-fit: contain;
   background: var(--eerie-black-2);
+  pointer-events: none;
 }
 
 .enum { margin: .4rem 0 .4rem 1.2rem; padding-left: 1rem; }
@@ -1429,30 +1433,21 @@ main {
   #FULL-BG IMAGE (cover)
 \*-----------------------------------*/
 
-/* Remplace le fond par une image plein écran, ratio conservé, crop autorisé */
+/* Remplace l’overlay pseudo-élément par des calques de background */
 body {
-  /* mets ton chemin d'image ici */
-  background-image: url("../images/Background.png");
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: cover;           /* clé: recouvre sans bande noire */
-  background-color: var(--smoky-black); /* fallback si l'image ne charge pas */
-  background-attachment: fixed;     /* effet "parallax" léger sur desktop */
-}
-
-/* iOS/Android gèrent mal background-attachment: fixed */
-@media (max-width: 1024px) {
-  body { background-attachment: scroll; }
-}
-
-/* Légère couche sombre pour préserver la lisibilité du thème */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background:
+  /* image de fond */
+  background-image:
     radial-gradient(1200px 600px at 50% 10%, rgba(0,0,0,0.35), rgba(0,0,0,0.65)),
-    rgba(0,0,0,0.45);
-  z-index: 0;
+    linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+    url("../images/Background.png");
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-position: center top, center, center;
+  background-size: 100% 100%, 100% 100%, cover;
+  background-attachment: fixed, fixed, fixed; /* effet léger sur desktop */
+  background-color: var(--smoky-black);
+}
+
+/* Mobile/tablette : pas de background-attachment: fixed (meilleure perf) */
+@media (max-width: 1024px) {
+  body { background-attachment: scroll, scroll, scroll; }
 }
