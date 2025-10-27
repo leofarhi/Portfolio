@@ -1451,3 +1451,41 @@ body {
 @media (max-width: 1024px) {
   body { background-attachment: scroll, scroll, scroll; }
 }
+
+
+/*-----------------------------------*\
+  #FORCE SAME STYLE LIGHT/DARK
+\*-----------------------------------*/
+
+/* Empêche le navigateur d'appliquer des styles ou couleurs différentes 
+   selon le mode clair/sombre du système */
+:root {
+  color-scheme: only dark;
+}
+
+/* Pour Safari et Firefox : neutralise le thème clair */
+@media (prefers-color-scheme: light) {
+  html, body {
+    background-color: var(--smoky-black) !important;
+    color: var(--white-2) !important;
+    filter: none !important;
+  }
+}
+
+/*-----------------------------------*\
+  #SIDEBAR INFO — ESPACEMENT TITRES
+\*-----------------------------------*/
+
+/* Annule les margin inline et gère l'espacement uniquement via le CSS */
+.info-content .title { margin-top: 0 !important; }
+.info-content .title + .title { margin-top: 5px !important; }
+
+/*-----------------------------------*\
+  #SIDEBAR — FIX CROP SUR PETITS ÉCRANS
+\*-----------------------------------*/
+
+/* La sidebar ne doit pas être limitée en hauteur quand il n'y a pas de toggle */
+.sidebar {
+  max-height: none !important;
+  overflow: visible !important;
+}
