@@ -200,6 +200,80 @@ window.PROJECTS_DATA = {
         "assets/projects/Epita/RegainTheWorld/galerie/67.png",
         "assets/projects/Epita/RegainTheWorld/galerie/68.png"
       ]
+    },
+    {
+      "id": "particule-engine",
+      "title": "Particule Engine",
+      "category": "Tools",
+      "icon": "assets/projects/Particule/icon.jpg",
+      "description": "Particule Engine (et son cœur, Particule SDK) est un moteur de jeu multi-distribution que je développe depuis 2020, inspiré de Unity, mais conçu pour être plus léger, ouvert et entièrement portable.\nMon objectif : créer un moteur capable de tourner sur presque n'importe quelle machine : PC, console, ou même calculatrice Casio, à partir d'un seul code source.\n\nL'idée est née de ma frustration face aux limites des outils existants : je voulais pouvoir écrire un code unique, et le déployer partout, sans dépendre d'un environnement propriétaire.\n\nParticule, c'est à la fois un éditeur, un moteur, et un SDK en C++, pensés pour fonctionner ensemble, de manière modulaire et adaptable à chaque plateforme.\n\n[url=https://github.com/leofarhi/ParticuleSDK]Lien du repo Github[/url]",
+      "media": "assets/projects/Particule/Image Principale.png",
+      "sections": [
+        {
+          "title": "Le contexte",
+          "description": "En développant des jeux sur PC avec Unity et sur calculatrices Casio, j'ai réalisé qu'il manquait un outil unifié.\nJe voulais un flux de travail unique, où l'on code une fois et où l'on exporte sur n'importe quelle plateforme, sans devoir tout réécrire.\nC'est de là qu'est né Particule SDK : reprendre les forces de Unity et les adapter à un environnement beaucoup plus flexible, à travers un éditeur visuel, un SDK léger et une architecture multi-distribution en C++.",
+          "medias": [
+            "assets/projects/Particule/contexe/Screenshot_20230926_163859_Gallery.jpg",
+            "assets/projects/Particule/contexe/Screenshot_20230926_163931_Gallery.jpg",
+            "assets/projects/Particule/contexe/Screenshot_20230926_163908_Gallery.jpg",
+            "assets/projects/Particule/contexe/20200813_190225.jpg",
+            "assets/projects/Particule/contexe/rtj5.jpg",
+            "assets/projects/Particule/contexe/20211127_164523.jpg",
+            "assets/projects/Particule/contexe/20211127_151754.jpg"
+          ]
+        },
+        {
+          "title": "Les débuts — de Unity à mon propre moteur",
+          "description": "Unity m'a beaucoup appris. C'est un environnement efficace, mais quand il s'agit d'exporter sur plusieurs plateformes, les limites se font vite sentir : dépendances propriétaires, processus lourds, ajustements infinis.\nJ'ai voulu retrouver cette efficacité, mais dans un cadre que je maîtrise entièrement.\n\nL'idée de départ était claire : créer un éditeur de type Unity, avec import d'assets, gestion de scènes et logique entité-composant, mais qui puisse générer des versions jouables sur différentes machines sans repartir de zéro.\nDans cette phase j'ai aussi tenté une interface plus simple : un “Visual Scratch”, pour pouvoir créer des jeux sans coder intensivement",
+          "medias": [
+            "assets/projects/Particule/debuts/7yip.png",
+            "assets/projects/Particule/debuts/casio.PNG",
+            "assets/projects/Particule/debuts/t736.png",
+            "assets/projects/Particule/debuts/visual scratch.PNG",
+            "assets/projects/Particule/debuts/hid4.png",
+            "assets/projects/Particule/debuts/200512030856819595.png",
+            "assets/projects/Particule/debuts/b99i.png",
+            "assets/projects/Particule/debuts/shcz.png",
+            "assets/projects/Particule/debuts/u0ap.png",
+            "assets/projects/Particule/debuts/unz6.png"
+          ]
+        },
+        {
+          "title": "Le fonctionnement — architecture et conception",
+          "description": "L'architecture de Particule SDK repose sur quelques fondations solides :\n\n[enum=1]• Un éditeur PC (inspiré de Unity) pour importer images, sons, et configurer les scènes.[/enum]\n\n[enum=1]• Un SDK en C++, compilé pour chaque plateforme cible : calculatrice Casio, Nintendo DS, 3DS, Wii, Switch, PSP ou PC.[/enum]\n\n[enum=1]• Une couche d'abstraction pour gérer les différences entre plateformes : rendu, entrées, mémoire, etc.[/enum]\n\n[enum=1]• Un seul code logique, partagé entre toutes les cibles.[/enum]\n\nÀ l'origine, j'avais commencé en Python/Tkinter, mais j'ai vite migré vers le C++ : plus rapide, plus précis, et indispensable pour gérer les contraintes matérielles.\nCette approche m'a permis de tester plusieurs plateformes et de prouver que le concept fonctionne, même si tout n'est pas encore finalisé.",
+          "medias": [
+            "assets/projects/Particule/fonctionnement/20200813_190711.jpg",
+            "assets/projects/Particule/fonctionnement/c728.png",
+            "assets/projects/Particule/fonctionnement/nei5.png",
+            "assets/projects/Particule/fonctionnement/u7bo.png",
+            "assets/projects/Particule/fonctionnement/ftkq.png",
+            "assets/projects/Particule/fonctionnement/particule.PNG",
+            "assets/projects/Particule/fonctionnement/ytyyrty.png",
+            "assets/projects/Particule/fonctionnement/izkd.png",
+            "assets/projects/Particule/fonctionnement/particule1.PNG",
+            "assets/projects/Particule/fonctionnement/TransformTuto.gif",
+            "assets/projects/Particule/fonctionnement/r37s.png"
+          ]
+        },
+        {
+          "title": "Les tentatives, les échecs et les apprentissages",
+          "description": "Le chemin a été tout sauf linéaire.\nCertaines idées ont échoué, mais chacune m'a appris quelque chose :\n\n[enum=1]• Le premier prototype Python/Tkinter fonctionnait, mais n'était pas viable pour la performance ni la portabilité.[/enum]\n\n[enum=1]• L'idée du Visual Scratch reste dans mes carnets ; elle reviendra plus tard sous une forme plus solide.[/enum]\n\n[enum=1]• Plusieurs ports, notamment sur DS, 3DS et Wii, ont été testés puis mis en pause. Ces essais m'ont beaucoup appris sur les contraintes de chaque machine : mémoire, affichage, gestion d'entrée, etc.[/enum]\n\nToutes ces étapes ont façonné Particule. Ce n'est pas un projet figé : c'est un laboratoire d'idées en constante évolution.",
+          "medias": [
+            "assets/projects/Particule/tentatives/Particule 2.0 Beta.mp4"
+          ]
+        },
+        {
+          "title": "L'état actuel et les perspectives",
+          "description": "Aujourd'hui, Particule SDK est en version prototype.\nL'éditeur est en cours de réécriture complète en C++, le SDK compile déjà pour plusieurs plateformes, et certains jeux fonctionnent dessus.\n\nMais il reste encore du travail : finaliser les ports, renforcer la stabilité, enrichir l'éditeur, et surtout rendre l'interface plus intuitive.\nL'objectif ne change pas : proposer un moteur-éditeur unique, où l'on code une fois et déploie partout, que ce soit sur une calculatrice, une console, ou un PC, à la manière d'un Unity… mais libre, minimaliste et adapté à mes besoins.",
+          "medias": [
+            "assets/projects/Particule/etat_actuel/cap.png",
+            "assets/projects/Particule/etat_actuel/sdegfsdfd.png",
+            "assets/projects/Particule/etat_actuel/t9f1.png",
+            "assets/projects/Particule/etat_actuel/vsx8.png"
+          ]
+        }
+      ],
+      "medias": []
     }
   ]
 };

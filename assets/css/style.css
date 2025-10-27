@@ -979,7 +979,6 @@ main {
   align-items: center;
   justify-content: center;
   background: var(--bg-gradient-jet);
-  pointer-events: none;
 }
 
 .image-modal .modal-body img {
