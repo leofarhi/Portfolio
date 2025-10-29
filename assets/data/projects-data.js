@@ -274,6 +274,92 @@ window.PROJECTS_DATA = {
         }
       ],
       "medias": []
+    },
+    {
+      "id": "underworld",
+      "title": "Underworld",
+      "category": "AI",
+      "icon": "assets/projects/Epita/Underworld/icon.jpg",
+      "description": "Underworld est un projet que j’ai réalisé à EPITA durant l’année 2022-2023, avec trois camarades de promotion.\nNous avions six mois pour concevoir un programme complet autour d’un concept libre. J’ai pris le rôle de chef de projet, en charge de l’architecture, du code principal, de l’intelligence artificielle et du moteur d’affichage.\n\nNotre idée était ambitieuse : créer un monde virtuel 2D vivant, où des intelligences artificielles autonomes évoluent, s’adaptent et apprennent à survivre.\nUn univers dans lequel les IA ne suivent pas un script, mais émergent de règles biologiques inspirées de la sélection naturelle.\nEn somme, un mélange entre un simulateur de vie et une expérience d’intelligence artificielle évolutive.\n\n[url=https://anthav2002.wixsite.com/underworld]Site web du projet[/url]",
+      "media": "assets/projects/Epita/Underworld/Image Principale.png",
+      "sections": [
+        {
+          "title": "Les débuts — Le prototype",
+          "description": "On devait trouver un nom d'équipe. On s'est finalement réunis sous le nom Relik (pour “relique”), un mot qui collait parfaitement avec l'univers qu'on voulait construire : un monde fantastique, rempli de mystère, de magie et de ruines oubliées.\n\nL'un des plus grands défis techniques imposés par le cahier des charges était de créer un jeu multijoueur en ligne.\nPour rendre cela cohérent dans le scénario, on a imaginé une équipe de quatre aventuriers. Les quatre sont jouables, mais si un joueur manque, il est automatiquement remplacé par une IA pour garder le groupe complet. De plus, à tout moment, le joueur pouvait échanger de rôle et prendre le contrôle d'un autre membre du groupe contrôlé par l'IA, simplement en appuyant sur une touche.\n\nTrès vite, le concept s'est affiné :\nun groupe de personnages ordinaires propulsés dans une autre dimension après une expérience scientifique qui tourne mal.\nPerdus dans un monde inconnu, ils doivent retrouver plusieurs reliques pour rouvrir un portail et regagner leur monde d'origine.",
+          "medias": [
+            "assets/projects/Epita/RegainTheWorld/proto/1.png",
+            "assets/projects/Epita/RegainTheWorld/proto/2.png",
+            "assets/projects/Epita/RegainTheWorld/proto/3.png",
+            "assets/projects/Epita/RegainTheWorld/proto/4.png",
+            "assets/projects/Epita/RegainTheWorld/proto/5.png",
+            "assets/projects/Epita/RegainTheWorld/proto/6.png",
+            "assets/projects/Epita/RegainTheWorld/proto/7.png",
+            "assets/projects/Epita/RegainTheWorld/proto/8.png",
+            "assets/projects/Epita/RegainTheWorld/proto/9.png",
+            "assets/projects/Epita/RegainTheWorld/proto/10.png",
+            "assets/projects/Epita/RegainTheWorld/proto/unknown-38.png",
+            "assets/projects/Epita/RegainTheWorld/proto/unknown-42.png",
+            "assets/projects/Epita/RegainTheWorld/proto/unknown-37.png",
+            "assets/projects/Epita/RegainTheWorld/proto/unknown-34.png",
+            "assets/projects/Epita/RegainTheWorld/proto/unknown-48.png",
+            "assets/projects/Epita/RegainTheWorld/proto/music spectre.mp4"
+          ]
+        },
+        {
+          "title": "Les débuts — poser les fondations d’un monde",
+          "description": "Dès le départ, nous savions que ce projet demanderait une base technique solide.\nNous avons donc commencé par développer l’Underworld lui-même : un moteur 2D en C, avec une architecture découpée en chunks (comme Minecraft) pour optimiser le rendu et la mémoire.\nChaque bloc du monde est stocké, sauvegardé, chargé et mis à jour en temps réel.\nJ’ai également conçu un moteur d’interface graphique complet sous SDL2. Boutons, curseurs, panneaux, zones de texte… tout a été codé à la main, depuis zéro.\nPour les graphismes, nous avons utilisé les tilesets de RPG Maker.\nPendant qu’Amanda s’occupait du design sous Figma, Bob construisait la structure du monde et Antoine développait le site web de présentation, j’ai posé les bases du Makefile multiplateforme et du système d’IA.",
+          "medias": [
+            "assets/projects/Epita/Underworld/debuts/35.png",
+            "assets/projects/Epita/Underworld/debuts/36.png",
+            "assets/projects/Epita/Underworld/debuts/15.png",
+            "assets/projects/Epita/Underworld/debuts/16.png",
+            "assets/projects/Epita/Underworld/debuts/18.png",
+            "assets/projects/Epita/Underworld/debuts/22.png",
+            "assets/projects/Epita/Underworld/debuts/24.png"
+          ]
+        },
+        {
+          "title": "La réalisation — faire vivre l’Underworld",
+          "description": "Une fois les fondations en place, nous avons attaqué le cœur du projet : donner vie à l’Underworld.\nLes IA ont été conçues comme de véritables organismes : elles ont une faim, une espérance de vie, un sexe, et peuvent apprendre par génération successive.\nLeur comportement est régi par des réseaux de neurones entraînés dans des salles d’entraînement dédiées — 46 au total — chacune simulant une compétence : se déplacer, reconnaître la nourriture, éviter la lave, communiquer, attaquer, coopérer ou se reproduire.\n\nUn système nommé \"Cardinal\" agit comme une \"divinité\" virtuelle.\nelld observe, juge, et équilibre le monde : elle réanime les IA prometteuses, supprime celles qui dérivent, et attribue un “karma” selon leurs actions.\nC’est un peu un modérateur invisible du monde, garant de son harmonie.\n\nCôté technique, nous avons intégré des systèmes de génération procédurale via bruits de Perlin et Simplex, et testé brièvement l’algorithme Wave Function Collapse pour la création de cartes.",
+          "medias": [
+            "assets/projects/Epita/Underworld/realisation/19.png",
+            "assets/projects/Epita/Underworld/realisation/20.png",
+            "assets/projects/Epita/Underworld/realisation/38.png",
+            "assets/projects/Epita/Underworld/realisation/8.png",
+            "assets/projects/Epita/Underworld/realisation/11.png",
+            "assets/projects/Epita/Underworld/realisation/26.png",
+            "assets/projects/Epita/Underworld/realisation/41.png",
+            "assets/projects/Epita/Underworld/realisation/14.png",
+            "assets/projects/Epita/Underworld/realisation/28.png",
+            "assets/projects/Epita/Underworld/realisation/21.png",
+            "assets/projects/Epita/Underworld/realisation/23.png"
+          ]
+        },
+        {
+          "title": "L’aboutissement — évaluation du comportement des IA",
+          "description": "À la fin du projet, nous avons pu observer des comportements cohérents démontrant que les IA avaient effectivement appris à s’adapter à leur environnement.\nGrâce aux 46 salles d’entraînement, chaque génération présentait des améliorations progressives dans la réussite des objectifs fixés : navigation, gestion de la nourriture, coopération, évitement des dangers et reconnaissance des alliés.\n\nL’apprentissage génétique s’est révélé fonctionnel :\n[enum=1]• Les IA fusionnaient correctement leurs réseaux de neurones parentaux, produisant des générations plus performantes après plusieurs cycles.[/enum]\n\n[enum=1]• Le taux de réussite moyen dans les salles d’entraînement augmentait au fil du temps, signe d’une adaptation mesurable.[/enum]\n\n[enum=1]• Certaines IA développaient des comportements collectifs simples, comme suivre un individu ou partager une ressource, sans qu’aucune règle explicite ne l’impose.[/enum]\n\nCes résultats ont confirmé que le modèle d’évolution que nous avions imaginé fonctionnait réellement.\nL’apprentissage restait évidemment limité : les IA n’élaboraient pas encore de vraies stratégies, mais elles savaient déjà s’adapter à leur environnement, réagir à de nouvelles situations et affiner leurs actions au fil des générations.\n\nCertaines finissaient même par adopter des comportements inattendus, comme éviter les zones dangereuses, suivre d’autres IA ou gérer leurs priorités de manière plus efficace que leurs ancêtres.\n\nEn résumé, malgré les contraintes techniques et le temps de calcul réduit, on a pu constater que notre système d’IA génétique apprenait vraiment.\nPas de manière “intelligente” au sens humain, mais suffisamment pour montrer qu’une forme d’adaptation émergente était bien possible.",
+          "medias": [
+            "assets/projects/Epita/Underworld/aboutissement/7.png",
+            "assets/projects/Epita/Underworld/aboutissement/37.png",
+            "assets/projects/Epita/Underworld/aboutissement/9.png",
+            "assets/projects/Epita/Underworld/aboutissement/17.png",
+            "assets/projects/Epita/Underworld/aboutissement/34.png",
+            "assets/projects/Epita/Underworld/aboutissement/40.png",
+            "assets/projects/Epita/Underworld/aboutissement/39.png",
+            "assets/projects/Epita/Underworld/aboutissement/25.png",
+            "assets/projects/Epita/Underworld/aboutissement/12.png",
+            "assets/projects/Epita/Underworld/aboutissement/13.png",
+            "assets/projects/Epita/Underworld/aboutissement/10.png",
+            "assets/projects/Epita/Underworld/aboutissement/27.png",
+            "assets/projects/Epita/Underworld/aboutissement/29.png",
+            "assets/projects/Epita/Underworld/aboutissement/30.png",
+            "assets/projects/Epita/Underworld/aboutissement/31.png",
+            "assets/projects/Epita/Underworld/aboutissement/32.png",
+            "assets/projects/Epita/Underworld/aboutissement/33.png"
+          ]
+        }
+      ],
+      "medias": []
     }
   ]
 };

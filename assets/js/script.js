@@ -40,8 +40,12 @@ navLinks.forEach(btn => {
     modal: document.getElementById('img-modal'),
     overlay: document.getElementById('img-overlay'),
     modalImg: document.getElementById('img-full'),
-    modalClose: document.getElementById('img-close')
+    modalClose: document.getElementById('img-close'),
+    modalPrev: document.getElementById('img-prev'),
+    modalNext: document.getElementById('img-next')
   };
+
+  const modalBody = el.modal?.querySelector('.modal-body');
 
   const VIDEO_EXT = /\.(mp4|webm|ogg)$/i;
   const isVideo = (src) => VIDEO_EXT.test(String(src || ''));
@@ -172,16 +176,71 @@ navLinks.forEach(btn => {
     el.modal.classList.remove('active');
     el.overlay.classList.remove('active');
     el.modal.setAttribute('aria-hidden', 'true');
+
+    CURRENT_LIST = [];
+    CURRENT_INDEX = -1;
   }
   if (el.overlay) el.overlay.addEventListener('click', closeModal);
   if (el.modalClose) el.modalClose.addEventListener('click', closeModal);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
+  let CURRENT_LIST = [];
+  let CURRENT_INDEX = -1;
+
+  function openModalAt(index, list) {
+    if (!Array.isArray(list) || !list.length) return;
+    CURRENT_LIST = list.slice();
+    CURRENT_INDEX = (index + CURRENT_LIST.length) % CURRENT_LIST.length;
+    openModalMedia(CURRENT_LIST[CURRENT_INDEX]);
+  }
+
+  function showPrev() {
+    if (!CURRENT_LIST.length) return;
+    CURRENT_INDEX = (CURRENT_INDEX - 1 + CURRENT_LIST.length) % CURRENT_LIST.length;
+    openModalMedia(CURRENT_LIST[CURRENT_INDEX]);
+  }
+
+  function showNext() {
+    if (!CURRENT_LIST.length) return;
+    CURRENT_INDEX = (CURRENT_INDEX + 1) % CURRENT_LIST.length;
+    openModalMedia(CURRENT_LIST[CURRENT_INDEX]);
+  }
+
+  if (el.modalPrev) el.modalPrev.addEventListener('click', showPrev);
+  if (el.modalNext) el.modalNext.addEventListener('click', showNext);
+
+  document.addEventListener('keydown', e => {
+    if (!el.modal?.classList.contains('active')) return;
+    if (e.key === 'ArrowLeft') { e.preventDefault(); showPrev(); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); showNext(); }
+  });
+
+  let touchStartX = 0, touchStartY = 0, touchActive = false;
+  const SWIPE_MIN = 50, SWIPE_MAX_ANGLE = 80;
+  function onTouchStart(ev) {
+    const t = ev.changedTouches ? ev.changedTouches[0] : ev;
+    touchStartX = t.clientX; touchStartY = t.clientY; touchActive = true;
+  }
+  function onTouchEnd(ev) {
+    if (!touchActive) return;
+    const t = ev.changedTouches ? ev.changedTouches[0] : ev;
+    const dx = t.clientX - touchStartX;
+    const dy = Math.abs(t.clientY - touchStartY);
+    touchActive = false;
+    if (Math.abs(dx) >= SWIPE_MIN && dy <= SWIPE_MAX_ANGLE) {
+      if (dx < 0) showNext(); else showPrev();
+    }
+  }
+  if (modalBody) {
+    modalBody.addEventListener('touchstart', onTouchStart, { passive: true });
+    modalBody.addEventListener('touchend', onTouchEnd, { passive: true });
+  }
+
   function createThumbs(medias) {
     const box = document.createElement('div');
     box.className = 'project-thumbs has-scrollbar';
 
-    medias.forEach(src => {
+    medias.forEach((src, i) => {
       const btn = document.createElement('button');
       btn.className = 'thumb-btn';
       btn.setAttribute('aria-label', isVideo(src) ? 'Voir la vidéo' : 'Voir l’image');
@@ -201,10 +260,10 @@ navLinks.forEach(btn => {
         badge.textContent = '▶';
         btn.appendChild(badge);
 
-        btn.addEventListener('click', () => openModalMedia(src));
+        btn.addEventListener('click', () => openModalAt(i, medias));
       } else {
         btn.innerHTML = `<img src="${src}" alt="Miniature" class="thumb-media">`;
-        btn.addEventListener('click', () => openModalMedia(src));
+        btn.addEventListener('click', () => openModalAt(i, medias));
       }
 
       box.appendChild(btn);
