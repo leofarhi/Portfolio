@@ -284,25 +284,14 @@ window.PROJECTS_DATA = {
       "media": "assets/projects/Epita/Underworld/Image Principale.png",
       "sections": [
         {
-          "title": "Les débuts — Le prototype",
-          "description": "On devait trouver un nom d'équipe. On s'est finalement réunis sous le nom Relik (pour “relique”), un mot qui collait parfaitement avec l'univers qu'on voulait construire : un monde fantastique, rempli de mystère, de magie et de ruines oubliées.\n\nL'un des plus grands défis techniques imposés par le cahier des charges était de créer un jeu multijoueur en ligne.\nPour rendre cela cohérent dans le scénario, on a imaginé une équipe de quatre aventuriers. Les quatre sont jouables, mais si un joueur manque, il est automatiquement remplacé par une IA pour garder le groupe complet. De plus, à tout moment, le joueur pouvait échanger de rôle et prendre le contrôle d'un autre membre du groupe contrôlé par l'IA, simplement en appuyant sur une touche.\n\nTrès vite, le concept s'est affiné :\nun groupe de personnages ordinaires propulsés dans une autre dimension après une expérience scientifique qui tourne mal.\nPerdus dans un monde inconnu, ils doivent retrouver plusieurs reliques pour rouvrir un portail et regagner leur monde d'origine.",
+          "title": "Le concept — un “jeu de la vie” moderne",
+          "description": "L’idée de base vient du célèbre “Game of Life” de John Conway : un système simple de cellules qui vivent ou meurent selon des règles fixes.\nMais nous voulions aller beaucoup plus loin.\nDans Underworld, chaque entité — qu’elle soit IA, ressource ou objet — fait partie d’un écosystème complexe. Les IA y apprennent à manger, explorer, communiquer, combattre, se reproduire, et même coopérer ou rivaliser.\n\nPour cela, nous avons utilisé un réseau de neurones génétiques, où chaque IA possède son propre “cerveau” capable de muter et de se réadapter au fil des générations.\nNotre but : observer si une forme de comportement collectif, voire d’intelligence émergente, pouvait naître naturellement.",
           "medias": [
-            "assets/projects/Epita/RegainTheWorld/proto/1.png",
-            "assets/projects/Epita/RegainTheWorld/proto/2.png",
-            "assets/projects/Epita/RegainTheWorld/proto/3.png",
-            "assets/projects/Epita/RegainTheWorld/proto/4.png",
-            "assets/projects/Epita/RegainTheWorld/proto/5.png",
-            "assets/projects/Epita/RegainTheWorld/proto/6.png",
-            "assets/projects/Epita/RegainTheWorld/proto/7.png",
-            "assets/projects/Epita/RegainTheWorld/proto/8.png",
-            "assets/projects/Epita/RegainTheWorld/proto/9.png",
-            "assets/projects/Epita/RegainTheWorld/proto/10.png",
-            "assets/projects/Epita/RegainTheWorld/proto/unknown-38.png",
-            "assets/projects/Epita/RegainTheWorld/proto/unknown-42.png",
-            "assets/projects/Epita/RegainTheWorld/proto/unknown-37.png",
-            "assets/projects/Epita/RegainTheWorld/proto/unknown-34.png",
-            "assets/projects/Epita/RegainTheWorld/proto/unknown-48.png",
-            "assets/projects/Epita/RegainTheWorld/proto/music spectre.mp4"
+            "assets/projects/Epita/Underworld/concept/1.png",
+            "assets/projects/Epita/Underworld/concept/2.png",
+            "assets/projects/Epita/Underworld/concept/3.png",
+            "assets/projects/Epita/Underworld/concept/4.png",
+            "assets/projects/Epita/Underworld/concept/5.png"
           ]
         },
         {
