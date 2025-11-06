@@ -204,7 +204,7 @@ window.PROJECTS_DATA = {
     {
       "id": "particule-engine",
       "title": "Particule Engine",
-      "category": "Tools",
+      "category": "Game Development",
       "icon": "assets/projects/Particule/icon.jpg",
       "description": "Particule Engine (et son cœur, Particule SDK) est un moteur de jeu multi-distribution que je développe depuis 2020, inspiré de Unity, mais conçu pour être plus léger, ouvert et entièrement portable.\nMon objectif : créer un moteur capable de tourner sur presque n'importe quelle machine : PC, console, ou même calculatrice Casio, à partir d'un seul code source.\n\nL'idée est née de ma frustration face aux limites des outils existants : je voulais pouvoir écrire un code unique, et le déployer partout, sans dépendre d'un environnement propriétaire.\n\nParticule, c'est à la fois un éditeur, un moteur, et un SDK en C++, pensés pour fonctionner ensemble, de manière modulaire et adaptable à chaque plateforme.\n\n[url=https://github.com/leofarhi/ParticuleSDK]Lien du repo Github[/url]",
       "media": "assets/projects/Particule/Image Principale.png",
@@ -349,6 +349,40 @@ window.PROJECTS_DATA = {
         }
       ],
       "medias": []
+    },
+    {
+      "id": "Thermorph",
+      "title": "Thermorph",
+      "category": "Game Development",
+      "icon": "assets/projects/Thermorph/icon.jpg",
+      "description": "Thermorph est un petit jeu que j’ai réalisé lors de la [url=https://itch.io/jam/game-off-2023]Game Off 2023[/url], une game jam internationale organisée sur itch.io.\nLe thème de cette édition était « Scale », un mot à plusieurs sens : échelle, taille, mesure, ou encore transformation.\nNous avions un mois pour créer un jeu complet à partir de ce concept, en équipe et entièrement à distance.\n\nJ’ai formé un groupe sur Discord, et très vite, nous étions quatre :\nJuka à la musique et au sound design, Omer Yuncu pour les environnements 3D, Izivad pour les illustrations 2D, et X-90 pour la modélisation 3D.\nDe mon côté, j’ai assuré la programmation, le level design, et une bonne partie de l’intégration technique.\nMême si le rôle affiché sur la page officielle est “Dev”, j’ai aussi coordonné l’équipe et relié toutes les pièces du projet ensemble.\n\n[url=https://farhi.itch.io/thermorph]Lien du jeu[/url]",
+      "media": "assets/projects/Thermorph/Image Principale.png",
+      "sections": [
+        {
+          "title": "Le concept — jouer avec la chaleur et le froid",
+          "description": "Dans Thermorph, on incarne un petit robot issu d’un centre de recherche, réveillé plusieurs années après une expérience scientifique ratée.\nL’environnement est désormais instable, les lieux abandonnés, et d’autres robots — autrefois alliés — sont devenus hostiles, chacun défendant son territoire.\n\nLe joueur explore un monde en ruine où la température devient une arme.\nLe personnage peut tirer des boules de feu ou de glace, alterner librement entre les deux, et même charger une attaque spéciale en maintenant le tir.\nEn modulant la température de ses projectiles, le joueur peut influencer l’environnement :\n\n[enum=1]• Les boules de glace figent l’eau et créent des plateformes temporaires sur la lave.[/enum]\n[enum=1]• Les boules de feu font fondre la glace et débloquent de nouveaux passages.[/enum]\n\nMais la température n’affecte pas que le décor : elle agit aussi sur le corps du robot lui-même.\n\n[enum=1]• Sous le froid, il rétrécit, ce qui lui permet de passer dans des espaces étroits.[/enum]\n[enum=1]• Sous la chaleur, il fond partiellement, devenant capable de traverser des grilles perforées.[/enum]\n\nLes ennemis sont eux aussi sensibles à la température.\nPour les vaincre, il faut les surchauffer ou les glacer suffisamment longtemps — mais attention : s’ils refroidissent ou se réchauffent trop vite, ils reprennent vie.",
+          "medias": []
+        },
+        {
+          "title": "Le développement — un mois de création intensive",
+          "description": "La game jam se déroulait entièrement en ligne, et l’organisation n’a pas toujours été simple.\nAu début, les idées partaient dans tous les sens : chacun imaginait un jeu différent.\nOn a donc pris le temps de voter, de trancher, et d’établir une base claire pour ne pas se disperser.\n\nUne fois le concept validé, j’ai défini la structure du jeu et attribué les tâches de production.\nPendant que les artistes travaillaient sur les modèles et les textures, j’ai conçu la gestion des températures, et l’ensemble des mécaniques physiques (fonte, rétrécissement, plateformes de glace, projectiles).\n\nNous voulions un rendu rétro, à mi-chemin entre 3D et pixel art.\nPour ça, j’ai ajouté un shader de pixelisation, donnant cet effet de “jeu PS1 modernisé” qui colle bien à l’ambiance.\n\nLe temps était court, alors nous avons concentré nos efforts sur un seul niveau : une démo jouable qui présente toutes les mécaniques principales.\nCe niveau sert à montrer comment le joueur peut combiner les interactions — température, taille, environnement — pour progresser.\nMême si le jeu n’est pas complet, tout le cœur du gameplay est présent et fonctionnel.",
+          "medias": []
+        }
+      ],
+      "medias": [
+        "assets/projects/Thermorph/imgs/0_Ltpt.png",
+        "assets/projects/Thermorph/imgs/0BWVhe.png",
+        "assets/projects/Thermorph/imgs/2KtlsM.png",
+        "assets/projects/Thermorph/imgs/btlhk1.png",
+        "assets/projects/Thermorph/imgs/CfnHUT.png",
+        "assets/projects/Thermorph/imgs/NdmkOM.png",
+        "assets/projects/Thermorph/imgs/Oa0UAl.png",
+        "assets/projects/Thermorph/imgs/rJ3pPL.png",
+        "assets/projects/Thermorph/imgs/TVPX5i.png",
+        "assets/projects/Thermorph/imgs/vBlsmv.png",
+        "assets/projects/Thermorph/imgs/VS9zPS.png",
+        "assets/projects/Thermorph/imgs/y_mjzS.png"
+      ]
     }
   ]
 };
