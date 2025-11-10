@@ -3,23 +3,54 @@
 /*-----------------------------------*\
   #NAV
 \*-----------------------------------*/
+/*-----------------------------------*\
+  #NAV
+\*-----------------------------------*/
 const navLinks = document.querySelectorAll('[data-nav-link]');
 const pages = document.querySelectorAll('article[data-page]');
 
-navLinks.forEach(btn => {
-  btn.addEventListener('click', () => {
-    const target = btn.dataset.target;
-    navLinks.forEach(l => l.classList.toggle('active', l === btn));
-    pages.forEach(page => {
-      page.classList.toggle('active', page.dataset.page === target);
-    });
-    if (location.hash.startsWith('#project=')) {
-      const u = new URL(location.href);
-      u.hash = '';
-      history.replaceState(null, '', u);
+function renderSection(target) {
+  navLinks.forEach(l => l.classList.toggle('active', l.dataset.target === target));
+  pages.forEach(p => p.classList.toggle('active', p.dataset.page === target));
+}
+
+function showFromHash() {
+  const h = (location.hash || '').slice(1);       // sans "#"
+  const proj = h.match(/^project=(.+)$/);
+
+  if (proj) {
+    // Déléguer au loader projet existant
+    if (window.Portfolio && typeof window.Portfolio.openProjectById === 'function') {
+      window.Portfolio.openProjectById(decodeURIComponent(proj[1]));
+      return;
     }
+  }
+
+  // Sinon: navigation section (about/resume/portfolio/links)
+  const wanted = h || 'about';
+  const valid = new Set(Array.from(pages).map(p => p.dataset.page));
+  renderSection(valid.has(wanted) ? wanted : 'about');
+}
+
+// Sync avec flèches avant/arrière + changement manuel du hash
+window.addEventListener('popstate', showFromHash);
+window.addEventListener('hashchange', showFromHash);
+
+// Clic navbar -> pousse un hash de section
+navLinks.forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = btn.dataset.target;
+    if (location.hash !== '#' + target) {
+      history.pushState(null, '', '#' + target);
+    }
+    showFromHash();
   });
 });
+
+// Affiche la bonne vue au chargement
+document.addEventListener('DOMContentLoaded', showFromHash);
+
 
 
 /*-----------------------------------*\
@@ -377,10 +408,6 @@ navLinks.forEach(btn => {
 
     renderProject(project);
     navigateToDetail();
-
-    const u = new URL(location.href);
-    u.hash = `#project=${encodeURIComponent(id)}`;
-    history.replaceState(null, '', u);
   }
 
   function onProjectTileClick(e) {
@@ -389,25 +416,18 @@ navLinks.forEach(btn => {
     if (!id) return;
     const a = e.target.closest('a');
     if (a) e.preventDefault();
-    openProjectById(id);
+
+    const newHash = `#project=${encodeURIComponent(id)}`;
+    if (location.hash !== newHash) {
+      history.pushState(null, '', newHash);
+    }
+    showFromHash();
   }
 
   function bindProjectLinks() {
     document.querySelectorAll('[data-project-id]').forEach(li => {
       li.removeEventListener('click', onProjectTileClick, true);
       li.addEventListener('click', onProjectTileClick, true);
-    });
-  }
-
-  function bindNavbarHashCleanup() {
-    document.querySelectorAll('[data-nav-link]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (location.hash.startsWith('#project=')) {
-          const u = new URL(location.href);
-          u.hash = '';
-          history.replaceState(null, '', u);
-        }
-      });
     });
   }
 
@@ -418,8 +438,6 @@ navLinks.forEach(btn => {
 
   document.addEventListener('DOMContentLoaded', () => {
     bindProjectLinks();
-    bindNavbarHashCleanup();
-    openFromHash();
   });
 
   window.Portfolio = Object.assign(window.Portfolio || {}, {
