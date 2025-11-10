@@ -351,7 +351,7 @@ window.PROJECTS_DATA = {
       "medias": []
     },
     {
-      "id": "Thermorph",
+      "id": "thermorph",
       "title": "Thermorph",
       "category": "Game Development",
       "icon": "assets/projects/Thermorph/icon.jpg",
@@ -383,6 +383,53 @@ window.PROJECTS_DATA = {
         "assets/projects/Thermorph/imgs/VS9zPS.png",
         "assets/projects/Thermorph/imgs/y_mjzS.png"
       ]
+    },
+    {
+      "id": "frontiers-of-legends",
+      "title": "Frontiers Of Legends",
+      "category": "Game Development",
+      "icon": "assets/projects/FrontiersOfLegends/icon.jpg",
+      "description": "Frontiers of Legends est un prototype que j’ai commencé à développer pour des raisons avant tout personnelles et techniques.\nL’idée était simple : comprendre comment fonctionne un monde ouvert à grande échelle, et voir jusqu’où je pouvais aller en le reproduisant dans Unity, un moteur qui n’est pas conçu nativement pour ce type de projet.\n\nEn tant que grand fan de The Legend of Zelda: Breath of the Wild, j’ai voulu partir d’un terrain familier.\nMon objectif : analyser, extraire et comprendre la structure du monde de Zelda pour recréer un système équivalent dans Unity.\n\nFrontiers of Legends reste à ce jour un prototype, sans ambition commerciale immédiate. Si un jour je décide d’en faire un projet commercial, la carte sera évidemment entièrement refaite par mes soins, pour des raisons de droit d’auteur et d’originalité.\nLe projet m’a surtout servi de terrain d’expérimentation pour approfondir mes connaissances.",
+      "media": "assets/projects/FrontiersOfLegends/Image Principale.png",
+      "sections": [
+        {
+          "title": "Exploration technique — comprendre le monde de Zelda",
+          "description": "Pour commencer, j’ai dû ripper les données du jeu afin d’en étudier le fonctionnement interne.\nL’objectif n’était pas de copier le contenu, mais d’analyser comment Nintendo gère un monde aussi vaste avec des performances aussi stables.\n\nEn inspectant les fichiers, j’ai découvert que le moteur de Zelda utilise plusieurs versions du même chunk, chacune à une résolution différente.\nCe système permet au jeu de charger dynamiquement le niveau de détail du terrain en fonction de la distance, tout en gardant une mémoire maîtrisée.\n\nAprès plusieurs essais et beaucoup de débogage, j’ai réussi à extraire la heightmap complète (la carte des altitudes) avec la plus haute résolution disponible.\nCette base m’a permis de reconstruire un terrain 3D fidèle, entièrement dans Unity.",
+          "medias": [
+            "assets/projects/FrontiersOfLegends/technique/hghtmap_4.png"
+          ]
+        },
+        {
+          "title": "Construction du moteur — un Open World sur Unity",
+          "description": "Une fois la heightmap récupérée, j’ai développé mon propre système de gestion de chunks.\nUnity n’étant pas conçu pour du streaming massif de terrain, j’ai dû contourner ses limites et créer un système de chargement dynamique qui divise la carte en zones indépendantes.\nCes zones se chargent et se déchargent automatiquement selon la position du joueur, sans coupure ni chute de performances perceptible.\n\nJ’ai ensuite appliqué les textures de manière procédurale grâce à Gaia, en combinant altitude, pente et biomes pour obtenir un rendu naturel.\nCela m’a permis d’obtenir un terrain crédible, sans avoir à peindre manuellement chaque surface.",
+          "medias": [
+            "assets/projects/FrontiersOfLegends/moteur/Editor-5.gif",
+            "assets/projects/FrontiersOfLegends/moteur/FrontiersOfLegends Test Chunk.mp4",
+            "assets/projects/FrontiersOfLegends/moteur/Capture_decran_2024-03-30_163939.png",
+            "assets/projects/FrontiersOfLegends/moteur/Capture_decran_2024-03-30_163948.png",
+            "assets/projects/FrontiersOfLegends/moteur/Capture_decran_2024-03-30_164013.png",
+            "assets/projects/FrontiersOfLegends/moteur/image.png",
+            "assets/projects/FrontiersOfLegends/moteur/image-2.png",
+            "assets/projects/FrontiersOfLegends/moteur/image-3-1.png",
+            "assets/projects/FrontiersOfLegends/moteur/image-7.png",
+            "assets/projects/FrontiersOfLegends/moteur/image-9.png",
+            "assets/projects/FrontiersOfLegends/moteur/image-15.png",
+            "assets/projects/FrontiersOfLegends/moteur/iuisugusigu.png",
+            "assets/projects/FrontiersOfLegends/moteur/unity gif2.gif"
+          ]
+        },
+        {
+          "title": "Systèmes additionnels",
+          "description": "Au-delà du terrain, j’ai voulu rendre le projet vivant et interactif.\nJ’ai ajouté un système multijoueur basé sur Steam, permettant à plusieurs joueurs de se connecter sur une même carte et d’explorer ensemble le monde en temps réel.\n\nJ’ai également conçu une API externe, capable de communiquer avec le jeu depuis Python ou Discord.\nCette interface permet de récupérer ou d’envoyer des données en direct — par exemple, suivre les positions des joueurs sur un serveur, afficher des informations en temps réel, ou même interagir avec le jeu depuis un bot Discord.\n\nUne autre fonctionnalité que j’ai ajoutée concerne la personnalisation du joueur.\nLe jeu permet d’importer son propre avatar 3D créé avec Vroid Studio, un logiciel permettant de générer facilement des modèles au format .vrm.\nUne fois le fichier importé, le moteur extrait automatiquement le modèle du joueur et supprime les vêtements par défaut, pour que le joueur puisse changer de vêtement en jeu.",
+          "medias": [
+            "assets/projects/FrontiersOfLegends/systemes/yghftytgghd.png",
+            "assets/projects/FrontiersOfLegends/systemes/Untitled-3.mp4",
+            "assets/projects/FrontiersOfLegends/systemes/Untitled-2.mp4",
+            "assets/projects/FrontiersOfLegends/systemes/Untitled.mp4"
+          ]
+        }
+      ],
+      "medias": []
     }
   ]
 };
