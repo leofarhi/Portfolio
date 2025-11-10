@@ -430,6 +430,66 @@ window.PROJECTS_DATA = {
         }
       ],
       "medias": []
+    },
+    {
+      "id": "3d-engines",
+      "title": "3D Engines",
+      "category": "Game Development",
+      "icon": "assets/projects/3d-engines/icon.jpg",
+      "description": "",
+      "media": "assets/projects/3d-engines/Video Principale.mp4",
+      "sections": [],
+      "medias": []
+    },
+    {
+      "id": "arboris",
+      "title": "Arboris",
+      "category": "Casio game development",
+      "icon": "assets/projects/Arboris/icon.jpg",
+      "description": "",
+      "media": "assets/projects/Arboris/Image Principale.png",
+      "sections": [],
+      "medias": []
+    },
+    {
+      "id": "zelda-totn",
+      "title": "Zelda TOTN",
+      "category": "Casio game development",
+      "icon": "assets/projects/ZeldaTOTN/icon.jpg",
+      "description": "",
+      "media": "assets/projects/ZeldaTOTN/Image Principale.png",
+      "sections": [],
+      "medias": []
+    },
+    {
+      "id": "mario3d",
+      "title": "Mario 3D",
+      "category": "Casio game development",
+      "icon": "assets/projects/Mario3D/icon.jpg",
+      "description": "",
+      "media": "assets/projects/Mario3D/Image Principale.jpg",
+      "sections": [],
+      "medias": []
+    },
+    {
+      "id": "rpg-maker",
+      "title": "RPG Maker",
+      "category": "Casio game development",
+      "icon": "assets/projects/RPG-Maker/icon.jpg",
+      "description": "",
+      "media": "assets/projects/RPG-Maker/Image Principale.jpg",
+      "sections": [],
+      "medias": []
+    },
+    {
+      "id": "temple-warriors",
+      "title": "Temple Warriors",
+      "category": "Casio game development",
+      "icon": "assets/projects/TempleWarriors/icon.jpg",
+      "description": "",
+      "media": "assets/projects/TempleWarriors/Image Principale.png",
+      "sections": [],
+      "medias": []
     }
   ]
 };
