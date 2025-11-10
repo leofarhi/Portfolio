@@ -3,7 +3,7 @@ window.PROJECTS_DATA = {
     {
       "id": "regain-the-world",
       "title": "Regain The World",
-      "category": "Game Development",
+      "category": ["Game Development"],
       "icon": "assets/projects/Epita/RegainTheWorld/icon.jpg",
       "media": "assets/projects/Epita/RegainTheWorld/Image Principale.png",
       "description": "Regain The World est le jeu vidéo que j'ai réalisé à EPITA durant l'année 2019-2020, avec trois autres étudiants.\nOn avait six mois pour créer un jeu complet de A à Z avec Unity 3D (en C#), en parallèle de tous les cours, des TP et des partiels — autrement dit, sur notre temps libre.\nC'était intense, exigeant, parfois épuisant… mais c'est aussi l'un des projets dont je suis le plus fier.\n\nJe me suis occupé du lead du projet, de l'organisation, du code principal et d'une grande partie de la direction artistique.\nMême si, avec le recul, je ne trouve pas la version finale particulièrement belle, elle reste très importante à mes yeux : c'est grâce à ce projet que j'ai appris à gérer une équipe, à concrétiser une vision, et à aller au bout d'un objectif ambitieux malgré les contraintes.\n\n\nD'ailleurs, en 2023, j'ai commencé à travailler sur un remake complet du jeu, plus moderne et plus fidèle à ce que j'avais imaginé à l'époque — un moyen de redonner vie à cet univers avec tout ce que j'ai appris depuis.\n\n[url=https://epitallhg.github.io/RegainTheWorldWebsite/index.html]Site web du projet[/url]",
@@ -204,7 +204,7 @@ window.PROJECTS_DATA = {
     {
       "id": "particule-engine",
       "title": "Particule Engine",
-      "category": "Game Development",
+      "category": ["Game Development"],
       "icon": "assets/projects/Particule/icon.jpg",
       "description": "Particule Engine (et son cœur, Particule SDK) est un moteur de jeu multi-distribution que je développe depuis 2020, inspiré de Unity, mais conçu pour être plus léger, ouvert et entièrement portable.\nMon objectif : créer un moteur capable de tourner sur presque n'importe quelle machine : PC, console, ou même calculatrice Casio, à partir d'un seul code source.\n\nL'idée est née de ma frustration face aux limites des outils existants : je voulais pouvoir écrire un code unique, et le déployer partout, sans dépendre d'un environnement propriétaire.\n\nParticule, c'est à la fois un éditeur, un moteur, et un SDK en C++, pensés pour fonctionner ensemble, de manière modulaire et adaptable à chaque plateforme.\n\n[url=https://github.com/leofarhi/ParticuleSDK]Lien du repo Github[/url]",
       "media": "assets/projects/Particule/Image Principale.png",
@@ -278,7 +278,7 @@ window.PROJECTS_DATA = {
     {
       "id": "underworld",
       "title": "Underworld",
-      "category": "AI",
+      "category": ["AI"],
       "icon": "assets/projects/Epita/Underworld/icon.jpg",
       "description": "Underworld est un projet que j’ai réalisé à EPITA durant l’année 2022-2023, avec trois camarades de promotion.\nNous avions six mois pour concevoir un programme complet autour d’un concept libre. J’ai pris le rôle de chef de projet, en charge de l’architecture, du code principal, de l’intelligence artificielle et du moteur d’affichage.\n\nNotre idée était ambitieuse : créer un monde virtuel 2D vivant, où des intelligences artificielles autonomes évoluent, s’adaptent et apprennent à survivre.\nUn univers dans lequel les IA ne suivent pas un script, mais émergent de règles biologiques inspirées de la sélection naturelle.\nEn somme, un mélange entre un simulateur de vie et une expérience d’intelligence artificielle évolutive.\n\n[url=https://anthav2002.wixsite.com/underworld]Site web du projet[/url]",
       "media": "assets/projects/Epita/Underworld/Image Principale.png",
@@ -353,7 +353,7 @@ window.PROJECTS_DATA = {
     {
       "id": "thermorph",
       "title": "Thermorph",
-      "category": "Game Development",
+      "category": ["Game Development"],
       "icon": "assets/projects/Thermorph/icon.jpg",
       "description": "Thermorph est un petit jeu que j’ai réalisé lors de la [url=https://itch.io/jam/game-off-2023]Game Off 2023[/url], une game jam internationale organisée sur itch.io.\nLe thème de cette édition était « Scale », un mot à plusieurs sens : échelle, taille, mesure, ou encore transformation.\nNous avions un mois pour créer un jeu complet à partir de ce concept, en équipe et entièrement à distance.\n\nJ’ai formé un groupe sur Discord, et très vite, nous étions quatre :\nJuka à la musique et au sound design, Omer Yuncu pour les environnements 3D, Izivad pour les illustrations 2D, et X-90 pour la modélisation 3D.\nDe mon côté, j’ai assuré la programmation, le level design, et une bonne partie de l’intégration technique.\nMême si le rôle affiché sur la page officielle est “Dev”, j’ai aussi coordonné l’équipe et relié toutes les pièces du projet ensemble.\n\n[url=https://farhi.itch.io/thermorph]Lien du jeu[/url]",
       "media": "assets/projects/Thermorph/Image Principale.png",
@@ -387,7 +387,7 @@ window.PROJECTS_DATA = {
     {
       "id": "frontiers-of-legends",
       "title": "Frontiers Of Legends",
-      "category": "Game Development",
+      "category": ["Game Development"],
       "icon": "assets/projects/FrontiersOfLegends/icon.jpg",
       "description": "Frontiers of Legends est un prototype que j’ai commencé à développer pour des raisons avant tout personnelles et techniques.\nL’idée était simple : comprendre comment fonctionne un monde ouvert à grande échelle, et voir jusqu’où je pouvais aller en le reproduisant dans Unity, un moteur qui n’est pas conçu nativement pour ce type de projet.\n\nEn tant que grand fan de The Legend of Zelda: Breath of the Wild, j’ai voulu partir d’un terrain familier.\nMon objectif : analyser, extraire et comprendre la structure du monde de Zelda pour recréer un système équivalent dans Unity.\n\nFrontiers of Legends reste à ce jour un prototype, sans ambition commerciale immédiate. Si un jour je décide d’en faire un projet commercial, la carte sera évidemment entièrement refaite par mes soins, pour des raisons de droit d’auteur et d’originalité.\nLe projet m’a surtout servi de terrain d’expérimentation pour approfondir mes connaissances.",
       "media": "assets/projects/FrontiersOfLegends/Image Principale.png",
@@ -434,7 +434,7 @@ window.PROJECTS_DATA = {
     {
       "id": "3d-engines",
       "title": "3D Engines",
-      "category": "Game Development",
+      "category": ["Game Development"],
       "icon": "assets/projects/3d-engines/icon.jpg",
       "description": "",
       "media": "assets/projects/3d-engines/Video Principale.mp4",
@@ -444,7 +444,7 @@ window.PROJECTS_DATA = {
     {
       "id": "arboris",
       "title": "Arboris",
-      "category": "Casio game development",
+      "category": ["Casio","Game development"],
       "icon": "assets/projects/Arboris/icon.jpg",
       "description": "",
       "media": "assets/projects/Arboris/Image Principale.png",
@@ -454,7 +454,7 @@ window.PROJECTS_DATA = {
     {
       "id": "zelda-totn",
       "title": "Zelda TOTN",
-      "category": "Casio game development",
+      "category": ["Casio","Game development"],
       "icon": "assets/projects/ZeldaTOTN/icon.jpg",
       "description": "",
       "media": "assets/projects/ZeldaTOTN/Image Principale.png",
@@ -464,7 +464,7 @@ window.PROJECTS_DATA = {
     {
       "id": "mario3d",
       "title": "Mario 3D",
-      "category": "Casio game development",
+      "category": ["Casio","Game development"],
       "icon": "assets/projects/Mario3D/icon.jpg",
       "description": "",
       "media": "assets/projects/Mario3D/Image Principale.jpg",
@@ -474,7 +474,7 @@ window.PROJECTS_DATA = {
     {
       "id": "rpg-maker",
       "title": "RPG Maker",
-      "category": "Casio game development",
+      "category": ["Casio","Game development"],
       "icon": "assets/projects/RPG-Maker/icon.jpg",
       "description": "",
       "media": "assets/projects/RPG-Maker/Image Principale.jpg",
@@ -484,7 +484,7 @@ window.PROJECTS_DATA = {
     {
       "id": "temple-warriors",
       "title": "Temple Warriors",
-      "category": "Casio game development",
+      "category": ["Casio","Game development"],
       "icon": "assets/projects/TempleWarriors/icon.jpg",
       "description": "",
       "media": "assets/projects/TempleWarriors/Image Principale.png",

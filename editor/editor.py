@@ -102,7 +102,7 @@ def default_project() -> dict:
     return {
         "id": "nouveau-projet",
         "title": "Nouveau Projet",
-        "category": "autre",
+        "category": ["autre"],
         "icon": "./assets/images/placeholder.png",
         "description": "",
         "media": "./assets/images/placeholder.png",
@@ -117,6 +117,17 @@ def default_section() -> dict:
         "description": "",
         "medias": [],
     }
+
+def _normalize_categories_inplace(data: dict) -> None:
+    """
+    Compat: convertit category "str" -> ["str"], et garantit une liste.
+    """
+    for p in data.get("projects", []):
+        cat = p.get("category", [])
+        if isinstance(cat, str):
+            p["category"] = [cat] if cat else []
+        elif not isinstance(cat, list):
+            p["category"] = []
 
 
 # ------------------------------
@@ -331,6 +342,157 @@ class ListWithPickers(ctk.CTkFrame):
         self.selected_index.set(-1)
         for v in values or []:
             self.add_item(v)
+
+class ListOfStrings(ctk.CTkFrame):
+    """
+    Tag input horizontal :
+    - zone fixe (hauteur ~110px) qui wrap les tags sur plusieurs lignes
+    - entrée + bouton 'Ajouter'
+    - chaque tag est une petite box avec un 'x' pour supprimer
+    """
+    def __init__(self, master, title: str, on_change=None, max_height=10, **kwargs):
+        super().__init__(master, **kwargs)
+        self.on_change = on_change
+        self._values: list[str] = []
+        self._chips: list[ctk.CTkFrame] = []
+        self._pending_refresh = None
+
+        self.columnconfigure(0, weight=1)
+
+        # Titre
+        ctk.CTkLabel(self, text=title).grid(row=0, column=0, padx=8, pady=(8, 4), sticky="w")
+
+        # Zone des tags (scrollable, hauteur fixe)
+        self.items_frame = ctk.CTkFrame(self, height=max_height)
+        self.items_frame.grid(row=1, column=0, padx=8, pady=(0, 8), sticky="nsew")
+        # On veut que la frame utilisateur ne vole pas toute la hauteur du parent
+        # -> on ne met PAS de rowconfigure(weight=1) ici
+        # mais on autorise l'expansion horizontale
+        self.items_frame.columnconfigure(0, weight=1)
+
+        # Barre d'ajout (entrée + bouton)
+        bar = ctk.CTkFrame(self)
+        bar.grid(row=2, column=0, padx=8, pady=(0, 8), sticky="ew")
+        bar.columnconfigure(0, weight=1)
+        self._entry = ctk.CTkEntry(bar)
+        self._entry.grid(row=0, column=0, padx=(4, 4), pady=4, sticky="ew")
+        ctk.CTkButton(bar, text="Ajouter", command=self._on_add).grid(row=0, column=1, padx=(0, 4), pady=4)
+        self._entry.bind("<Return>", lambda e: self._on_add())
+
+        # Reflow sur redimensionnement (wrap)
+        self.items_frame.bind("<Configure>", self._on_items_configure)
+
+    # --- Helpers UI ---
+
+    def _schedule_refresh(self):
+        if self._pending_refresh is not None:
+            try:
+                self.after_cancel(self._pending_refresh)
+            except Exception:
+                pass
+        # petit debounce pour éviter une boucle _Configure -> relayout
+        self._pending_refresh = self.after(50, self._refresh_chips)
+
+    def _on_items_configure(self, _event=None):
+        self._schedule_refresh()
+
+    def _make_chip(self, text: str) -> ctk.CTkFrame:
+        chip = ctk.CTkFrame(self.items_frame, corner_radius=12)
+        chip.grid_propagate(False)
+        # contenu
+        lbl = ctk.CTkLabel(chip, text=text, anchor="w")
+        lbl.grid(row=0, column=0, padx=(8, 4), pady=4, sticky="w")
+        btn = ctk.CTkButton(chip, text="✕", width=26, command=lambda: self._remove_value(text))
+        btn.grid(row=0, column=1, padx=(0, 6), pady=4)
+        # petite largeur mini pour l’esthétique
+        chip.update_idletasks()
+        return chip
+
+    def _refresh_chips(self):
+        self._pending_refresh = None
+        # Clear placement uniquement (on garde les widgets si possible)
+        for ch in self._chips:
+            ch.grid_forget()
+
+        # Taille disponible pour calculer combien de colonnes on peut mettre
+        w = max(1, self.items_frame.winfo_width())
+        # largeur approximative d’un chip (label + bouton + marges)
+        approx_chip_w = 140
+        cols = max(1, w // approx_chip_w)
+
+        # s’assurer que les chips existent et correspondent à self._values
+        # (rebuild si desync)
+        if len(self._chips) != len(self._values):
+            for ch in self._chips:
+                ch.destroy()
+            self._chips = [self._make_chip(v) for v in self._values]
+
+        # placer en grille (wrap)
+        for i, ch in enumerate(self._chips):
+            r = i // cols
+            c = i % cols
+            ch.grid(row=r, column=c, padx=4, pady=4, sticky="ew")
+            # largeur flexible dans sa colonne
+            try:
+                self.items_frame.grid_columnconfigure(c, weight=1)
+            except Exception:
+                pass
+
+    # --- API publique identique ---
+
+    def add_item(self, value: str | None = None):
+        """Compat: on garde le nom 'add_item', mais ça ajoute un tag."""
+        if value is None:
+            return
+        self._add_value(value)
+
+    def _on_add(self):
+        txt = self._entry.get().strip()
+        if not txt:
+            return
+        self._entry.delete(0, tk.END)
+        self._add_value(txt)
+
+    def _add_value(self, txt: str):
+        # éviter doublons vides
+        if not txt:
+            return
+        self._values.append(txt)
+        chip = self._make_chip(txt)
+        self._chips.append(chip)
+        self._schedule_refresh()
+        self._notify_change()
+
+    def _remove_value(self, txt: str):
+        try:
+            i = self._values.index(txt)
+        except ValueError:
+            return
+        self._values.pop(i)
+        self._chips[i].destroy()
+        del self._chips[i]
+        self._schedule_refresh()
+        self._notify_change()
+
+    def get_list(self) -> list[str]:
+        return list(self._values)
+
+    def set_list(self, values: list[str]):
+        # reset
+        for ch in self._chips:
+            ch.destroy()
+        self._chips.clear()
+        self._values = [v for v in (values or []) if str(v).strip()]
+        # rebuild
+        self._chips = [self._make_chip(v) for v in self._values]
+        self._schedule_refresh()
+        self._notify_change()
+
+    # --- callbacks ---
+
+    def _notify_change(self):
+        if callable(self.on_change):
+            self.on_change()
 
 
 class SectionsPanel(ctk.CTkFrame):
@@ -548,7 +710,7 @@ class ProjectsEditor(ctk.CTk):
 
         self.p_id = LabeledEntry(self.center, "ID")
         self.p_title = LabeledEntry(self.center, "Titre")
-        self.p_category = LabeledEntry(self.center, "Catégorie")
+        self.p_categories = ListOfStrings(self.center, "Catégories (tags)", on_change=self.mark_dirty)
         self.p_icon = PathPicker(self.center, "Icône (image)")
         self.p_media = PathPicker(self.center, "Média principal")
         self.p_desc = TextArea(self.center, "Description (textarea)")
@@ -556,7 +718,7 @@ class ProjectsEditor(ctk.CTk):
 
         self.p_id.grid(row=0, column=0, sticky="ew")
         self.p_title.grid(row=1, column=0, sticky="ew")
-        self.p_category.grid(row=2, column=0, sticky="ew")
+        self.p_categories.grid(row=2, column=0, sticky="ew")
         self.p_icon.grid(row=3, column=0, sticky="ew")
         self.p_media.grid(row=4, column=0, sticky="ew")
         self.p_desc.grid(row=5, column=0, sticky="nsew")
@@ -567,7 +729,7 @@ class ProjectsEditor(ctk.CTk):
         self.sections_panel.grid(row=1, column=2, sticky="nsew")
 
         for widget in [
-            self.p_id.entry, self.p_title.entry, self.p_category.entry,
+            self.p_id.entry, self.p_title.entry,
             self.p_icon.entry, self.p_media.entry, self.p_desc.text,
         ]:
             widget.bind("<KeyRelease>", lambda e: self._live_autosave_project())
@@ -586,6 +748,7 @@ class ProjectsEditor(ctk.CTk):
             with open(PROJECTS_JSON, "r", encoding="utf-8") as f:
                 txt = f.read()
             self.data = parse_projects_js(txt)
+            _normalize_categories_inplace(self.data)
 
         except FileNotFoundError:
             # 2) Si le .js n'existe pas, on tente un fallback legacy vers projects.json
@@ -676,7 +839,12 @@ class ProjectsEditor(ctk.CTk):
         proj = self.data["projects"][idx]
         self.p_id.set(proj.get("id", ""))
         self.p_title.set(proj.get("title", ""))
-        self.p_category.set(proj.get("category", ""))
+
+        cats = proj.get("category", [])
+        if isinstance(cats, str):
+            cats = [cats] if cats else []
+        self.p_categories.set_list(cats)
+
         self.p_icon.set(proj.get("icon", ""))
         self.p_media.set(proj.get("media", ""))
         self.p_desc.set(proj.get("description", ""))
@@ -687,7 +855,7 @@ class ProjectsEditor(ctk.CTk):
     def clear_project_editor(self):
         self.p_id.set("")
         self.p_title.set("")
-        self.p_category.set("")
+        self.p_categories.set_list([])
         self.p_icon.set("")
         self.p_media.set("")
         self.p_desc.set("")
@@ -713,7 +881,8 @@ class ProjectsEditor(ctk.CTk):
         try:
             proj["id"] = self.p_id.get()
             proj["title"] = self.p_title.get()
-            proj["category"] = self.p_category.get()
+            cats = self.p_categories.get_list()
+            proj["category"] = cats
             proj["icon"] = _validate_path(self.p_icon.get()) if self.p_icon.get() else ""
             proj["media"] = _validate_path(self.p_media.get()) if self.p_media.get() else ""
             proj["description"] = self.p_desc.get()

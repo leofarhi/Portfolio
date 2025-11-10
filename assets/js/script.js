@@ -495,8 +495,9 @@ document.addEventListener('DOMContentLoaded', showFromHash);
   }
 
   function projectItemHTML(p) {
-    const catLabel = p.category || 'Autres';
-    const catSlug  = slug(catLabel);
+    const categories = Array.isArray(p.category) ? p.category : [p.category || 'Autres'];
+    const catSlugs = categories.map(slug);
+    const catLabels = categories.join(', ');
     const thumb    = pickThumb(p);
     const isVid    = isVideo(thumb);
     const title    = p.title || p.id || 'Projet';
@@ -506,7 +507,10 @@ document.addEventListener('DOMContentLoaded', showFromHash);
       : `<img src="${thumb}" alt="${escapeHtml(title)}" loading="lazy">`;
 
     return `
-<li class="project-item active" data-filter-item data-category="${catSlug}" data-project-id="${p.id}">
+<li class="project-item active"
+    data-filter-item
+    data-categories="${catSlugs.join(',')}"
+    data-project-id="${p.id}">
   <a href="#">
     <figure class="project-img">
       <div class="project-item-icon-box">
@@ -515,7 +519,7 @@ document.addEventListener('DOMContentLoaded', showFromHash);
       ${mediaHTML}
     </figure>
     <h3 class="project-title">${escapeHtml(title)}</h3>
-    <p class="project-category">${escapeHtml(catLabel)}</p>
+    <p class="project-category">${escapeHtml(catLabels)}</p>
   </a>
 </li>`;
   }
@@ -532,8 +536,8 @@ document.addEventListener('DOMContentLoaded', showFromHash);
     const map = new Map();
     map.set('all', 'Tous');
     projects.forEach(p => {
-      const label = p.category || 'Autres';
-      map.set(slug(label), label);
+      const categories = Array.isArray(p.category) ? p.category : [p.category || 'Autres'];
+      categories.forEach(cat => map.set(slug(cat), cat));
     });
     return [...map.entries()].map(([value, label]) => ({ value, label }));
   }
@@ -562,7 +566,8 @@ document.addEventListener('DOMContentLoaded', showFromHash);
       items.forEach(li => li.classList.add('active'));
     } else {
       items.forEach(li => {
-        li.classList.toggle('active', li.getAttribute('data-category') === value);
+        const cats = (li.getAttribute('data-categories') || '').split(',').map(s => s.trim());
+        li.classList.toggle('active', cats.includes(value));
       });
     }
 
