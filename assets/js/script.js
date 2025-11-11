@@ -3,13 +3,15 @@
 /*-----------------------------------*\
   #NAV
 \*-----------------------------------*/
-/*-----------------------------------*\
-  #NAV
-\*-----------------------------------*/
 const navLinks = document.querySelectorAll('[data-nav-link]');
 const pages = document.querySelectorAll('article[data-page]');
 
 function renderSection(target) {
+  // Si on quitte la page détail, on purge le contenu pour éviter tout flash ultérieur
+  if (target !== 'project-detail' && window.Portfolio && typeof window.Portfolio.resetDetail === 'function') {
+    window.Portfolio.resetDetail();
+  }
+
   navLinks.forEach(l => l.classList.toggle('active', l.dataset.target === target));
   pages.forEach(p => p.classList.toggle('active', p.dataset.page === target));
 }
@@ -59,7 +61,7 @@ document.addEventListener('DOMContentLoaded', showFromHash);
 (function () {
   const STATE = { data: null, cache: new Map() };
 
-  const el = {
+    const el = {
     page: document.querySelector('[data-page="project-detail"]'),
     title: document.getElementById('pj-title'),
     desc: document.getElementById('pj-description'),
@@ -75,6 +77,33 @@ document.addEventListener('DOMContentLoaded', showFromHash);
     modalPrev: document.getElementById('img-prev'),
     modalNext: document.getElementById('img-next')
   };
+
+  function resetProjectDetail() {
+    if (!el.page) return;
+
+    // Texte
+    el.title.textContent = '';
+    el.desc.innerHTML = '';
+
+    // Hero
+    const oldVid = el.heroWrap.querySelector('video');
+    if (oldVid) oldVid.remove();
+    el.heroImg.removeAttribute('src');
+    el.heroImg.style.display = 'none';
+    el.heroWrap.style.display = 'none';
+
+    // Sections & galerie
+    el.sections.innerHTML = '';
+    el.galleryWrap.style.display = 'none';
+
+    // Thumbs : recrée un conteneur vide propre
+    const fresh = document.createElement('div');
+    fresh.className = 'project-thumbs has-scrollbar';
+    fresh.id = 'pj-thumbs';
+    el.thumbs.replaceWith(fresh);
+    el.thumbs = fresh;
+  }
+
 
   const modalBody = el.modal?.querySelector('.modal-body');
 
@@ -381,6 +410,14 @@ document.addEventListener('DOMContentLoaded', showFromHash);
   }
 
   async function openProjectById(id) {
+    // 1) Reset immédiat pour ne rien laisser afficher de l'ancien projet
+    resetProjectDetail();
+    if (el.page) el.page.classList.add('loading');
+
+    // 2) Ouvre la page vide (blank state) tout de suite
+    navigateToDetail();
+
+    // 3) Charge prévisualisation / data
     loadDataFromInline();
     let project = STATE.cache.get(id);
 
@@ -406,9 +443,13 @@ document.addEventListener('DOMContentLoaded', showFromHash);
     if (!project.media && project.image) project.media = project.image;
     if (!project.medias && project.images) project.medias = project.images;
 
+    // 4) Rendu du nouveau projet
     renderProject(project);
-    navigateToDetail();
+
+    // 5) Fin du mode "loading"
+    if (el.page) el.page.classList.remove('loading');
   }
+
 
   function onProjectTileClick(e) {
     const li = e.currentTarget;
@@ -442,7 +483,8 @@ document.addEventListener('DOMContentLoaded', showFromHash);
 
   window.Portfolio = Object.assign(window.Portfolio || {}, {
     openProjectById,
-    bindTiles: bindProjectLinks
+    bindTiles: bindProjectLinks,
+    resetDetail: resetProjectDetail
   });
 })();
 

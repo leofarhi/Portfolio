@@ -3,7 +3,7 @@ window.PROJECTS_DATA = {
     {
       "id": "regain-the-world",
       "title": "Regain The World",
-      "category": ["Game Development"],
+      "category": ["Game Development", "Epita"],
       "icon": "assets/projects/Epita/RegainTheWorld/icon.jpg",
       "media": "assets/projects/Epita/RegainTheWorld/Image Principale.png",
       "description": "Regain The World est le jeu vidéo que j'ai réalisé à EPITA durant l'année 2019-2020, avec trois autres étudiants.\nOn avait six mois pour créer un jeu complet de A à Z avec Unity 3D (en C#), en parallèle de tous les cours, des TP et des partiels — autrement dit, sur notre temps libre.\nC'était intense, exigeant, parfois épuisant… mais c'est aussi l'un des projets dont je suis le plus fier.\n\nJe me suis occupé du lead du projet, de l'organisation, du code principal et d'une grande partie de la direction artistique.\nMême si, avec le recul, je ne trouve pas la version finale particulièrement belle, elle reste très importante à mes yeux : c'est grâce à ce projet que j'ai appris à gérer une équipe, à concrétiser une vision, et à aller au bout d'un objectif ambitieux malgré les contraintes.\n\n\nD'ailleurs, en 2023, j'ai commencé à travailler sur un remake complet du jeu, plus moderne et plus fidèle à ce que j'avais imaginé à l'époque — un moyen de redonner vie à cet univers avec tout ce que j'ai appris depuis.\n\n[url=https://epitallhg.github.io/RegainTheWorldWebsite/index.html]Site web du projet[/url]",
@@ -278,7 +278,7 @@ window.PROJECTS_DATA = {
     {
       "id": "underworld",
       "title": "Underworld",
-      "category": ["AI"],
+      "category": ["AI", "Epita"],
       "icon": "assets/projects/Epita/Underworld/icon.jpg",
       "description": "Underworld est un projet que j’ai réalisé à EPITA durant l’année 2022-2023, avec trois camarades de promotion.\nNous avions six mois pour concevoir un programme complet autour d’un concept libre. J’ai pris le rôle de chef de projet, en charge de l’architecture, du code principal, de l’intelligence artificielle et du moteur d’affichage.\n\nNotre idée était ambitieuse : créer un monde virtuel 2D vivant, où des intelligences artificielles autonomes évoluent, s’adaptent et apprennent à survivre.\nUn univers dans lequel les IA ne suivent pas un script, mais émergent de règles biologiques inspirées de la sélection naturelle.\nEn somme, un mélange entre un simulateur de vie et une expérience d’intelligence artificielle évolutive.\n\n[url=https://anthav2002.wixsite.com/underworld]Site web du projet[/url]",
       "media": "assets/projects/Epita/Underworld/Image Principale.png",
