@@ -208,7 +208,8 @@ window.PROJECTS_DATA = {
       "id": "particule-engine",
       "title": "Particule Engine",
       "category": [
-        "Game Development"
+        "Game Development",
+        "Tools"
       ],
       "icon": "assets/projects/Particule/icon.jpg",
       "description": "Particule Engine (et son cœur, Particule SDK) est un moteur de jeu multi-distribution que je développe depuis 2020, inspiré de Unity, mais conçu pour être plus léger, ouvert et entièrement portable.\nMon objectif : créer un moteur capable de tourner sur presque n'importe quelle machine : PC, console, ou même calculatrice Casio, à partir d'un seul code source.\n\nL'idée est née de ma frustration face aux limites des outils existants : je voulais pouvoir écrire un code unique, et le déployer partout, sans dépendre d'un environnement propriétaire.\n\nParticule, c'est à la fois un éditeur, un moteur, et un SDK en C++, pensés pour fonctionner ensemble, de manière modulaire et adaptable à chaque plateforme.\n\n[url=https://github.com/leofarhi/ParticuleSDK]Lien du repo Github[/url]",
@@ -519,10 +520,22 @@ window.PROJECTS_DATA = {
         "Game development"
       ],
       "icon": "assets/projects/Mario3D/icon.jpg",
-      "description": "",
+      "description": "Ce jeu a été développé dans le cadre de la Chill Casio Jam #2 organisée par la communauté Planète Casio. \nPour moi, c’était le début d’une passion : créer du rendu 3D sur calculatrice.\nMais la 3D native sur une machine comme la Casio Graph 90+E, c’est extrêmement coûteux. J’ai donc choisi d’opter pour de la 2.5D, une sorte de rendu 3D simplifié, qui permet d’obtenir l’effet tout en gardant des performances acceptables.\n\n[url=https://www.planet-casio.com/Fr/programmes/programme4343-last-super-mario-3d-farhi-jeux-add-ins.html]Lien du jeu[/url]",
       "media": "assets/projects/Mario3D/Image Principale.jpg",
-      "sections": [],
-      "medias": []
+      "sections": [
+        {
+          "title": "Techniques et optimisations majeures",
+          "description": "Le principal défi de Super Mario 3D était d’obtenir un rendu pseudo-3D fluide sur une machine qui n’est pas faite pour ça.\nPour y parvenir, j’ai pris plusieurs décisions techniques cruciales.\n\nD’abord, j’ai remplacé les nombres flottants par des fixed points, c’est-à-dire des valeurs entières représentant des décimales via un facteur d’échelle.\nCette méthode supprime totalement les calculs en virgule flottante, beaucoup trop lourds sur calculatrice, tout en gardant une bonne précision pour les positions et les mouvements.\nRésultat : des calculs de physique et de projection plus rapides d’un facteur considérable, sans aucune perte visible pour le joueur.\n\nEnsuite, j’ai choisi de rester en 2.5D plutôt que de basculer en vraie 3D.\nCette approche me permettait de simuler la profondeur et la perspective sans avoir à calculer des sinus et cosinus en permanence pour la rotation de la caméra ou la projection des objets.\nEn pratique, tout repose sur une géométrie simplifiée, où les éléments sont rendus à plat avec un léger décalage vertical et une échelle variable selon leur distance.\nCela réduit drastiquement la charge de calcul tout en conservant une illusion 3D crédible.\n\nGrâce à ces choix, le moteur tourne de façon stable, même avec plusieurs éléments à l’écran.\nCette base technique m’a ensuite servi pour mes projets 3D suivants, où j’ai pu réintroduire progressivement des calculs plus complexes tout en gardant une architecture optimisée.",
+          "medias": []
+        }
+      ],
+      "medias": [
+        "assets/projects/Mario3D/medias/video.mp4",
+        "assets/projects/Mario3D/medias/20230425_025650.jpg",
+        "assets/projects/Mario3D/medias/20230425_025704.jpg",
+        "assets/projects/Mario3D/medias/Participation à la Game Jam 2023 Casio (Super Mario 3D) 1-10 screenshot.png",
+        "assets/projects/Mario3D/medias/Participation à la Game Jam 2023 Casio (Super Mario 3D) 1-46 screenshot.png"
+      ]
     },
     {
       "id": "rpg-maker",
