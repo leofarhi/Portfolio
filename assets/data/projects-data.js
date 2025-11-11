@@ -545,10 +545,36 @@ window.PROJECTS_DATA = {
         "Game development"
       ],
       "icon": "assets/projects/TempleWarriors/icon.jpg",
-      "description": "",
+      "description": "TempleWarriors est un jeu que j’ai développé dans le cadre du concours Casio Python Jam #2, organisé par Planète Casio — et que j’ai eu la chance de remporter 🏆.\nOn avait pour mission de coder un jeu autour du thème imposé \"Le gardien du Temple\"\n\nHabituellement, les jeux Casio que j'écris sont en C ou C++.\nFaire un jeu d’action en Python représentait donc un vrai défi technique : chaque rafraîchissement de l’écran, chaque déplacement, chaque collision coûtait énormément en performances, bien plus qu'en C++.\nCe projet m’a forcé à repenser complètement ma manière de programmer sur cette machine.\n\n[url=https://www.planet-casio.com/Fr/programmes/programme4546-last-templewarriors-farhi-jeux-strategie.html]Lien du jeu[/url]",
       "media": "assets/projects/TempleWarriors/Image Principale.png",
-      "sections": [],
-      "medias": []
+      "sections": [
+        {
+          "title": "Optimisation — contourner les limites du Python",
+          "description": "Au début, je voulais une caméra dynamique qui suive le joueur, mais cela aurait obligé le jeu à rafraîchir tout l’écran à chaque frame. Le jeu ramerait tellement qu'il serait injouable.\nJ’ai donc opté pour une approche différente : un découpage du temple en zones.\n\nLe principe :\n[enum=1]• La carte est divisée en sections fixes.[/enum]\n[enum=1]• Lorsque le joueur atteint un bord, la zone suivante s'affiche entièrement.[/enum]\n\nPendant les déplacements, seuls les blocs directement affectés sont redessinés à l’écran, ce qui évite toute traînée de pixels et réduit le coût de rendu.\n\nGrâce à ce système, le jeu tourne de façon fluide, même en Python.\n\nAutre point complexe : les marches diagonales.\nElles ne sont pas de simples blocs carrés, mais de véritables pentes.\nLe joueur devait rester “collé” au sol (snap) tout en pouvant sauter à tout moment, et les collisions devaient aussi fonctionner par-dessous, sur une diagonale et non sur un rectangle.\n\nPour les ennemis, j’ai choisi une approche complètement différente.\nCréer une vraie physique avec collisions et gravité aurait été beaucoup trop coûteux en Python, surtout quand plusieurs dizaines d’ennemis sont présents.\nJ’ai donc mis en place un système de nœuds invisibles, formant un graphe orienté qui définit les chemins que les monstres peuvent suivre dans le temple.\n\nChaque ennemi se contente de se déplacer linéairement d’un nœud à l’autre :\n\n[enum=1]• s’ils sont alignés horizontalement, ils marchent simplement[/enum]\n[enum=1]• verticalement, ils chutent (avec une vitesse modifiée pour \"simuler\" une gravité)[/enum]\n[enum=1]• en diagonale, ils montent ou descendent des marches[/enum]\n\nCe système ne nécessite donc aucun calcul physique complexe : tout est pré-calculé et parfaitement cohérent, puisque le décor ne change jamais.\nLorsqu’un ennemi atteint un nœud, il choisit aléatoirement une des connexions disponibles, ce qui rend ses déplacements \"pseudo-imprévisibles\" sans nécessiter d’IA avancée.\nEt s’il arrive sur un nœud sans sortie, cela signifie qu’il a atteint sa cible finale — cristal à attaquer.\n\nCe mécanisme, inspiré de mes cours d’algorithmique, a permis de multiplier le nombre d’ennemis à l’écran sans perte de fluidité.\nEn pratique, cela change tout : on a l’impression que les monstres possèdent un vrai comportement, alors qu’ils ne font que suivre des trajectoires intelligemment préparées.",
+          "medias": [
+            "assets/projects/TempleWarriors/medias/Capture-d-cran-2025-04-27-190815.png",
+            "assets/projects/TempleWarriors/medias/wcKklfw.png",
+            "assets/projects/TempleWarriors/medias/KbGZADt.png"
+          ]
+        },
+        {
+          "title": "Gameplay — défendre le temple",
+          "description": "Dans TempleWarriors, on incarne le Gardien d’un temple sacré envahi par des monstres.\nVotre mission : protéger les trois cristaux du sanctuaire, coûte que coûte.\nSi le joueur meurt ou qu’un cristal est détruit, la partie est terminée.\n\nLe jeu se joue comme un action-platformer : on saute, on attaque, on esquive, et on gère plusieurs ennemis à la fois.\nLa difficulté vient surtout du positionnement et de la gestion des vagues d’ennemis qui arrivent sans relâche.\n\nUne mini-carte dans le menu pause permet de visualiser :\n[enum=1]• les cristaux (points verts)[/enum]\n[enum=1]• les monstres (points rouges)[/enum]\n[enum=1]• et le joueur (point blanc)[/enum]\n\nLe but est de tenir le plus longtemps possible, vague après vague.\nToutes les cinq vagues, des objets apparaissent aléatoirement dans le temple :\n\n[enum=1]• 💖 des cœurs pour régénérer la vie[/enum]\n[enum=1]• 💎 des fragments de cristal pour réparer les cristaux[/enum]\n\nCes objets n’apparaissent pas sur la mini-carte : il faut explorer le temple pour les trouver.",
+          "medias": []
+        },
+        {
+          "title": "La version C++ — un second souffle",
+          "description": "Après la jam, j’ai voulu pousser le concept plus loin.\nJ’ai donc reprogrammé entièrement le jeu en C++, cette fois sous forme d’add-in.\nGrâce à la puissance du langage, j’ai pu ajouter une caméra fluide qui suit le joueur en continu, améliorer la réactivité, et rééquilibrer la difficulté.\n\nJ’ai aussi intégré :\n\n[enum=1]• un système de vagues progressif[/enum]\n[enum=1]• un affichage du score final (temps + vague atteinte)[/enum]\n[enum=1]• une interface multilingue (français/anglais)[/enum]\n\nCette version C++ est aujourd’hui considéré comme la version principale de TempleWarriors, bien plus stable, fluide et complète que l’originale, tout en restant fidèle à l’esprit du concours.",
+          "medias": []
+        }
+      ],
+      "medias": [
+        "assets/projects/TempleWarriors/medias/kKkdLFg.png",
+        "assets/projects/TempleWarriors/medias/Farhi - Temple Warrior.mp4",
+        "assets/projects/TempleWarriors/medias/q5BZMVQ.png",
+        "assets/projects/TempleWarriors/medias/2kwg7W3.png",
+        "assets/projects/TempleWarriors/medias/Capture-d-cran-2025-04-27-182243.png"
+      ]
     }
   ]
 };
