@@ -451,10 +451,87 @@ window.PROJECTS_DATA = {
         "Game Development"
       ],
       "icon": "assets/projects/3d-engines/icon.jpg",
-      "description": "",
+      "description": "3D Engines regroupe l’ensemble de mes travaux, prototypes et expérimentations autour du rendu 3D — depuis mes premières tentatives naïves jusqu’à mes moteurs les plus aboutis.\nCe n’est pas un “projet” unique, mais plutôt un chemin technique, une suite d’essais, de réécritures et d’optimisations qui m’ont permis de comprendre en profondeur comment fonctionne un moteur de rendu, et surtout comment en construire un à partir de zéro.\n\nAu fil des années, j’ai créé, cassé et refait plusieurs moteurs : fausse et vrai 3D, 2.5D, rendu CPU triangle par triangle, texturing, gestion de la lumière, matrices, fixed-point, approximations mathématiques…\nChaque version a servi à en alimenter une autre, jusqu’à aboutir à des projets concrets.\n\nAujourd’hui, 3D Engines représente tout ce que j’ai appris sur la 3D “low-level”, sur la manière de rendre un moteur plus propre, plus rapide, plus précis, malgré les limites matérielles.\nC’est un domaine que je continue d’explorer, et qui influence directement la manière dont je conçois mes scripts actuels.",
       "media": "assets/projects/3d-engines/Video Principale.mp4",
-      "sections": [],
-      "medias": []
+      "sections": [
+        {
+          "title": "Origine de ma passion pour la 3D",
+          "description": "J’ai toujours été fasciné par les moteurs 3D.\nQuand je jouais aux jeux vidéo, enfant, je passais autant de temps à m’amuser qu’à me demander comment tout cela fonctionnait derrière l’écran.\nDès mes premiers pas sur Scratch, j’essayais déjà de reproduire de la 3D… avec des résultats souvent catastrophiques, mais qui m’ont donné envie d’aller plus loin.\n\nEn avançant dans la programmation, j’ai tenté plusieurs approches pour comprendre la 3D “à ma façon” :\n\nAu fil du temps, j’ai exploré plusieurs approches : d’abord une fausse 3D empilée (de Scratch à Basic Casio, puis Python), basée sur le principe de décaler et superposer des sprites pour donner une illusion de volume — une technique que j’avais illustrée en tentant de reproduire le style Paper Mario ; ensuite mes premières tentatives en 2.5D, où je transformais des quads pour simuler une perspective légère ; et enfin, après de nombreuses réécritures, mes premiers essais de vraie 3D, avec projection en perspective et rendu polygonal.",
+          "medias": [
+            "assets/projects/3d-engines/medias/3D casio.gif",
+            "assets/projects/3d-engines/medias/Test 3D (ParticuleEngine).mp4"
+          ]
+        },
+        {
+          "title": "Pourquoi travailler sur calculatrice ?",
+          "description": "Une question revient souvent : pourquoi développer sur une Casio Graph 90+E, une machine au processeur minuscule et sans accélération graphique ?\n\nLa réponse est simple : la contrainte forme le développeur.\n\nLa Casio n’a ni GPU, ni FPU, très peu de mémoire… et pourtant, elle oblige à :\n\n[enum=1]• optimiser chaque instruction,[/enum]\n\n[enum=1]• écrire du code clair et compact,[/enum]\n\n[enum=1]• remplacer les flottants par du fixed point,[/enum]\n\n[enum=1]• réécrire soi-même des opérations comme sin, cos, tan ou atan2,[/enum]\n\n[enum=1]• imaginer des alternatives aux fonctions trop lourdes,[/enum]\n\n[enum=1]• comprendre les vraies limites d’un moteur 3D sans “tricher”.[/enum]\n\nC’est littéralement le terrain de jeu idéal si on veut progresser en optimisation, en maths appliquées, et en architecture bas niveau.\n\nAvec ces contraintes, j’ai appris énormément :\nje suis passé de petits hacks visuels à la construction d’un pipeline 3D complet, allant du vertex shader CPU au rasterizer pixel-par-pixel.",
+          "medias": []
+        },
+        {
+          "title": "Mes différentes tentatives — et ce qu’elles m’ont appris",
+          "description": "Je ne compte plus le nombre de fois où j’ai recommencé mon moteur 3D entièrement.\nÀ chaque réécriture, je testais un nouvel angle :\n\n[enum=1]• utilisation plus poussée du fixed point,[/enum]\n\n[enum=1]• rasterisation plus rapide,[/enum]\n\n[enum=1]• simplification des matrices,[/enum]\n\n[enum=1]• affichage triangle par triangle vs quad par quad,[/enum]\n\n[enum=1]• backface culling,[/enum]\n\n[enum=1]• clipping plus intelligent,[/enum]\n\n[enum=1]• projection plus précise,[/enum]\n\n[enum=1]• batching des triangles,[/enum]\n\n[enum=1]• gestion mémoire plus stricte,[/enum]\n\n[enum=1]• pipelines spécialisés selon le type d’objet.[/enum]\n\nLa plupart de ces tentatives n’ont jamais été “finies”, mais chacune m’a fait progresser.\nPlus j’avançais, plus je me suis retrouvé à réutiliser les techniques des anciens moteurs 3D des années 90. Par exemple, pour gagner en vitesse, j’ai implémenté une approximation ultra-rapide d’atan2 inspirée directement du code de Quake III, ainsi qu’un fast inverse square root allégé pour optimiser certains calculs vectoriels. Ces méthodes, combinées aux lookup tables et au fixed-point, m’ont permis de réduire drastiquement le coût des opérations trigonometriques et de projection, rendant le rendu 3D viable même sur une calculatrice.",
+          "medias": []
+        },
+        {
+          "title": "Paper Mario Mansion — ma première “fausse 3D”",
+          "description": "Avant de travailler sur mes moteurs sur calculatrice, j’ai eu une première vraie expérience de pseudo-3D avec mon projet d’ISN au lycée : Paper Mario Mansion.\nOn l’a développé en Python avec Pygame, en binôme, et j’y ai créé mon propre moteur de jeu qui gérait l’affichage, les entrées clavier/souris, les menus, les cinématiques, l’inventaire, la sauvegarde, le texte multilingue… et surtout un système 3D “illusion”.\n\nComme Pygame n’a pas de 3D native, j’ai mis en place un rendu basé sur la superposition d’images 2D :\nles décors et les entités étaient affichés en plusieurs “couches” avec des tailles et positions calculées en fonction de la caméra, ce qui donnait cet effet Paper Mario en carton.\nDerrière, il y avait quand même une vraie gestion de collisions sur trois axes (X, Y, Z), de gravité, d’entités scriptées, d’anti-ram (déchargement des éléments hors écran) et même un mode créatif pour éditer les niveaux.\n\nCe projet n’était pas un moteur 3D au sens strict, mais c’est la première fois où j’ai vraiment essayé de penser un monde en volume.\nC’est clairement l’ancêtre de mes moteurs 2.5D et 3D actuels.",
+          "medias": [
+            "assets/projects/3d-engines/medias/ghghgh.png",
+            "assets/projects/3d-engines/medias/unnamed.png"
+          ]
+        },
+        {
+          "title": "Moteurs 2.5D",
+          "description": "Super Mario 3D a été mon premier moteur réellement utilisable.\nL’idée était de créer une fausse 3D convaincante tout en restant extrêmement léger, grâce à l’utilisation massive du fixed-point (aucun float) et une projection simplifiée donnant l’illusion de profondeur, ce moteur m’a permis d’établir les bases.\n\nPour TOTN v1, je suis parti exactement de cette base 2.5D.\nLa différence principale est que j’ai étendu le moteur, ajouté plus de systèmes et introduit davantage de complexité :\n\n[enum=1]• une caméra plus avancée,[/enum]\n\n[enum=1]• de nouvelles mécaniques d’interaction,[/enum]\n\n[enum=1]• un inventaire,[/enum]\n\n[enum=1]• des animations,[/enum]\n\n[enum=1]• un début de gestion de lumière “fake”,[/enum]\n\n[enum=1]• un meilleur système d’entités,[/enum]\n\n[enum=1]• un monde plus ouvert.[/enum]\n\nMais même si TOTN v1 semble plus 3D visuellement, ce n’est pas encore un vrai moteur 3D :\n\n[enum=1]• il n’y a pas de rasterisation triangle par triangle,[/enum]\n\n[enum=1]• pas de vraie projection 3D complète,[/enum]\n\n[enum=1]• les modèles ne sont pas des meshes 3D au sens classique,[/enum]\n\n[enum=1]• tout repose encore sur des transformations simplifiées.[/enum]\n\nC’était en réalité une version améliorée du moteur de Mario, poussée au maximum de ce que la 2.5D peut offrir sur Casio.\nCe projet m’a servi de transition et m’a donné envie de passer à la vraie 3D.",
+          "medias": [
+            "assets/projects/3d-engines/medias/demo 2.5d.mp4",
+            "assets/projects/3d-engines/medias/Screenshot_20230926_164155_Gallery.jpg",
+            "assets/projects/3d-engines/medias/Screenshot_20230926_164217_Gallery.jpg",
+            "assets/projects/Mario3D/icon.jpg",
+            "assets/projects/Mario3D/medias/Participation à la Game Jam 2023 Casio (Super Mario 3D) 1-10 screenshot.png",
+            "assets/projects/Mario3D/medias/20230425_025650.jpg",
+            "assets/projects/ZeldaTOTN/v1/IMG_20230630_212123_210.jpg",
+            "assets/projects/ZeldaTOTN/v1/Zelda Tears Of The NES pour Casio 1-58 screenshot.png",
+            "assets/projects/ZeldaTOTN/v1/wrr8.gif"
+          ]
+        },
+        {
+          "title": "Mini 3D Engine (devlogs Planète Casio)",
+          "description": "Mon topic “mini moteur 3D” sur Planète Casio montre plusieurs prototypes intermédiaires :\ntests de perspective, rasterization, texturing minimaliste, rendu polygonal, etc.\n\nC’est dans ce projet-là que j’ai mis au point certaines fonctions cruciales :\n\n[enum=1]• approximation ultra-rapide d’atan2 (inspirée du code Quake III),[/enum]\n\n[enum=1]• division optimisée,[/enum]\n\n[enum=1]• gestion de matrices simplifiée.[/enum]\n\nTout ceci m’a servi plus tard dans TOTN v2 et dans mes autres moteurs.",
+          "medias": [
+            "assets/projects/3d-engines/medias/20250321_023310.mp4",
+            "assets/projects/3d-engines/medias/20250321_112604.mp4",
+            "assets/projects/3d-engines/medias/20250321_165423.mp4",
+            "assets/projects/3d-engines/medias/20250323_150132.jpg",
+            "assets/projects/3d-engines/medias/20250324_150622.jpg",
+            "assets/projects/3d-engines/medias/20240608_034809.mp4",
+            "assets/projects/3d-engines/medias/20240608_200515.mp4",
+            "assets/projects/3d-engines/medias/20241018_005729.mp4",
+            "assets/projects/3d-engines/medias/Capture d'écran 2024-10-25 150614.png",
+            "assets/projects/3d-engines/medias/Casio Moteur 3D x Unity 3D Update.mp4"
+          ]
+        },
+        {
+          "title": "Moteur 3D entièrement refait",
+          "description": "Avec TOTN v2, j’ai enfin franchi le cap :\nC’est ma première implémentation d’un moteur 100 % 3D, réécrite from scratch en C++.\n\nCette version introduit enfin un rendu 3D réel :\n\n[enum=1]• projection en perspective,[/enum]\n\n[enum=1]• polygones et triangles texturés,[/enum]\n\n[enum=1]• transformations 3D complètes (matrices, rotation, translation, scale),[/enum]\n\n[enum=1]• un vrai pipeline d’entités 3D,[/enum]\n\n[enum=1]• gestion de camera avec rotation libre,[/enum]\n\n[enum=1]• architecture orientée objet, bien plus extensible.[/enum]\n\nTOTN v2 n’est pas une évolution :\nc’est un nouveau moteur 3D, bien plus optimisé, plus propre et capable d’afficher des scènes réellement 3D.",
+          "medias": [
+            "assets/projects/ZeldaTOTN/v2/2b37.gif",
+            "assets/projects/ZeldaTOTN/v2/casio.gif",
+            "assets/projects/3d-engines/medias/Encore une démo 3D pour Casio.mp4",
+            "assets/projects/3d-engines/medias/Unity3D To Casio.mp4"
+          ]
+        },
+        {
+          "title": "Ce que ces projets m’ont apporté",
+          "description": "Développer un moteur 3D sur un support aussi limité m’a obligé à :\n\n[enum=1]• apprendre la rigueur mathématique,[/enum]\n\n[enum=1]• comprendre les vraies bases du rendu 3D,[/enum]\n\n[enum=1]• repenser mes algorithmes pour les rendre plus légers,[/enum]\n\n[enum=1]• optimiser sans cesse,[/enum]\n\n[enum=1]• structurer mes projets comme le feraient les développeurs des années 90,[/enum]\n\n[enum=1]• rechercher en profondeur pour améliorer le pipeline.[/enum]\n\nÀ l’avenir, j’aimerais aller plus loin :\npasser à un rendu GPU, explorer le multi-threading, et continuer à affiner mon pipeline logiciel.",
+          "medias": []
+        }
+      ],
+      "medias": [
+        "assets/projects/3d-engines/medias/20250324_150622.jpg",
+        "assets/projects/3d-engines/medias/6wf4.png",
+        "assets/projects/3d-engines/medias/fgfgf.png"
+      ]
     },
     {
       "id": "arboris",
@@ -521,7 +598,9 @@ window.PROJECTS_DATA = {
             "assets/projects/ZeldaTOTN/v1/Zelda Tears Of The NES pour Casio 1-44 screenshot.png",
             "assets/projects/ZeldaTOTN/v1/Zelda Tears Of The NES pour Casio 1-58 screenshot.png",
             "assets/projects/ZeldaTOTN/v1/Zelda Tears Of The NES pour Casio 2-40 screenshot.png",
-            "assets/projects/ZeldaTOTN/v1/Zelda Tears Of The NES pour Casio 3-44 screenshot.png"
+            "assets/projects/ZeldaTOTN/v1/Zelda Tears Of The NES pour Casio 3-44 screenshot.png",
+            "assets/projects/ZeldaTOTN/v1/Zelda Tears Of The NES pour Casio 0-55 screenshot.png",
+            "assets/projects/ZeldaTOTN/v1/Zelda Tears Of The NES pour Casio 1-4 screenshot.png"
           ]
         },
         {
