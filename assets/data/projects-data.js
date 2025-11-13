@@ -435,10 +435,13 @@ window.PROJECTS_DATA = {
           "title": "Systèmes additionnels",
           "description": "Au-delà du terrain, j’ai voulu rendre le projet vivant et interactif.\nJ’ai ajouté un système multijoueur basé sur Steam, permettant à plusieurs joueurs de se connecter sur une même carte et d’explorer ensemble le monde en temps réel.\n\nJ’ai également conçu une API externe, capable de communiquer avec le jeu depuis Python ou Discord.\nCette interface permet de récupérer ou d’envoyer des données en direct — par exemple, suivre les positions des joueurs sur un serveur, afficher des informations en temps réel, ou même interagir avec le jeu depuis un bot Discord.\n\nUne autre fonctionnalité que j’ai ajoutée concerne la personnalisation du joueur.\nLe jeu permet d’importer son propre avatar 3D créé avec Vroid Studio, un logiciel permettant de générer facilement des modèles au format .vrm.\nUne fois le fichier importé, le moteur extrait automatiquement le modèle du joueur et supprime les vêtements par défaut, pour que le joueur puisse changer de vêtement en jeu.",
           "medias": [
+            "assets/projects/FrontiersOfLegends/systemes/3.png",
+            "assets/projects/FrontiersOfLegends/systemes/2.png",
             "assets/projects/FrontiersOfLegends/systemes/yghftytgghd.png",
             "assets/projects/FrontiersOfLegends/systemes/Untitled-3.mp4",
             "assets/projects/FrontiersOfLegends/systemes/Untitled-2.mp4",
-            "assets/projects/FrontiersOfLegends/systemes/Untitled.mp4"
+            "assets/projects/FrontiersOfLegends/systemes/Untitled.mp4",
+            "assets/projects/FrontiersOfLegends/systemes/1.png"
           ]
         }
       ],
