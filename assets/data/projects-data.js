@@ -686,10 +686,50 @@ window.PROJECTS_DATA = {
         "Game development"
       ],
       "icon": "assets/projects/RPG-Maker/icon.jpg",
-      "description": "",
+      "description": "Quand j’ai commencé à apprendre Python, je me suis fixé un objectif ambitieux pour progresser : recréer le moteur de RPG Maker MV.\nJe découvre mieux en construisant, et refaire un moteur connu m’obligeait à toucher à tout : affichage, collisions, gestion des tiles, inventaire, scripts, réseau, structure des données…\n\nÀ cette époque, j’avais une compréhension limitée des bonnes pratiques, mais beaucoup d’enthousiasme.\nJ’ai donc développé mon premier clone de RPG Maker MV en Python/Pygame, avec :\n\n[enum=1]• un rendu graphique (via pygame) très proche de RPG Maker MV[/enum]\n\n[enum=1]• un éditeur interne[/enum]\n\n[enum=1]• un “système multijoueur” expérimental via socket[/enum]\n\n[enum=1]• un gestionnaire de comptes utilisateur (avec… un chiffrement César, oui, la catastrophe)[/enum]\n\n[enum=1]• des tonnes de librairies utilisées juste pour apprendre[/enum]\n\nLe résultat fonctionnait, mais c’était une purge en termes de code :\ndes variables globales partout, un seul fichier de 3000 lignes, des while True infinis, des break/continue à outrance, très peu de classes, aucune séparation logique… bref, un enfer à relire aujourd’hui.\n\nMais ce premier essai m’a donné la base de ce qui deviendrait l’un de mes projets les plus formateurs.",
       "media": "assets/projects/RPG-Maker/Image Principale.jpg",
-      "sections": [],
-      "medias": []
+      "sections": [
+        {
+          "title": "Rétro-ingénierie de RPG Maker MV",
+          "description": "Quelques années plus tard, j’ai voulu comprendre réellement comment RPG Maker MV avait été conçu.\nJ’ai donc fait ce que je n’avais pas osé au début : l’analyser en profondeur.\n\nJ’ai rétro-ingéniéré RPG Maker MV et découvert l’ingéniosité de ses systèmes internes.\n\nUn exemple frappant :\nRPG Maker utilise un principe de “Tile Autotile”.\nAvec 6 blocs de base, découpés en sous-morceaux, on peut automatiquement générer 47 variantes d’un même type de terrain.\nDans ma première version Python, j’avais naïvement enregistré les 47 blocs complets × tous les tiles, ce qui explosait la RAM et l’espace disque.\n\nAprès avoir étudié le système, j’ai entièrement recréé le même fonctionnement, cette fois de manière propre.\n\nJe me suis alors mis à réécrire tout le moteur, mais correctement, en :\n\n[enum=1]• Python[/enum]\n[enum=1]• C[/enum]\n[enum=1]• C++[/enum]\n\nEn parallèle, j’ai aussi recréé :\n\n[enum=1]• l’interpréteur d’évènements[/enum]\n[enum=1]• le parsing des maps[/enum]\n[enum=1]• la logique interne[/enum]\n[enum=1]• les systèmes de transitions, collisions, couches, animations…[/enum]\n\nBref, un vrai clone technique de RPG Maker, mais version “from scratch”.\n\nEt comme RPG Maker MV utilise du JavaScript, j’ai dû apprendre le JavaScript au passage pour comprendre exactement comment le moteur original fonctionnait.",
+          "medias": [
+            "assets/projects/RPG-Maker/media/6ktd.png",
+            "assets/projects/RPG-Maker/media/61095-b8bbb1763f55cda3d7eceb32e4843344.png"
+          ]
+        },
+        {
+          "title": "Une version Casio — la contrainte maximale",
+          "description": "Après avoir consolidé mon moteur, j’ai voulu le porter sur un support extrême :\nla Casio Graph 90+E, qui impose une limite :\n\n👉 Un programme ne peut pas dépasser 2 Mo (code + images + texte inclus).\n\nRPG Maker, lui, utilise des centaines d’assets.\n\nPour que le port fonctionne, j’ai dû :\n\n[enum=1]• stocker une partie des images en dehors du programme dans un fichier binaire[/enum]\n\n[enum=1]• mettre en place un chargement/déchargement dynamique pour ne jamais saturer la RAM[/enum]\n\n[enum=1]• intégrer un culling strict pour n’afficher que les tiles visibles[/enum]\n\n[enum=1]• compresser ou restructurer les données[/enum]\n\nCe port Casio a été l’une des versions les plus difficiles, mais aussi l’une des plus enrichissantes :\nil m’a poussé à comprendre la structure de RPG Maker MV dans le détail, et à développer des systèmes réutilisables ensuite dans d’autres projets (comme Underworld, ou même certaines briques techniques de Particule SDK).",
+          "medias": []
+        },
+        {
+          "title": "Compréhension, rigueur et héritage technique",
+          "description": "Recréer RPG Maker de cette manière m’a appris :\n\n[enum=1]• à analyser un moteur professionnel,[/enum]\n\n[enum=1]• à comprendre la gestion de tiles, de couches, de transitions et d’autotiles,[/enum]\n\n[enum=1]• à architecturer un moteur modulaire,[/enum]\n\n[enum=1]• à optimiser méthodiquement sous contrainte,[/enum]\n\n[enum=1]• à écrire un interpréteur d’évènements,[/enum]\n\n[enum=1]• à mieux structurer mes projets,[/enum]\n\n[enum=1]• et surtout : à ne plus refaire les erreurs de ma première version.[/enum]\n\nCe projet a profondément influencé la manière dont je conçois mes moteurs actuels.\nC’est aussi l’un des déclencheurs qui m’ont poussé à m’intéresser sérieusement :\n\n[enum=1]• à l’optimisation bas niveau,[/enum]\n\n[enum=1]• à la sécurité et au chiffrement (qui ont refait surface à EPITA lorsque j’ai recodé RSA en OCaml),[/enum]\n\n[enum=1]• et à la rétro-ingénierie de moteurs professionnels.[/enum]",
+          "medias": [
+            "assets/projects/RPG-Maker/media/8dm6.png",
+            "assets/projects/RPG-Maker/media/fude.jpg",
+            "assets/projects/RPG-Maker/media/2ur5.jpg",
+            "assets/projects/RPG-Maker/media/wdyv.jpg"
+          ]
+        },
+        {
+          "title": "Aujourd’hui",
+          "description": "Mon moteur RPG Maker “from scratch” existe sous plusieurs formes : Python, C, C++, et une version Casio c++ optimisée.\nJe le réutilise et l’améliore encore dans certains projets, car sa structure solide et sa modularité en font une base idéale pour créer des jeux narratifs 2D.\n\nIl fait partie des projets qui ont marqué mon apprentissage au plus haut point, et qui m’ont imposé une rigueur dont je me sers aujourd’hui dans tous mes projets modernes.",
+          "medias": []
+        }
+      ],
+      "medias": [
+        "assets/projects/RPG-Maker/media/Éditeur RPG directement sur Casio et compatible sur ordinateur.mp4",
+        "assets/projects/RPG-Maker/media/20220212_232854.jpg",
+        "assets/projects/RPG-Maker/media/c86s.jpg",
+        "assets/projects/RPG-Maker/media/d2c2.jpg",
+        "assets/projects/RPG-Maker/media/fude.jpg",
+        "assets/projects/RPG-Maker/media/IMG_20220213_183208.jpg",
+        "assets/projects/RPG-Maker/media/2ur5.jpg",
+        "assets/projects/RPG-Maker/media/wdyv.jpg",
+        "assets/projects/RPG-Maker/media/0jxk.jpg",
+        "assets/projects/RPG-Maker/media/unnamed.png"
+      ]
     },
     {
       "id": "temple-warriors",
