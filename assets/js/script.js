@@ -118,7 +118,9 @@ document.addEventListener('DOMContentLoaded', showFromHash);
 
   function bbcodeInlinePreserve(src) {
     const links = [];
-    const replaced = String(src).replace(/\[url=(.+?)\](.+?)\[\/url\]/gi, (_m, href, text) => {
+
+    // --- [url=...]...[/url]
+    let replaced = String(src).replace(/\[url=(.+?)\](.+?)\[\/url\]/gi, (_m, href, text) => {
       const h = String(href || '').trim();
       const t = String(text || '').trim();
       const safeHref = escapeHtml(h);
@@ -129,10 +131,23 @@ document.addEventListener('DOMContentLoaded', showFromHash);
       return `\uE000${links.length - 1}\uE001`;
     });
 
+    // --- [projet=ID]Nom[/projet]
+    replaced = replaced.replace(/\[projet=(.+?)\](.+?)\[\/projet\]/gi, (_m, id, text) => {
+      const pid = String(id || '').trim();
+      const t = escapeHtml(String(text || '').trim());
+
+      const a =
+        `<a href="#project=${encodeURIComponent(pid)}" class="pj-link" data-open-project="${pid}">${t}</a>`;
+
+      links.push(a);
+      return `\uE000${links.length - 1}\uE001`;
+    });
+
     let esc = escapeHtml(replaced);
     esc = esc.replace(/\uE000(\d+)\uE001/g, (_m, i) => links[Number(i)]);
     return esc;
   }
+
 
   function textToParagraphs(raw) {
     const safe = bbcodeInlinePreserve(String(raw).replaceAll('\r\n', '\n'));
@@ -417,6 +432,9 @@ document.addEventListener('DOMContentLoaded', showFromHash);
     // 2) Ouvre la page vide (blank state) tout de suite
     navigateToDetail();
 
+    // 🔽 Remet le scroll tout en haut (instantané)
+    window.scrollTo({ top: 0, behavior: 'auto' });
+
     // 3) Charge prévisualisation / data
     loadDataFromInline();
     let project = STATE.cache.get(id);
@@ -479,7 +497,24 @@ document.addEventListener('DOMContentLoaded', showFromHash);
 
   document.addEventListener('DOMContentLoaded', () => {
     bindProjectLinks();
+
+    // --- Gestion des balises [projet=...]
+    document.body.addEventListener('click', (e) => {
+      const a = e.target.closest('a[data-open-project]');
+      if (!a) return;
+      e.preventDefault();
+
+      const id = a.getAttribute('data-open-project');
+      if (!id) return;
+
+      const hash = `#project=${encodeURIComponent(id)}`;
+      if (location.hash !== hash) {
+        history.pushState(null, '', hash);
+      }
+      showFromHash();
+    });
   });
+
 
   window.Portfolio = Object.assign(window.Portfolio || {}, {
     openProjectById,

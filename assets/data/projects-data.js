@@ -507,10 +507,69 @@ window.PROJECTS_DATA = {
         "Game development"
       ],
       "icon": "assets/projects/ZeldaTOTN/icon.jpg",
-      "description": "",
+      "description": "Zelda: Tears of the NES (ou Zelda TOTN) est un projet que j’ai commencé à développer dans le cadre du Casio Programming Contest 30 (CPC30) organisé par Planète Casio, dont le thème était « Les profondeurs ».\nCe jeu marque la suite directe de mes expérimentations 3D sur calculatrice, amorcées avec [projet=mario3d]Super Mario 3D[/projet].\nMon objectif : transformer ce moteur prototype en un véritable moteur d’action-aventure 3D, capable de gérer une carte complète, un système d’inventaire, des entités, et de multiples interactions complexes.\n\nC’est aussi le projet qui m’a réellement lancé dans la conception de moteurs 3D maison : il m’a permis de dépasser la simple démonstration technique pour m’approcher d’un jeu.\n\n[url=https://www.planet-casio.com/Fr/programmes/programme4350-last-zelda-tears-of-the-nes-farhi-jeux-add-ins.html]Lien du jeu[/url]",
       "media": "assets/projects/ZeldaTOTN/Image Principale.png",
-      "sections": [],
-      "medias": []
+      "sections": [
+        {
+          "title": "Version 1 — Démo initiale (C / gint)",
+          "description": "La première version de Zelda: Tears of the NES est née dans le cadre du CPC30.\nElle utilisait le moteur de Super Mario 3D que j’ai profondément modifié et étendu.\nCette version, écrite en C (gint), servait avant tout de preuve de concept et de base pour le développement futur.\n\nFondations techniques\n\nParmi les ajouts majeurs de cette v1 :\n\n[enum=1]• un système de gestion de la lumière/zones d’éclairage[/enum]\n[enum=1]• une réécriture du système d’entités[/enum]\n[enum=1]• une optimisation du chargement des modèles, pour éviter la surcharge mémoire[/enum]\n\nLe plus grand défi venait de la limite de taille des programmes Casio (2 Mo).\nLe jeu contenait plusieurs centaines de types d’objets et plus de 470 sprites d’items, ce qui aurait saturé la mémoire interne.\nPour contourner cela, j’ai conçu un système de ressources externes :\nles sprites et les cartes sont stockés dans des fichiers binaires séparés, chargés et déchargés selon les besoins.",
+          "medias": [
+            "assets/projects/ZeldaTOTN/v1/IMG_20230630_212123_072.jpg",
+            "assets/projects/ZeldaTOTN/v1/IMG_20230630_212123_210.jpg",
+            "assets/projects/ZeldaTOTN/v1/20230530_131415.jpg",
+            "assets/projects/ZeldaTOTN/v1/Zelda Tears Of The NES pour Casio 1-23 screenshot.png",
+            "assets/projects/ZeldaTOTN/v1/Zelda Tears Of The NES pour Casio 1-44 screenshot.png",
+            "assets/projects/ZeldaTOTN/v1/Zelda Tears Of The NES pour Casio 1-58 screenshot.png",
+            "assets/projects/ZeldaTOTN/v1/Zelda Tears Of The NES pour Casio 2-40 screenshot.png",
+            "assets/projects/ZeldaTOTN/v1/Zelda Tears Of The NES pour Casio 3-44 screenshot.png"
+          ]
+        },
+        {
+          "title": "Gameplay et contenu",
+          "description": "Dans cette première version, le joueur explore un monde en ruine inspiré de The Legend of Zelda.\nLe moteur repose sur une caméra 2.5D avec rotation partiellement.\n\nLe joueur peut :\n\n[enum=1]• ramasser, consulter et jeter des objets[/enum]\n\n[enum=1]• utiliser l’arc et les flèches, épée et bouclier[/enum]\n\n[enum=1]• subir des dégâts de chute selon la hauteur[/enum]\n\nUne mini-carte a été ajoutée, elle réutilise le code de mon projet [projet=rpg-maker]RPG Maker[/projet] pour gérer l'affichage.\nL’interface et les menus ont été retravaillés pour plus de clarté, notamment sur les versions Windows et Linux, qui ajoutent la reconfiguration des touches.",
+          "medias": [
+            "assets/projects/ZeldaTOTN/v1/Zelda TOTN MAJ.png",
+            "assets/projects/ZeldaTOTN/v1/Zelda Tears Of The NES pour Casio 2-6 screenshot.png",
+            "assets/projects/ZeldaTOTN/v1/Zelda Tears Of The NES pour Casio 2-12 screenshot.png",
+            "assets/projects/ZeldaTOTN/v1/Zelda Tears Of The NES pour Casio 3-44 screenshot.png",
+            "assets/projects/ZeldaTOTN/v1/llra.png"
+          ]
+        },
+        {
+          "title": "Un travail sur les items",
+          "description": "Le système d’items a été une partie compliquée à développer.\nJ’ai dû :\n\n[enum=1]• aligner manuellement 470 sprites[/enum]\n[enum=1]• les intégrer dans un fichier binaire unique[/enum]\n[enum=1]• créer un lecteur capable d’extraire le bon sprite à la volée tout en déchargeant les anciens/inutilisés[/enum]",
+          "medias": [
+            "assets/projects/ZeldaTOTN/v1/zj6v.png"
+          ]
+        },
+        {
+          "title": "Version 2 — Refonte complète du moteur (C++ / gint + Azur)",
+          "description": "Suite à la v1, j’ai entrepris une refonte intégrale du moteur, cette fois en C++, afin d’améliorer les performances et d’élargir les possibilités du jeu.\nCette v2 utilise le duo gint + Azur, ce qui me permet d’aller beaucoup plus loin que ce que la v1 pouvait supporter.\n\nAméliorations techniques majeures :\n\n[enum=1]• Moteur 3D entièrement réécrit, avec un pipeline de rendu plus flexible et bien plus rapide.[/enum]\n\n[enum=1]• Gestion de la lumière revisitée[/enum]\n\n[enum=1]• Nouveau système d’entités : structure orientée objet, interactions et collisions améliorées.[/enum]\n\n[enum=1]• Animations et modèles plus détaillés, avec davantage de formes géométriques possibles.[/enum]\n\n[enum=1]• Caméra rotative et déplacements libres[/enum]\n\n[enum=1]• Une skybox en deux couleurs[/enum]\n\nCette refonte vise à rendre le moteur plus proche d’un véritable moteur de jeu 3D moderne, tout en restant compatible avec les contraintes de la Casio Graph 90 ( et des versions PC/Linux).",
+          "medias": [
+            "assets/projects/ZeldaTOTN/v2/2b37.gif",
+            "assets/projects/ZeldaTOTN/v2/casio.gif",
+            "assets/projects/ZeldaTOTN/v2/7tn5.gif",
+            "assets/projects/ZeldaTOTN/v2/Zelda TOTN édition de map.mp4",
+            "assets/projects/ZeldaTOTN/v2/Capture-d-cran-2025-05-12-013515.png"
+          ]
+        },
+        {
+          "title": "État actuel et perspectives",
+          "description": "La v1 a posé les bases : moteur fonctionnel, gestion d’inventaire, ressources externes, et gameplay testable.\nLa v2 en cours de développement apporte une architecture C++ beaucoup plus souple, des optimisations poussées et une refonte totale du rendu.\nCertaines fonctionnalités restent encore à implémenter (ennemis, pouvoirs, carte complète), mais le projet avance avec une meilleure stabilité et des performances accrues.",
+          "medias": []
+        },
+        {
+          "title": "Bilan et apprentissages",
+          "description": "Zelda: Tears of the NES est avant tout un laboratoire technique pour la 3D sur calculatrice.\nIl m’a permis d’approfondir :\n\n[enum=1]• la gestion mémoire[/enum]\n\n[enum=1]• l’architecture multiplateforme[/enum]\n\n[enum=1]• la création d’un moteur 3D sous fortes contraintes[/enum]\n\nC’est aujourd’hui l’un de mes projets les plus ambitieux.\nLa v1 m’a permis de prouver que c’était faisable ; la v2 vise à montrer que c’est optimisable.",
+          "medias": []
+        }
+      ],
+      "medias": [
+        "assets/projects/ZeldaTOTN/v1/Zelda Tears Of The NES pour Calculatrice Casio.mp4",
+        "assets/projects/ZeldaTOTN/v1/Zelda Tears Of The NES pour Casio 0-19 screenshot.png",
+        "assets/projects/ZeldaTOTN/v1/casio-menu-gif.gif",
+        "assets/projects/ZeldaTOTN/v1/wrr8.gif"
+      ]
     },
     {
       "id": "mario3d",
