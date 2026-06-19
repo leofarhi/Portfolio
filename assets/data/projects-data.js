@@ -6,9 +6,8 @@ window.PROJECTS_DATA = {
       "date": "2023 – aujourd’hui",
       "duration": "3 ans",
       "category": [
-        "Animation",
-        "AI",
-        "3D"
+        "Narration",
+        "AI"
       ],
       "icon": "",
       "media": "",
@@ -114,13 +113,82 @@ window.PROJECTS_DATA = {
       "medias": []
     },
     {
+      "id": "universalmp",
+      "title": "UniversalMP",
+      "date": "Décembre 2025 – mai 2026",
+      "duration": "4 mois",
+      "category": [
+        "Game Development"
+      ],
+      "icon": "",
+      "media": "",
+      "description": "UniversalMP est un système que j’ai créé pour ajouter une présence multijoueur à des jeux qui n’ont jamais été prévus pour être joués en ligne.\nLe programme récupère la position, l’orientation, la caméra et l’animation du joueur, envoie ces informations sur le réseau, puis affiche les autres joueurs directement par-dessus le jeu grâce à ReShade.\n\nL’idée m’est venue parce que je voulais faire découvrir Zelda: Skyward Sword à un ami et y jouer avec lui.\nLe jeu est entièrement solo et, à l’époque, je ne savais pas encore créer un véritable mod capable d’ajouter un second joueur dans son moteur. J’ai donc cherché une autre solution : ne pas modifier le monde du jeu, mais afficher un avatar distant suffisamment bien intégré pour donner l’impression qu’il se trouve réellement à l’intérieur.\n\nUniversalMP ne synchronise pas les quêtes, les ennemis ou les objets. Chaque personne joue dans sa propre partie. En revanche, les joueurs peuvent se voir, suivre leurs mouvements et regarder le partage d’écran de l’autre sans quitter le jeu.",
+      "sections": [
+        {
+          "title": "L’origine — Jouer ensemble à un jeu entièrement solo",
+          "description": "Tout est parti d’une idée assez simple : je voulais faire découvrir Zelda: Skyward Sword à un ami, mais je ne voulais pas seulement le regarder jouer en partage d’écran.\nJe voulais pouvoir lancer ma propre partie, me déplacer à côté de lui et avoir au moins l’impression que nous explorions le jeu ensemble.\n\nLe problème, c’est que Skyward Sword ne possède aucun système multijoueur.\nCréer un vrai mod aurait demandé de comprendre puis de modifier une grande partie du fonctionnement interne du jeu : création d’un second acteur, animations, collisions, caméra, événements et synchronisation du monde. À ce moment-là, je ne savais pas encore faire ce genre de mod.\n\nJ’ai donc pris le problème dans l’autre sens.\nAu lieu d’ajouter réellement un joueur dans le moteur du jeu, j’allais récupérer les informations du joueur local et dessiner l’autre personne par-dessus l’image. Si la position, la caméra et la profondeur étaient correctement reproduites, l’illusion pouvait fonctionner.",
+          "medias": []
+        },
+        {
+          "title": "Les premières tentatives — Entrer dans le processus du jeu",
+          "description": "Mes premiers prototypes reposaient sur l’injection d’une DLL dans le processus cible.\nJ’ai créé un injecteur avec les API Windows, puis plusieurs bibliothèques capables de s’exécuter directement à côté du jeu et d’inspecter son environnement graphique.\n\nIl fallait ensuite retrouver les données importantes dans la mémoire :\n\n[enum=1]• la position et l’orientation du joueur,[/enum]\n\n[enum=1]• la position, la rotation et le champ de vision de la caméra,[/enum]\n\n[enum=1]• l’état du personnage : immobile, marche, course, attaque, nage ou escalade,[/enum]\n\n[enum=1]• certains états particuliers comme une cinématique ou un écran de pause.[/enum]\n\nLes premières versions utilisaient surtout des offsets et des chaînes de pointeurs trouvés manuellement. Cela fonctionnait, mais le code était très lié au jeu testé et pouvait casser dès que l’organisation de sa mémoire changeait.\n\nCes essais m’ont tout de même permis de valider le point le plus important : je pouvais suivre le joueur en temps réel sans disposer du code source du jeu.",
+          "medias": []
+        },
+        {
+          "title": "Les premiers moteurs de rendu — Dessiner le modèle depuis l’addon",
+          "description": "Dans les premières versions, le modèle 3D était entièrement rendu par l’addon.\nJe pouvais choisir entre plusieurs moteurs : un renderer CPU fait maison, une variante utilisant un shader CPU et un renderer OpenGL. Chacun chargeait le modèle GLB, ses textures et ses animations, puis essayait de le replacer dans la perspective de la caméra du jeu.\n\nCette méthode m’a permis de valider le concept, mais elle avait deux gros problèmes.\nLe rendu pouvait devenir instable et provoquer des crashs selon le jeu ou l’API graphique utilisée. Il ralentissait aussi le jeu dès que je voulais intégrer correctement le modèle au décor.\n\nPour savoir si un mur devait cacher l’avatar, l’addon devait récupérer la depth map calculée par le jeu. Cette lecture provoquait une interruption du GPU : il fallait attendre la fin de ses commandes, copier la profondeur vers une ressource accessible par le processeur, puis reprendre le rendu.\nCette attente cassait le parallélisme entre le CPU et le GPU et créait des ralentissements visibles.\n\nPlus j’améliorais l’intégration, plus mon addon se transformait en second moteur 3D exécuté à côté de celui du jeu. J’ai donc décidé de déplacer tout le rendu directement sur le GPU, sans récupérer la depth map dans l’addon.",
+          "medias": []
+        },
+        {
+          "title": "Le hack ReShade — Faire tenir un moteur 3D dans un shader",
+          "description": "Un shader est normalement un petit programme exécuté par le GPU.\nDans un moteur 3D classique, il reçoit une géométrie déjà préparée et s’occupe surtout de transformer ses sommets ou de calculer la couleur des pixels. Dans ReShade, les shaders servent principalement à appliquer des effets sur l’image finale du jeu : correction des couleurs, netteté, lumière ou post-processing.\n\nUn shader ReShade n’est pas censé charger un fichier GLB, gérer un squelette, lire des animations et rendre un personnage complet. Il ne peut même pas recevoir un modèle 3D en paramètre.\n\nJ’ai donc contourné cette limite en convertissant le modèle et toutes ses animations en une immense texture.\nLes positions des sommets, les normales, les UV, les poids du squelette, les matrices des os et les images des matériaux sont encodés dans ses pixels. La texture devient une sorte de base de données que le shader peut lire sur le GPU.\n\nÀ chaque frame, le shader décode ces pixels, reconstruit les sommets, calcule la pose du squelette, applique l’animation, place le joueur dans le monde puis reproduit la perspective de la caméra avec son FOV.\nIl récupère ensuite la couleur dans l’atlas de textures et calcule l’éclairage du modèle.\n\nCe n’est clairement pas l’usage prévu d’un shader ReShade : je l’utilise comme un véritable moteur 3D animé caché dans un effet de post-processing.\nDans cette V2, l’addon ne dessine plus les joueurs. Il prépare la texture du modèle une fois, puis fournit seulement au shader les informations qui changent : position, rotation, animation, frame, visibilité et paramètres de caméra.",
+          "medias": []
+        },
+        {
+          "title": "Les passes de rendu — Couleur, profondeur et ombre",
+          "description": "Rendre le modèle dans le shader ne suffit pas : il doit aussi respecter la profondeur du jeu.\nUne depth map est une image dans laquelle chaque pixel indique sa distance par rapport à la caméra. C’est elle qui permet de savoir si l’avatar distant se trouve devant ou derrière un mur.\n\nJ’ai détourné le canal alpha, puis le packing des canaux de sortie, pour transporter la profondeur du modèle en même temps que sa couleur. Le shader effectue ensuite plusieurs passes, comme un petit moteur de rendu :\n\n[enum=1]• une première passe calcule l’ombre du joueur,[/enum]\n\n[enum=1]• une deuxième anime et dessine le modèle dans une texture intermédiaire avec sa propre profondeur,[/enum]\n\n[enum=1]• une dernière passe décode le résultat, le compare à la depth map du jeu et l’intègre dans l’image finale.[/enum]\n\nSi le décor est plus proche de la caméra que le joueur distant, les pixels correspondants sont masqués. L’avatar peut donc passer derrière une colonne, disparaître dans un escalier ou être coupé par un objet comme s’il appartenait réellement à la scène.\n\nToute cette comparaison reste sur le GPU. L’addon n’a plus besoin d’interrompre son travail pour lire la depth map, ce qui supprime le principal ralentissement des premières versions.\nLe résultat combine animation du squelette, perspective, textures, éclairage, ombre et profondeur dans un shader qui, à la base, n’était prévu que pour modifier une image déjà rendue.",
+          "medias": []
+        },
+        {
+          "title": "Le réseau — Synchroniser les joueurs sans bloquer le jeu",
+          "description": "Les informations du joueur sont envoyées à un serveur sous forme de petits paquets binaires.\nIls contiennent principalement son identifiant, sa position, sa rotation, son animation et quelques états nécessaires au rendu.\n\nLe serveur redistribue ensuite ces paquets aux autres clients.\nLa connexion fonctionne dans un thread séparé avec des sockets non bloquantes et `TCP_NODELAY`, afin que le jeu ne se fige pas pendant un envoi ou une reconnexion.\n\nLes données réseau n’arrivent jamais à un rythme parfaitement régulier.\nPour éviter que les avatars se téléportent à chaque nouveau paquet, UniversalMP conserve une position intermédiaire et interpole progressivement le déplacement et la rotation. Les joueurs distants restent ainsi fluides même lorsque le réseau produit de petits décalages.\n\nLe système gère aussi les déconnexions : lorsqu’un joueur quitte le serveur, son avatar et ses données d’interpolation sont retirés proprement.",
+          "medias": []
+        },
+        {
+          "title": "Le partage d’écran — Voir la partie de l’autre joueur",
+          "description": "Comme les deux personnes jouent dans des mondes séparés, il reste utile de pouvoir voir ce qui se passe réellement dans la partie de l’autre.\nJ’ai donc intégré un système de partage d’écran directement dans UniversalMP.\n\nL’addon copie périodiquement le framebuffer du jeu vers une ressource lisible par le processeur. Pour éviter de bloquer le GPU, la copie est lancée sur une frame puis récupérée quelques frames plus tard, une fois qu’elle a eu le temps de se terminer.\n\nL’image est recadrée en 16:9, réduite puis envoyée au serveur à environ 15 images par seconde.\nLes flux des autres joueurs sont conservés dans un cache, transférés dans une texture GPU et affichés dans une fenêtre ReShade.\n\nJe peux choisir le joueur observé, régler l’opacité, déplacer la fenêtre et masquer son interface avec un double-clic. Le partage reste ainsi visible dans le jeu sans nécessiter Discord ou une autre fenêtre par-dessus.",
+          "medias": []
+        },
+        {
+          "title": "La limite du concept — Deux parties, pas un monde partagé",
+          "description": "UniversalMP donne une présence multijoueur, mais ce n’est pas un véritable mod multijoueur.\nChaque joueur reste dans sa propre sauvegarde et son propre monde.\n\nLe système ne synchronise pas :\n\n[enum=1]• les ennemis et leurs points de vie,[/enum]\n\n[enum=1]• les quêtes et les cinématiques,[/enum]\n\n[enum=1]• les objets ramassés ou déplacés,[/enum]\n\n[enum=1]• les changements permanents de la carte.[/enum]\n\nSi une personne ouvre une porte, elle ne s’ouvre pas automatiquement chez l’autre. Si un combat commence, chacun affronte ses propres ennemis.\n\nCette limite était volontaire.\nMon objectif initial était de pouvoir explorer un jeu solo avec un ami sans reconstruire toute sa logique interne. L’overlay, la depth map et le partage d’écran suffisaient pour créer cette sensation, tout en restant applicables à des jeux très différents.",
+          "medias": []
+        },
+        {
+          "title": "UniversalMP Core — Séparer le jeu du système multijoueur",
+          "description": "Les premières versions mélangeaient tout dans un même addon : lecture de mémoire, réseau, rendu, animations et partage d’écran.\nCela fonctionnait pour un jeu précis, mais chaque nouvelle adaptation demandait de copier puis de modifier une grande partie du projet.\n\nJ’ai donc séparé l’architecture en deux addons.\n\n`UniversalMP_Core` est entièrement générique. Il ne lit jamais directement la mémoire du jeu. Il s’occupe du serveur, du réseau, de l’interpolation, du partage d’écran et de la communication avec le shader. Il convertit le GLB en texture au chargement, l’envoie au GPU, puis met à jour les positions, rotations et animations utilisées par le moteur 3D dans ReShade.\n\nLe `GameBridge` est la seule partie spécifique au jeu. Il retrouve les données en mémoire, convertit les axes, les rotations, le FOV et les animations, puis les publie dans une structure commune.\n\nLes deux addons communiquent grâce à une zone de mémoire partagée attachée au device ReShade. Le bridge écrit les informations du joueur local et le Core les lit sans avoir besoin de connaître le jeu d’origine.\n\nCette séparation m’a permis d’adapter le système à d’autres jeux sans réécrire le cœur multijoueur ni le shader de rendu.",
+          "medias": []
+        },
+        {
+          "title": "Le SDK GameBridge — Créer plus facilement un nouvel adaptateur",
+          "description": "Pour éviter de recommencer les mêmes outils de reverse engineering à chaque adaptation, j’ai créé un SDK pour les GameBridge.\nLa partie spécifique à un jeu se concentre principalement dans une fonction qui collecte les données puis remplit la structure universelle attendue par le Core.\n\nLe SDK fournit notamment :\n\n[enum=1]• la lecture et l’écriture sécurisées dans la mémoire du processus,[/enum]\n\n[enum=1]• la résolution de chaînes de pointeurs,[/enum]\n\n[enum=1]• le scan de signatures AOB avec des jokers pour retrouver une adresse malgré certains changements,[/enum]\n\n[enum=1]• l’application et la restauration de patchs mémoire,[/enum]\n\n[enum=1]• des conversions de matrices, d’axes, d’angles et de champs de vision,[/enum]\n\n[enum=1]• des filtres pour lisser une position, une rotation ou une vitesse,[/enum]\n\n[enum=1]• une hystérésis permettant de stabiliser les transitions entre idle, marche et course.[/enum]\n\nJ’ai également ajouté des panneaux de debug pour vérifier les adresses, les données brutes et les valeurs envoyées au Core directement depuis l’overlay ReShade.",
+          "medias": []
+        },
+        {
+          "title": "État actuel — Le projet qui m’a amené vers de vrais mods",
+          "description": "UniversalMP a beaucoup évolué entre les premières DLL injectées et l’architecture Core/GameBridge.\nLe projet possède maintenant son propre rendu de modèles animés dans un shader ReShade, un serveur multijoueur, un partage d’écran et un SDK pour adapter plus facilement le système à un nouveau jeu.\n\nIl reste volontairement limité à une présence visuelle.\nPour synchroniser réellement les interactions, il faut aller plus loin : comprendre les acteurs du jeu, ses fonctions internes, ses événements et son moteur d’animation.\n\nAu départ, je voulais simplement voir mon ami courir à côté de moi dans Skyward Sword. Je me suis finalement retrouvé à injecter des DLL, lire la mémoire de plusieurs jeux, écrire un protocole réseau et faire tenir un moteur 3D animé dans un shader ReShade.\nUniversalMP reste un faux multijoueur, mais c’est ce projet qui m’a appris ce qu’il fallait pour passer ensuite à de vrais mods.",
+          "medias": []
+        }
+      ],
+      "medias": []
+    },
+    {
       "id": "projectorai",
       "title": "ProjectorAI",
       "date": "Juin 2026 – aujourd’hui",
       "duration": "2 semaines",
       "category": [
         "AI",
-        "3D",
         "Tools"
       ],
       "icon": "",
@@ -171,8 +239,7 @@ window.PROJECTS_DATA = {
       "date": "Juin 2026 – aujourd’hui",
       "duration": "2 semaines",
       "category": [
-        "AI",
-        "3D"
+        "AI"
       ],
       "icon": "",
       "media": "",
