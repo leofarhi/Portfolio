@@ -658,9 +658,13 @@ document.addEventListener('DOMContentLoaded', showFromHash);
     const isVid    = isVideo(thumb);
     const title    = p.title || p.id || 'Projet';
 
-    const mediaHTML = isVid
-      ? `<video src="${thumb}" muted playsinline preload="metadata" class="thumb-video"></video>`
-      : `<img src="${thumb}" alt="${escapeHtml(title)}" loading="lazy">`;
+    const mediaHTML = !thumb
+      ? `<div class="project-thumb-placeholder" role="img" aria-label="Visuel du projet en préparation">
+           <span>Visuel en préparation</span>
+         </div>`
+      : isVid
+        ? `<video src="${thumb}" muted playsinline preload="metadata" class="thumb-video"></video>`
+        : `<img src="${thumb}" alt="${escapeHtml(title)}" loading="lazy">`;
 
     return `
 <li class="project-item active"

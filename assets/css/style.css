@@ -805,6 +805,30 @@ main {
   transition: var(--transition-1);
 }
 
+.project-thumb-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 50% 0%, hsla(45, 100%, 72%, 0.12), transparent 58%),
+    linear-gradient(145deg, hsl(240, 2%, 18%), hsl(240, 2%, 12%));
+  box-shadow: inset 0 0 0 1px hsla(45, 100%, 72%, 0.12);
+}
+
+.project-thumb-placeholder span {
+  color: var(--orange-yellow-crayola);
+  font-size: 13px;
+  font-weight: var(--fw-500);
+  letter-spacing: 1.6px;
+  line-height: 1.5;
+  text-align: center;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
 .project-item > a:hover .project-img img,
 .project-item > a:hover .project-img video { transform: scale(1.1); }
 
@@ -1185,7 +1209,11 @@ main {
 
   .clients-item { min-width: calc(33.33% - 10px); } /* placeholder grid spacing for banners */
 
-  .project-img,
+  .project-img {
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+
   .blog-banner-box { height: auto; }
 
 }
