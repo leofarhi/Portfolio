@@ -833,7 +833,18 @@ main {
 
 .project-detail-header { margin-bottom: 24px; }
 
-.project-detail-header .article-title { margin-bottom: 12px; }
+.project-detail-header .article-title {
+  display: inline-block;
+  max-width: 100%;
+  margin-bottom: 12px;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.project-detail-header .article-title.project-title-wrap {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
 
 .project-meta {
   display: flex;

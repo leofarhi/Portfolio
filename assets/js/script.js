@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', showFromHash);
 
     const el = {
     page: document.querySelector('[data-page="project-detail"]'),
+    navbar: document.querySelector('.navbar'),
     title: document.getElementById('pj-title'),
     meta: document.getElementById('pj-meta'),
     dateWrap: document.getElementById('pj-date-wrap'),
@@ -88,6 +89,9 @@ document.addEventListener('DOMContentLoaded', showFromHash);
 
     // Texte
     el.title.textContent = '';
+    el.title.style.removeProperty('font-size');
+    el.title.style.removeProperty('max-width');
+    el.title.classList.remove('project-title-wrap');
     el.date.textContent = '';
     el.duration.textContent = '';
     el.dateWrap.hidden = true;
@@ -112,6 +116,61 @@ document.addEventListener('DOMContentLoaded', showFromHash);
     fresh.id = 'pj-thumbs';
     el.thumbs.replaceWith(fresh);
     el.thumbs = fresh;
+  }
+
+  const MIN_PROJECT_TITLE_SIZE = 16;
+  let titleFitFrame = null;
+
+  function fitProjectTitle() {
+    titleFitFrame = null;
+    if (!el.title || !el.title.textContent.trim()) return;
+
+    el.title.style.removeProperty('font-size');
+    el.title.style.removeProperty('max-width');
+    el.title.classList.remove('project-title-wrap');
+
+    const baseSize = Number.parseFloat(getComputedStyle(el.title).fontSize);
+    if (!Number.isFinite(baseSize)) return;
+
+    const titleRect = el.title.getBoundingClientRect();
+    const headerRect = el.title.parentElement.getBoundingClientRect();
+    const navbarRect = el.navbar?.getBoundingClientRect();
+    let rightLimit = headerRect.right;
+
+    if (
+      navbarRect
+      && navbarRect.top < titleRect.bottom
+      && navbarRect.bottom > titleRect.top
+      && navbarRect.left > titleRect.left
+    ) {
+      rightLimit = Math.min(rightLimit, navbarRect.left - 20);
+    }
+
+    const availableWidth = Math.max(0, rightLimit - titleRect.left);
+    const naturalWidth = el.title.scrollWidth;
+    if (!availableWidth || naturalWidth <= availableWidth) return;
+
+    const fittedSize = Math.max(
+      MIN_PROJECT_TITLE_SIZE,
+      Math.floor((baseSize * availableWidth / naturalWidth) * 10) / 10
+    );
+    el.title.style.fontSize = `${fittedSize}px`;
+
+    // Cas extrême : si la taille minimale ne suffit plus, le titre passe sur deux lignes.
+    if (el.title.scrollWidth > availableWidth + 1) {
+      el.title.style.maxWidth = `${availableWidth}px`;
+      el.title.classList.add('project-title-wrap');
+    }
+  }
+
+  function scheduleProjectTitleFit() {
+    if (titleFitFrame !== null) cancelAnimationFrame(titleFitFrame);
+    titleFitFrame = requestAnimationFrame(fitProjectTitle);
+  }
+
+  window.addEventListener('resize', scheduleProjectTitleFit);
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(scheduleProjectTitleFit);
   }
 
 
@@ -370,6 +429,7 @@ document.addEventListener('DOMContentLoaded', showFromHash);
     el.durationWrap.hidden = !projectDuration;
     el.meta.hidden = !projectDate && !projectDuration;
     el.desc.innerHTML = parseDescription(project.description || '');
+    fitProjectTitle();
 
     const heroSrc = project.media || project.image || null;
 
