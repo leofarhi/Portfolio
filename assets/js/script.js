@@ -64,6 +64,11 @@ document.addEventListener('DOMContentLoaded', showFromHash);
     const el = {
     page: document.querySelector('[data-page="project-detail"]'),
     title: document.getElementById('pj-title'),
+    meta: document.getElementById('pj-meta'),
+    dateWrap: document.getElementById('pj-date-wrap'),
+    date: document.getElementById('pj-date'),
+    durationWrap: document.getElementById('pj-duration-wrap'),
+    duration: document.getElementById('pj-duration'),
     desc: document.getElementById('pj-description'),
     heroWrap: document.getElementById('pj-hero'),
     heroImg: document.getElementById('pj-hero-img'),
@@ -83,6 +88,11 @@ document.addEventListener('DOMContentLoaded', showFromHash);
 
     // Texte
     el.title.textContent = '';
+    el.date.textContent = '';
+    el.duration.textContent = '';
+    el.dateWrap.hidden = true;
+    el.durationWrap.hidden = true;
+    el.meta.hidden = true;
     el.desc.innerHTML = '';
 
     // Hero
@@ -352,6 +362,13 @@ document.addEventListener('DOMContentLoaded', showFromHash);
     if (!project) return;
 
     el.title.textContent = project.title || '';
+    const projectDate = String(project.date || '').trim();
+    const projectDuration = String(project.duration || '').trim();
+    el.date.textContent = projectDate;
+    el.duration.textContent = projectDuration;
+    el.dateWrap.hidden = !projectDate;
+    el.durationWrap.hidden = !projectDuration;
+    el.meta.hidden = !projectDate && !projectDuration;
     el.desc.innerHTML = parseDescription(project.description || '');
 
     const heroSrc = project.media || project.image || null;
@@ -448,13 +465,15 @@ document.addEventListener('DOMContentLoaded', showFromHash);
         project = {
           id,
           title: titleEl ? titleEl.textContent.trim() : id,
+          date: '',
+          duration: '',
           description: '',
           media: src,
           sections: [],
           medias: src ? [src] : []
         };
       } else {
-        project = { id, title: id, description: '', sections: [], medias: [] };
+        project = { id, title: id, date: '', duration: '', description: '', sections: [], medias: [] };
       }
     }
 

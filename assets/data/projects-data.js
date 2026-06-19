@@ -3,6 +3,8 @@ window.PROJECTS_DATA = {
     {
       "id": "regain-the-world",
       "title": "Regain The World",
+      "date": "2019 – 2020",
+      "duration": "6 mois",
       "category": [
         "Game Development",
         "Epita"
@@ -207,6 +209,8 @@ window.PROJECTS_DATA = {
     {
       "id": "particule-engine",
       "title": "Particule Engine",
+      "date": "Juillet 2020 – aujourd’hui",
+      "duration": "5 ans et 11 mois",
       "category": [
         "Game Development",
         "Tools"
@@ -284,6 +288,8 @@ window.PROJECTS_DATA = {
     {
       "id": "underworld",
       "title": "Underworld",
+      "date": "2022 – 2023",
+      "duration": "6 mois",
       "category": [
         "AI",
         "Epita"
@@ -362,6 +368,8 @@ window.PROJECTS_DATA = {
     {
       "id": "thermorph",
       "title": "Thermorph",
+      "date": "Novembre 2023",
+      "duration": "1 mois",
       "category": [
         "Game Development"
       ],
@@ -398,6 +406,8 @@ window.PROJECTS_DATA = {
     {
       "id": "frontiers-of-legends",
       "title": "Frontiers Of Legends",
+      "date": "Décembre 2023 – aujourd’hui",
+      "duration": "2 ans et 6 mois",
       "category": [
         "Game Development"
       ],
@@ -450,6 +460,8 @@ window.PROJECTS_DATA = {
     {
       "id": "3d-engines",
       "title": "3D Engines",
+      "date": "Juillet 2023 – aujourd’hui",
+      "duration": "2 ans et 11 mois",
       "category": [
         "Game Development"
       ],
@@ -539,6 +551,8 @@ window.PROJECTS_DATA = {
     {
       "id": "arboris",
       "title": "Arboris",
+      "date": "Août 2025",
+      "duration": "1 mois",
       "category": [
         "Casio",
         "Game development"
@@ -582,6 +596,8 @@ window.PROJECTS_DATA = {
     {
       "id": "zelda-totn",
       "title": "Zelda TOTN",
+      "date": "Mai 2023 – aujourd’hui",
+      "duration": "3 ans et 1 mois",
       "category": [
         "Casio",
         "Game development"
@@ -656,6 +672,8 @@ window.PROJECTS_DATA = {
     {
       "id": "mario3d",
       "title": "Mario 3D",
+      "date": "Avril 2023",
+      "duration": "10 jours",
       "category": [
         "Casio",
         "Game development"
@@ -681,6 +699,8 @@ window.PROJECTS_DATA = {
     {
       "id": "rpg-maker",
       "title": "RPG Maker",
+      "date": "2020 – 2021",
+      "duration": "Environ 1 an",
       "category": [
         "Casio",
         "Game development"
@@ -734,6 +754,8 @@ window.PROJECTS_DATA = {
     {
       "id": "temple-warriors",
       "title": "Temple Warriors",
+      "date": "Avril 2025",
+      "duration": "2 semaines",
       "category": [
         "Casio",
         "Game development"

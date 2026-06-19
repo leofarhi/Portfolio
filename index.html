@@ -415,8 +415,18 @@
       </article>
 
       <article class="project-article" data-page="project-detail">
-        <header>
+        <header class="project-detail-header">
           <h2 class="h2 article-title" id="pj-title"></h2>
+          <div class="project-meta" id="pj-meta" hidden>
+            <span class="project-meta-item" id="pj-date-wrap" hidden>
+              <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>
+              <span id="pj-date"></span>
+            </span>
+            <span class="project-meta-item" id="pj-duration-wrap" hidden>
+              <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+              <span id="pj-duration"></span>
+            </span>
+          </div>
         </header>
 
         <section class="about-text">

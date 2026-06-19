@@ -102,6 +102,8 @@ def default_project() -> dict:
     return {
         "id": "nouveau-projet",
         "title": "Nouveau Projet",
+        "date": "",
+        "duration": "",
         "category": ["autre"],
         "icon": "./assets/images/placeholder.png",
         "description": "",
@@ -704,12 +706,14 @@ class ProjectsEditor(ctk.CTk):
         self.center = ctk.CTkFrame(self)
         self.center.grid(row=1, column=1, sticky="nsew")
         self.center.columnconfigure(0, weight=1)
-        for r in (0, 1, 2, 3, 4, 5, 6):
+        for r in (0, 1, 2, 3, 4, 5, 6, 7, 8):
             self.center.rowconfigure(r, weight=0)
-        self.center.rowconfigure(6, weight=1)
+        self.center.rowconfigure(8, weight=1)
 
         self.p_id = LabeledEntry(self.center, "ID")
         self.p_title = LabeledEntry(self.center, "Titre")
+        self.p_date = LabeledEntry(self.center, "Date")
+        self.p_duration = LabeledEntry(self.center, "Durée")
         self.p_categories = ListOfStrings(self.center, "Catégories (tags)", on_change=self.mark_dirty)
         self.p_icon = PathPicker(self.center, "Icône (image)")
         self.p_media = PathPicker(self.center, "Média principal")
@@ -718,18 +722,20 @@ class ProjectsEditor(ctk.CTk):
 
         self.p_id.grid(row=0, column=0, sticky="ew")
         self.p_title.grid(row=1, column=0, sticky="ew")
-        self.p_categories.grid(row=2, column=0, sticky="ew")
-        self.p_icon.grid(row=3, column=0, sticky="ew")
-        self.p_media.grid(row=4, column=0, sticky="ew")
-        self.p_desc.grid(row=5, column=0, sticky="nsew")
-        self.p_medias.grid(row=6, column=0, sticky="nsew")
+        self.p_date.grid(row=2, column=0, sticky="ew")
+        self.p_duration.grid(row=3, column=0, sticky="ew")
+        self.p_categories.grid(row=4, column=0, sticky="ew")
+        self.p_icon.grid(row=5, column=0, sticky="ew")
+        self.p_media.grid(row=6, column=0, sticky="ew")
+        self.p_desc.grid(row=7, column=0, sticky="nsew")
+        self.p_medias.grid(row=8, column=0, sticky="nsew")
 
         # Right: sections
         self.sections_panel = SectionsPanel(self, on_change=self.mark_dirty)
         self.sections_panel.grid(row=1, column=2, sticky="nsew")
 
         for widget in [
-            self.p_id.entry, self.p_title.entry,
+            self.p_id.entry, self.p_title.entry, self.p_date.entry, self.p_duration.entry,
             self.p_icon.entry, self.p_media.entry, self.p_desc.text,
         ]:
             widget.bind("<KeyRelease>", lambda e: self._live_autosave_project())
@@ -839,6 +845,8 @@ class ProjectsEditor(ctk.CTk):
         proj = self.data["projects"][idx]
         self.p_id.set(proj.get("id", ""))
         self.p_title.set(proj.get("title", ""))
+        self.p_date.set(proj.get("date", ""))
+        self.p_duration.set(proj.get("duration", ""))
 
         cats = proj.get("category", [])
         if isinstance(cats, str):
@@ -855,6 +863,8 @@ class ProjectsEditor(ctk.CTk):
     def clear_project_editor(self):
         self.p_id.set("")
         self.p_title.set("")
+        self.p_date.set("")
+        self.p_duration.set("")
         self.p_categories.set_list([])
         self.p_icon.set("")
         self.p_media.set("")
@@ -881,6 +891,8 @@ class ProjectsEditor(ctk.CTk):
         try:
             proj["id"] = self.p_id.get()
             proj["title"] = self.p_title.get()
+            proj["date"] = self.p_date.get()
+            proj["duration"] = self.p_duration.get()
             cats = self.p_categories.get_list()
             proj["category"] = cats
             proj["icon"] = _validate_path(self.p_icon.get()) if self.p_icon.get() else ""
