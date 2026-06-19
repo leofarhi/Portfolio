@@ -1,6 +1,237 @@
 window.PROJECTS_DATA = {
   "projects": [
     {
+      "id": "moderaworld",
+      "title": "Moderaworld",
+      "date": "2023 – aujourd’hui",
+      "duration": "3 ans",
+      "category": [
+        "Animation",
+        "AI",
+        "3D"
+      ],
+      "icon": "",
+      "media": "",
+      "description": "Moderaworld est un projet d’anime sur lequel je travaille depuis 2023.\nJe me suis fixé un objectif assez ambitieux : réussir à produire un anime proche du style japonais, seul, sans budget, en utilisant la 3D et en créant moi-même les outils qui me manquent.\n\nJe ne voulais pas simplement mettre un filtre cartoon sur un modèle 3D. Mon objectif est que le résultat puisse réellement être confondu avec de la 2D : des couleurs propres, des formes contrôlées, des contours qui restent cohérents et surtout un rendu capable de changer selon l’angle de la caméra, comme dans un dessin fait à la main.",
+      "sections": [
+        {
+          "title": "Les personnages — Partir de VRoid, puis dépasser ses limites",
+          "description": "Pour créer les personnages, j’ai commencé avec VRoid Studio.\nL’outil permet de fabriquer rapidement des modèles dans un style proche de l’animation japonaise, ce qui était parfait pour poser les premières bases sans passer des mois sur chaque personnage.\n\nMais VRoid n’était pas conçu pour ma façon de travailler. J’avais besoin de comparer précisément les silhouettes, de garder les mêmes angles de caméra entre plusieurs versions et de superposer des références pendant la création.\n\nComme VRoid est développé avec Unity, j’ai utilisé MelonLoader pour lui ajouter mes propres outils, comme un système d’overlay pour afficher une image de référence au-dessus du modèle, \nun verrouillage de la caméra sur des angles précis, etc...",
+          "medias": []
+        },
+        {
+          "title": "Premiers essais — Projeter une image 2D dans Blender",
+          "description": "Mon premier vrai problème a été le rendu des personnages.\nUn modèle VRoid reste immédiatement reconnaissable comme un modèle 3D, même avec des textures propres et un shader toon. J’ai donc créé un addon Blender capable de placer plusieurs projecteurs autour du personnage.\n\nChaque projecteur photographiait le modèle depuis un angle différent. Mon addon pilotait ensuite ComfyUI par son API. ComfyUI est un outil de génération d’images basé sur des workflows de nodes, qui permet notamment d’utiliser Stable Diffusion et ControlNet. Je n’avais donc pas besoin de quitter Blender : un bouton lançait le workflow, envoyait les captures et récupérait automatiquement l’image générée.\n\nL’IA produisait une version plus proche d’une illustration 2D, puis mon addon la reprojetait sur le modèle pour peindre sa texture. Je pouvais ainsi générer une vue du visage, des vêtements ou d’une partie du corps, puis transférer le résultat dans les textures du modèle.\n\nMais l’addon devenait de plus en plus difficile à utiliser. Les projecteurs dépendaient trop de Blender, leur configuration manquait de précision et le passage entre la génération, la projection et la retouche demandait trop de manipulations.",
+          "medias": []
+        },
+        {
+          "title": "EbSynth — Une bonne idée, mais pas assez stable",
+          "description": "J’ai aussi testé EbSynth.\nLe principe est très intéressant : on redessine une image clé d’une vidéo, puis le logiciel propage ce style sur les images suivantes. Sur le papier, c’était une solution idéale pour transformer une animation 3D en animation 2D sans avoir à redessiner chaque frame.\n\nDans mes essais, le résultat manquait malheureusement de stabilité.\nDès que le personnage tournait, qu’une partie du visage disparaissait ou qu’un élément passait devant un autre, le style se déformait ou glissait. Il fallait multiplier les images clés et corriger beaucoup de frames à la main.\n\nJe n’ai pas complètement abandonné cette piste, mais elle ne pouvait pas devenir la base du pipeline. Pour un anime complet, les petites erreurs s’accumulent beaucoup trop vite.",
+          "medias": []
+        },
+        {
+          "title": "Pourquoi Unity plutôt que Blender ?",
+          "description": "Pour le rendu final de Moderaworld, j’ai choisi Unity plutôt que Blender.\nBlender est très puissant, mais je me sens plus libre dans un moteur temps réel. Je peux programmer exactement le comportement de la caméra, modifier les shaders, construire mes propres interfaces, tester une scène immédiatement et automatiser les parties répétitives du pipeline.\n\nUnity me permet aussi de traiter l’anime comme un vrai environnement interactif avant de lancer le rendu : déplacer les personnages, changer une pose, ajuster la lumière ou tester un cadrage sans relancer une longue phase de calcul.\n\nCe choix ne simplifie pas tout. Il m’oblige parfois à recréer des outils déjà présents dans les logiciels d’animation classiques. Mais c’est justement ce contrôle qui m’intéresse : je préfère perdre du temps une fois à construire le bon outil plutôt que répéter la même manipulation sur chaque plan.",
+          "medias": []
+        },
+        {
+          "title": "MyMocap — Capturer mes propres animations",
+          "description": "Pour animer les personnages, j’avais aussi besoin d’un système de motion capture.\nLes solutions existantes étaient souvent payantes, mal adaptées à mon matériel ou trop limitées sur un point important pour moi : le suivi des mains et des doigts.\n\nComme je possède plusieurs Kinect V1 et V2, j’ai commencé [projet=mymocap]MyMocap[/projet]. L’idée est de placer plusieurs caméras autour de l’acteur et de combiner la profondeur des Kinect avec les détections de bibliothèques Python comme MediaPipe.\n\nChaque caméra observe le corps, le visage et les 21 points de chaque main depuis un angle différent. Lorsqu’une main est cachée pour une caméra, une autre peut donc continuer à la voir.\n\nLe prototype actuel aligne déjà une Kinect V2 et une caméra secondaire dans le même espace 3D. La prochaine étape est de fusionner leurs mesures articulation par articulation, puis d’envoyer le mouvement final vers les personnages de Moderaworld.",
+          "medias": []
+        },
+        {
+          "title": "ProjectorAI — Construire l’outil que Blender ne me donnait pas",
+          "description": "À force de pousser mon addon Blender, j’ai fini par comprendre que le problème venait surtout de l’outil lui-même.\nJ’avais besoin d’un logiciel consacré uniquement au modèle, aux projecteurs, aux passes de rendu, à ComfyUI et à la peinture de texture. J’ai donc commencé [projet=projectorai]ProjectorAI[/projet].\n\nDans ce logiciel, chaque projecteur est indépendant. Je peux choisir sa position, son angle, son champ de vision, sa résolution, les images envoyées à l’IA et son propre workflow ComfyUI.\nCela permet par exemple de traiter le visage avec des réglages très précis, les vêtements avec un autre workflow, puis les cheveux depuis plusieurs directions.\n\nLe résultat généré est ensuite reprojeté dans les textures du modèle. Le système fonctionne déjà bien pour créer une base 2D cohérente et corriger localement certaines parties sans repeindre tout le personnage.",
+          "medias": []
+        },
+        {
+          "title": "Neural Rendering — Faire varier le rendu selon la caméra",
+          "description": "Même avec une très bonne texture, quelque chose continue de trahir la 3D.\nDans un dessin animé, un visage n’a pas forcément la même forme ni les mêmes couleurs selon l’angle. Un œil peut être agrandi de profil, une mèche peut changer de silhouette, une ombre peut disparaître et une ligne de contour peut être déplacée volontairement.\n\nUn modèle 3D classique ne fonctionne pas comme ça. Un point de sa surface possède une texture fixe. On peut ajouter un outline ou mieux contrôler les ombres, mais la couleur reste la même quelle que soit la caméra.\n\nJ’ai d’abord étudié le Gaussian Splatting, qui remplace les triangles par un grand nombre de points orientés dans l’espace. Cette technique permet de faire apparaître certains détails uniquement depuis certains angles. Le problème, c’est que les fichiers deviennent vite lourds et que ces points ne sont pas naturellement attachés au squelette du personnage, ce qui complique énormément l’animation.\n\nJ’ai donc créé [projet=neural-rendering]Neural Rendering[/projet].\nLa première version générait une UV map et une normal map du modèle, puis un réseau de neurones colorisait toute l’image en post-processing. Le principe fonctionnait, mais il fallait exécuter le même gros réseau pour chaque pixel affiché. Le rendu était donc beaucoup trop lent.\n\nDans la seconde version, chaque texel de la texture contient son propre mini-modèle neuronal. Le shader exécute seulement le mini-modèle correspondant au pixel affiché, qui choisit sa couleur selon l’angle de la caméra. Le rendu devient fluide et chaque texel peut apprendre indépendamment des autres.\n\nLe principal inconvénient est que les textures neuronales sont environ douze fois plus lourdes qu’une texture classique. Mais pour Moderaworld, c’est beaucoup plus intéressant qu’un gros réseau lent à exécuter sur chaque image.",
+          "medias": []
+        },
+        {
+          "title": "État actuel — L’histoire et la technique avancent ensemble",
+          "description": "Moderaworld est encore en développement.\nJe travaille actuellement sur l’histoire, les personnages et plusieurs versions de la trame, mais je préfère ne rien détailler ici pour éviter de dévoiler le contenu de l’anime. En parallèle, je continue d’améliorer le pipeline visuel pour qu’il puisse servir à une production complète, et pas seulement à quelques images de démonstration.\n\nLe plus difficile, c’est que chaque avancée apporte son nouveau problème : créer les personnages demande de meilleurs outils, les texturer demande ProjectorAI, les afficher correctement demande Neural Rendering, et tout cela doit ensuite fonctionner dans une vraie scène animée.\n\nC’est probablement le projet le plus ambitieux que j’ai commencé. Il rassemble presque tout ce que j’aime faire : écrire une histoire, créer un univers, travailler sur la 3D et développer mes propres moteurs, shaders et outils d’intelligence artificielle.",
+          "medias": []
+        }
+      ],
+      "medias": []
+    },
+    {
+      "id": "mymocap",
+      "title": "MyMocap",
+      "date": "6 – 17 mars 2026",
+      "duration": "11 jours",
+      "category": [
+        "AI",
+        "Tools"
+      ],
+      "icon": "",
+      "media": "",
+      "description": "MyMocap est un système de motion capture que j’ai commencé pour animer les personnages de [projet=moderaworld]Moderaworld[/projet].\nJe voulais pouvoir enregistrer le corps, le visage, le regard et surtout les mains sans dépendre d’un abonnement ou d’un logiciel fermé.\n\nLa capture des doigts était l’une de mes priorités.\nBeaucoup de solutions accessibles suivent correctement le corps, mais perdent rapidement les mains dès qu’elles tournent, passent devant le visage ou sortent légèrement du cadre. Pour de l’animation, c’est un vrai problème : les gestes des doigts donnent énormément de vie au personnage.\n\nComme je possède plusieurs Kinect V1 et V2, j’ai voulu exploiter leur profondeur et les combiner avec les détections de MediaPipe. L’objectif final est d’utiliser plusieurs points de vue autour de l’acteur : si une caméra perd une articulation, une autre peut continuer à la suivre.\n\nLe prototype actuel utilise une Kinect V2 comme caméra principale et une caméra classique comme vue secondaire. Les deux produisent un squelette complet, sont recalées dans le même espace 3D et peuvent être comparées dans une visionneuse OpenGL.",
+      "sections": [
+        {
+          "title": "Pourquoi créer mon propre système ?",
+          "description": "Au départ, je cherchais simplement un logiciel de motion capture utilisable pour Moderaworld.\nMais les solutions que j’ai testées avaient presque toujours l’un de ces problèmes : abonnement payant, matériel propriétaire, peu de contrôle sur les données ou suivi des mains trop limité.\n\nJe ne cherchais pas seulement à récupérer la position des bras et des jambes.\nPour animer correctement un personnage, je voulais aussi suivre les doigts, le visage et si possible le regard. Je voulais également pouvoir ajouter plusieurs caméras sans être enfermé dans le matériel prévu par un seul logiciel.\n\nJ’ai donc préféré construire mon propre pipeline en Python.\nCela me permet de choisir la source de chaque information : la profondeur peut venir d’une Kinect, le squelette de MediaPipe et une articulation mal visible peut être récupérée depuis une autre caméra.",
+          "medias": []
+        },
+        {
+          "title": "Le tracking — Corps, visage, mains et regard",
+          "description": "Chaque flux vidéo est analysé avec MediaPipe Holistic.\nLe programme récupère les points du corps, les 478 points du visage et les 21 articulations de chaque main. Le mode `refine_face_landmarks` ajoute aussi les iris, ce qui me permet d’estimer la direction du regard.\n\nLes différentes parties ne sont pas traitées comme des squelettes complètement séparés.\nLe visage reste attaché à la tête, et chaque main reste ancrée sur le poignet détecté dans la pose générale. Leur profondeur est également recalée sur celle du corps pour éviter qu’une main apparaisse soudainement plusieurs mètres devant le personnage.\n\nLe résultat est regroupé dans une structure de squelette commune. Peu importe que les données viennent d’une Kinect ou d’une caméra classique : le reste du programme peut ensuite les manipuler de la même manière.",
+          "medias": []
+        },
+        {
+          "title": "La Kinect — Ajouter une vraie profondeur",
+          "description": "Une caméra classique peut estimer une pose, mais sa profondeur reste relative.\nLa Kinect V2 apporte une information supplémentaire : sa caméra infrarouge mesure la distance réelle entre le capteur et la scène.\n\nMon module Kinect récupère l’image couleur, l’image infrarouge et la correspondance entre les pixels et l’espace caméra 3D. Pour éviter qu’un point de profondeur incorrect sur un mur ou un objet perturbe tout le squelette, je mesure principalement la distance du torse à partir des épaules et des hanches, puis j’utilise leur médiane.\n\nLes coordonnées normalisées de MediaPipe sont ensuite converties en mètres grâce à cette distance et au champ de vision de la Kinect.\nSi la profondeur matérielle est désactivée ou indisponible, le programme peut utiliser une profondeur de référence afin de continuer à fonctionner avec une webcam classique.\n\nCette séparation est importante pour la suite : je peux utiliser une Kinect lorsqu’une vraie mesure métrique est nécessaire, tout en gardant la possibilité d’ajouter des caméras beaucoup plus simples autour de l’acteur.",
+          "medias": []
+        },
+        {
+          "title": "Plusieurs caméras — Voir les gestes sous plusieurs angles",
+          "description": "Une seule caméra ne peut pas tout voir.\nLorsqu’un bras passe devant le corps ou qu’une main tourne de profil, certains points deviennent invisibles. Mon objectif est donc de placer plusieurs Kinect et caméras autour de l’acteur, puis de réunir leurs détections.\n\nDans le prototype actuel, une Kinect V2 joue le rôle de caméra maîtresse et une webcam sert de caméra secondaire.\nChaque appareil exécute son propre tracking et produit son propre squelette. L’architecture utilise une interface commune pour que d’autres sources, notamment mes Kinect V1 et V2 supplémentaires, puissent être ajoutées par la suite.\n\nLa version actuelle ne fusionne pas encore automatiquement les deux squelettes articulation par articulation. Elle les place d’abord dans un repère commun et les affiche ensemble. C’est la base nécessaire avant de pouvoir comparer leurs scores et choisir, pour chaque articulation, la mesure la plus fiable.",
+          "medias": []
+        },
+        {
+          "title": "La calibration — Mettre toutes les caméras dans le même espace",
+          "description": "Pour combiner plusieurs caméras, il faut connaître précisément leur position et leur rotation les unes par rapport aux autres.\nDeux caméras peuvent détecter la même main, mais leurs coordonnées ne représentent pas le même espace.\n\nJ’ai mis en place une calibration avec une mire ChArUco.\nLa mire mélange un damier et des marqueurs ArUco. Lorsqu’elle est visible par les deux caméras, OpenCV calcule sa pose dans chaque image. Le programme peut alors construire une matrice 4 × 4 qui transforme toutes les coordonnées de la caméra secondaire vers le repère de la Kinect maîtresse.\n\nSi la mire n’est pas disponible, j’ai ajouté une méthode de secours basée sur le squelette.\nLe programme utilise les épaules et les hanches détectées par les deux caméras, puis applique l’algorithme de Kabsch pour estimer la rotation et la translation qui alignent les deux torses.\n\nUne fois la matrice calculée, elle est appliquée au corps, au visage et aux deux mains de la caméra secondaire.",
+          "medias": []
+        },
+        {
+          "title": "Stabiliser les mains et reconstruire les points perdus",
+          "description": "Les mains sont rapides, petites et souvent partiellement cachées. Leurs points ont donc tendance à trembler beaucoup plus que ceux du corps.\nUn lissage trop fort supprime ces tremblements, mais ajoute un retard visible. Un lissage trop faible garde le mouvement réactif, mais rend l’animation instable.\n\nJ’ai créé un filtre adaptatif qui change automatiquement son intensité.\nLorsqu’un point bouge peu, le programme applique un lissage important pour réduire le bruit. Lorsqu’il se déplace rapidement, le filtre devient plus réactif afin de suivre le geste sans trop de retard.\n\nLe système conserve aussi la forme locale du visage et des mains par rapport à leur point d’attache.\nSi MediaPipe perd temporairement une main, ses points peuvent rester reconstruits autour du poignet au lieu de disparaître immédiatement. Dès que la détection revient, le filtre se réinitialise sur les nouvelles valeurs pour éviter un saut trop violent.\n\nChaque partie possède enfin un score tenant compte de sa visibilité, de son tremblement et du nombre de points proches des bords de l’image. Ces scores serviront plus tard à décider quelle caméra est la plus fiable pour chaque articulation.",
+          "medias": []
+        },
+        {
+          "title": "La visionneuse 3D — Vérifier l’alignement en temps réel",
+          "description": "Pour vérifier le tracking, j’ai créé une visionneuse 3D avec Pygame et OpenGL.\nElle affiche le corps, le visage et les mains avec des couleurs différentes. Les points perdus deviennent gris, ce qui permet de voir immédiatement quand MediaPipe n’arrive plus à suivre une partie.\n\nLe squelette de la Kinect et celui de la caméra secondaire sont affichés simultanément avec deux palettes distinctes.\nAprès la calibration, ils doivent se superposer dans l’espace. Je peux faire tourner la vue et zoomer pour repérer une erreur de profondeur, une mauvaise orientation ou un décalage entre les caméras.\n\nLa visionneuse s’exécute dans un processus séparé et reçoit uniquement les dernières données disponibles dans une file. Le tracking vidéo n’est donc pas ralenti par le rendu OpenGL.",
+          "medias": []
+        },
+        {
+          "title": "État actuel — Vers une capture réellement multi-Kinect",
+          "description": "En onze jours, j’ai construit les premières briques du système : acquisition Kinect, tracking MediaPipe du corps, du visage et des mains, profondeur métrique, calibration multi-caméras, lissage adaptatif et visualisation 3D.\n\nLe prototype aligne déjà deux sources dans le même espace, mais la fusion finale reste à faire.\nLa prochaine étape est de comparer les scores articulation par articulation, combiner les mesures les plus fiables et utiliser la profondeur des différentes Kinect pour mieux gérer les occultations.\n\nJe veux ensuite enregistrer les mouvements dans un format réutilisable, puis les appliquer directement aux personnages dans Unity.\nL’objectif reste très concret : pouvoir jouer une scène devant plusieurs caméras, récupérer une animation complète — doigts compris — et l’utiliser dans Moderaworld sans passer par un service payant.",
+          "medias": []
+        }
+      ],
+      "medias": []
+    },
+    {
+      "id": "projectorai",
+      "title": "ProjectorAI",
+      "date": "Juin 2026 – aujourd’hui",
+      "duration": "2 semaines",
+      "category": [
+        "AI",
+        "3D",
+        "Tools"
+      ],
+      "icon": "",
+      "media": "",
+      "description": "ProjectorAI est un logiciel de texturing 3D assisté par intelligence artificielle que je développe en C++ avec OpenGL et ImGui.\nSon objectif est de prendre un modèle GLB, de le photographier depuis plusieurs projecteurs virtuels, d’envoyer ces vues à ComfyUI, puis de reprojeter les images générées dans les textures du modèle.\n\nJ’ai commencé ce projet pour [projet=moderaworld]Moderaworld[/projet]. Mon premier système existait sous la forme d’un addon Blender, mais il devenait trop difficile à contrôler et mélangeait des outils qui n’avaient pas été pensés pour travailler ensemble.\nJ’ai donc préféré repartir de zéro et créer un logiciel entièrement consacré à ce pipeline.\n\nProjectorAI n’est pas seulement un viewer qui envoie une capture à une IA. Il gère le modèle, ses textures, sa pose, les projecteurs, plusieurs passes de rendu, les workflows ComfyUI, la peinture projective et l’export final. L’idée est de garder tout le travail dans une seule application, sans devoir passer constamment de Blender à ComfyUI puis à un éditeur d’images.",
+      "sections": [
+        {
+          "title": "L’origine — Remplacer mon addon Blender",
+          "description": "Le premier prototype de projection fonctionnait directement dans Blender.\nJe plaçais des caméras autour du modèle, je générais une image avec ComfyUI, puis je la projetais sur la surface pour peindre la texture.\n\nLe problème n’était pas vraiment le résultat, mais tout ce qu’il fallait faire autour.\nChaque angle demandait de déplacer la caméra, préparer les bonnes passes, lancer le workflow, récupérer l’image, régler la projection et vérifier les coutures dans les UV. Dès que je voulais utiliser des paramètres différents pour le visage, les cheveux ou les vêtements, l’organisation devenait vite pénible.\n\nProjectorAI est né de cette limite.\nAu lieu d’adapter mon idée au fonctionnement de Blender, j’ai construit l’interface autour de mon besoin : le modèle au centre, des projecteurs indépendants autour de lui et un pipeline complet allant de la capture jusqu’à l’export.",
+          "medias": []
+        },
+        {
+          "title": "Le modèle — Un éditeur GLB intégré",
+          "description": "ProjectorAI charge directement les modèles GLB et conserve leur structure d’origine : géométrie, matériaux, textures, armature et morph targets.\nLe rendu principal utilise OpenGL avec un shader Unlit/Cutout, ce qui permet d’afficher correctement les cheveux, les vêtements fins et les surfaces utilisant de la transparence.\n\nJ’ai ensuite ajouté un véritable éditeur de modèle.\nIl permet de sélectionner les différentes parties du mesh, masquer ou supprimer une primitive, changer les matériaux, modifier les textures et travailler sur plusieurs calques.\n\nLe logiciel gère aussi la pose :\n\n[enum=1]• affichage et sélection des os du squelette,[/enum]\n\n[enum=1]• rotation ou déplacement avec des gizmos,[/enum]\n\n[enum=1]• modification des morph targets,[/enum]\n\n[enum=1]• création de presets de pose réutilisables.[/enum]\n\nC’était important pour moi de pouvoir préparer exactement l’angle et l’expression du personnage avant la génération, sans devoir retourner dans un autre logiciel.",
+          "medias": []
+        },
+        {
+          "title": "Les projecteurs — Photographier le modèle sous tous les angles",
+          "description": "Le cœur du logiciel repose sur des projecteurs virtuels placés autour du modèle.\nUn projecteur possède sa propre position, sa rotation, son champ de vision et sa résolution. Il peut être créé depuis la caméra libre, déplacé indépendamment, puis utilisé comme une caméra fixe pour capturer le modèle.\n\nChaque capture produit plusieurs rendus :\n\n[enum=1]• Color Unlit, pour récupérer la couleur brute du modèle,[/enum]\n\n[enum=1]• Depth Map, pour connaître la distance de chaque pixel,[/enum]\n\n[enum=1]• Canny et Lineart, pour conserver les formes et les détails,[/enum]\n\n[enum=1]• Outline, pour isoler la silhouette.[/enum]\n\nLa profondeur est recalculée par rapport à la partie visible du modèle, ce qui évite d’obtenir une image presque noire lorsque la caméra est éloignée.\nLes projecteurs sont visibles dans la scène avec leur frustum et peuvent afficher directement leur capture sur un rectangle, comme de petits écrans placés autour du personnage.\n\nLe fait qu’ils soient indépendants change beaucoup de choses : je peux préparer une configuration pour le visage, une autre pour le dos, puis revenir exactement sur les mêmes cadrages plus tard.",
+          "medias": []
+        },
+        {
+          "title": "ComfyUI — Un workflow différent pour chaque projecteur",
+          "description": "ComfyUI est un outil nodal de génération d’images qui permet de construire des pipelines avec Stable Diffusion, ControlNet, des LoRA et différents modèles de traitement.\nDans ProjectorAI, je ne passe pas manuellement d’un logiciel à l’autre : l’application communique directement avec le serveur ComfyUI grâce à son API.\n\nChaque projecteur possède son propre workflow au format API JSON. Je peux charger un workflow existant, le copier vers un autre projecteur ou l’éditer directement dans ProjectorAI avec un graph inspiré de l’interface de ComfyUI.\n\nLe logiciel reconnaît les nodes que j’utilise le plus souvent : chargement de modèle, prompts CLIP, ControlNet, Canny, KSampler, VAE, LoRA et sauvegarde d’image. Les nodes inconnus ne sont pas supprimés : ils restent dans le fichier pour que le workflow puisse continuer à fonctionner même si mon éditeur ne sait pas encore les modifier.\n\nConcrètement, je clique sur le bouton « Génération » dans ProjectorAI. Le logiciel injecte les captures du projecteur dans les bons nodes, envoie le workflow par API, suit la progression de chaque étape et récupère automatiquement les images produites. Je peux ensuite choisir l’un des résultats comme preview du projecteur.\n\nCette organisation permet d’utiliser un workflow très précis pour le visage et un autre pour les vêtements, sans devoir ouvrir ou reconfigurer ComfyUI à chaque changement de vue.",
+          "medias": []
+        },
+        {
+          "title": "La projection — Transformer l’image générée en texture",
+          "description": "Une image générée depuis un angle ne peut pas simplement être collée sur la texture.\nIl faut retrouver quel pixel de l’image correspond à quelle position du modèle, ignorer les surfaces cachées et éviter de peindre à travers le personnage.\n\nProjectorAI réalise donc un bake de la preview du projecteur dans les UV du modèle.\nLa projection utilise la caméra du projecteur, la profondeur et la géométrie pour ne conserver que les pixels réellement visibles depuis ce point de vue. Le résultat est stocké dans un calque temporaire séparé de la texture d’origine.\n\nJe peux ensuite transférer uniquement les zones utiles avec un pinceau projectif. Sa taille, son opacité, son flux et sa dureté sont réglables. Cela permet par exemple de garder uniquement le visage produit par l’IA sans écraser les cheveux ou les vêtements autour.\n\nLe logiciel possède aussi un éditeur de texture plus classique avec pinceau, gomme, remplissage, verrouillage des pixels transparents et historique d’annulation. À la fin, les calques peuvent être fusionnés et réinjectés dans une copie du GLB.",
+          "medias": []
+        },
+        {
+          "title": "Sauvegarde et export — Garder tout le projet au même endroit",
+          "description": "ProjectorAI utilise son propre format de projet, `.aiproj`.\nIl ne sauvegarde pas uniquement le chemin du modèle : il peut conserver le GLB, les textures de base, les calques de peinture, la visibilité des meshes, les matériaux modifiés, la pose, les morph targets, les presets et la configuration des projecteurs avec leurs workflows.\n\nL’objectif est de pouvoir rouvrir un personnage et retrouver exactement le même environnement de travail, même si les fichiers d’origine ont été déplacés.\n\nUne fois le texturing terminé, le logiciel exporte un nouveau GLB dans lequel les calques peints sont fusionnés avec les textures du modèle.\nLe résultat peut ensuite être utilisé dans Unity, Blender ou n’importe quel moteur compatible glTF, sans dépendre de ProjectorAI pour l’affichage.",
+          "medias": []
+        },
+        {
+          "title": "État actuel — Un prototype déjà utilisable",
+          "description": "ProjectorAI est encore jeune, mais le pipeline principal fonctionne déjà : charger un modèle, préparer une pose, placer des projecteurs, capturer les différentes passes, lancer ComfyUI, récupérer le rendu, le projeter et exporter le modèle texturé.\n\nIl reste encore beaucoup de travail sur l’ergonomie, les coutures entre plusieurs projections, la gestion des zones jamais visibles et l’automatisation de certaines étapes.\nJe veux aussi intégrer plus tard [projet=neural-rendering]Neural Rendering[/projet], afin que ProjectorAI puisse produire des modèles dont l’apparence ne dépend plus d’une seule texture fixe.\n\nLe projet est parti d’un besoin très précis pour Moderaworld, mais je pense que l’outil peut être utile bien au-delà.",
+          "medias": []
+        }
+      ],
+      "medias": []
+    },
+    {
+      "id": "neural-rendering",
+      "title": "Neural Rendering",
+      "date": "Juin 2026 – aujourd’hui",
+      "duration": "2 semaines",
+      "category": [
+        "AI",
+        "3D"
+      ],
+      "icon": "",
+      "media": "",
+      "description": "Neural Rendering est un projet de recherche que j’ai commencé pour résoudre un problème rencontré sur [projet=moderaworld]Moderaworld[/projet] : même avec une très bonne texture et un shader toon, un modèle 3D ressemble encore à un modèle 3D.\n\nDans une animation dessinée à la main, le rendu n’est pas physiquement stable.\nLes contours, les ombres, les proportions et parfois même les couleurs changent selon l’angle pour produire l’image la plus lisible ou la plus belle. Une texture 3D classique ne peut pas faire cela : un point du modèle garde la même couleur, quelle que soit la caméra.\n\nMon objectif est donc de créer un modèle 3D capable d’apprendre son apparence selon le point de vue.\nJe me suis inspiré des NeRF, qui utilisent un réseau de neurones pour prédire la couleur et la densité d’un point de l’espace selon la direction de la caméra. Mais je n’ai pas repris leur fonctionnement tel quel : je conserve la géométrie, les UV et l’armature du modèle GLB. Seule la manière de produire sa couleur devient neuronale.\n\nJ’ai développé deux versions très différentes.\nLa V1 colorise l’image entière en post-processing avec un gros réseau partagé. La V2 déplace au contraire l’intelligence dans la texture : chaque texel possède son propre mini-modèle, exécuté directement par le shader.",
+      "sections": [
+        {
+          "title": "Le point de départ — Pourquoi un shader toon ne suffit pas",
+          "description": "Les techniques classiques de NPR, comme les outlines ou les ombres en paliers, améliorent beaucoup le rendu d’un modèle 3D.\nMais elles ne changent pas le problème principal : la surface reste fixe.\n\nSur un dessin, l’artiste peut tricher volontairement.\nDe face, il place les yeux d’une certaine manière. De profil, il déplace une mèche ou agrandit un élément pour que la silhouette reste lisible. Une ombre peut être dessinée à un endroit qui n’est pas physiquement exact, simplement parce que l’image fonctionne mieux ainsi.\n\nJe voulais que le modèle apprenne ces choix au lieu d’essayer de les reproduire avec une longue liste de règles écrites à la main.\nL’idée est donc de fournir plusieurs rendus de référence autour du personnage, puis de laisser le système apprendre quelle couleur afficher pour chaque angle intermédiaire.",
+          "medias": []
+        },
+        {
+          "title": "Première piste — Du Gaussian Splatting vers les NeRF",
+          "description": "Avant d’arriver au Neural Rendering, j’ai expérimenté avec le 3D Gaussian Splatting.\nCette technique représente une scène avec un grand nombre de points déformables plutôt qu’avec des triangles. Une gaussienne peut être étirée, orientée et rendue plus ou moins visible selon la caméra. Cela permet de reproduire des détails qui n’existent que depuis certains angles.\n\nLe résultat était intéressant, mais mal adapté à un personnage animé.\nLa qualité dépend directement du nombre de points, les fichiers PLY deviennent vite lourds et surtout les gaussiennes ne sont pas naturellement attachées au squelette du modèle. Les faire suivre proprement une animation aurait demandé de reconstruire une grande partie du système.\n\nJe me suis alors intéressé aux NeRF.\nUn NeRF apprend une fonction continue : on lui donne une position dans l’espace et une direction de vue, puis le réseau prédit une couleur et une densité. Une image est construite en envoyant un rayon dans la scène pour chaque pixel.\n\nDans mon cas, je n’avais pas besoin de reconstruire la géométrie, puisque le modèle 3D existait déjà. J’ai donc gardé le mesh et remplacé uniquement le calcul de sa couleur.",
+          "medias": []
+        },
+        {
+          "title": "Version 1 — Un réseau neuronal en post-processing",
+          "description": "La première version fonctionne comme un filtre neuronal appliqué après le rendu.\nLe moteur affiche d’abord le modèle dans plusieurs buffers qui ne contiennent pas sa couleur finale, mais des informations permettant d’identifier chaque pixel :\n\n[enum=1]• ses coordonnées UV,[/enum]\n\n[enum=1]• sa normale par rapport à la caméra,[/enum]\n\n[enum=1]• l’identité de la primitive du mesh.[/enum]\n\nCes huit valeurs passent dans un encodage de Fourier. Les coordonnées UV sont transformées avec plusieurs fréquences de sinus et de cosinus, ce qui aide le réseau à apprendre des détails fins plutôt qu’une simple couleur moyenne.\n\nLe modèle LibTorch utilise ensuite une architecture `40 → 256 → 256 → 256 → 256 → 3` avec une connexion résiduelle. Les trois valeurs de sortie correspondent à la couleur RGB du pixel.\nCUDA est utilisé pour l’entraînement et l’inférence lorsqu’il est disponible.\n\nUne fois le G-buffer généré, chaque pixel visible de l’image traverse ce réseau, puis le résultat est réinjecté en post-processing.",
+          "medias": []
+        },
+        {
+          "title": "Entraîner la V1 — Apprendre depuis plusieurs vues",
+          "description": "Pour entraîner le réseau, j’ai créé plusieurs méthodes de génération de dataset.\nJe peux ajouter manuellement la vue actuelle, générer automatiquement des caméras orbitales autour du modèle ou rasteriser directement les triangles dans l’espace UV.\n\nChaque exemple associe les informations géométriques d’un pixel à une couleur cible.\nLa cible peut venir de la texture originale ou d’une image générée avec ComfyUI, un outil nodal permettant de construire des workflows autour de Stable Diffusion et ControlNet.\n\nIci encore, tout est piloté par l’API : un bouton dans mon application capture le modèle, injecte l’image dans le workflow ComfyUI, lance la génération et récupère le résultat. Je peux ensuite ajouter directement cette image au dataset, sans changer de logiciel.\n\nL’entraînement s’exécute dans un thread séparé afin de garder l’interface utilisable. Le programme affiche la progression, la loss et une estimation du temps restant, puis repasse automatiquement sur le rendu neuronal une fois l’optimisation terminée.\n\nCette version m’a permis de valider l’idée : le réseau peut remplacer la texture et reconstruire une apparence différente selon les informations reçues.",
+          "medias": []
+        },
+        {
+          "title": "Les limites de la V1 — Un seul modèle pour tous les pixels",
+          "description": "Le principal problème de la V1 est son architecture centralisée.\nToutes les textures, tous les angles et tous les pixels du modèle doivent être mémorisés dans un seul réseau neuronal.\n\nC’est un peu comme compresser toutes les apparences du personnage dans une même boîte.\nPlus je lui demande de retenir de détails, plus le réseau doit être grand et plus son calcul devient lent. Et comme le modèle complet est exécuté pour chaque pixel affiché, la latence augmente très vite avec la résolution de l’écran.\n\nSur une image fixe, le résultat pouvait être intéressant. En temps réel, il était beaucoup trop lent.\nLa capacité posait aussi problème : ajouter de nouvelles textures ou de nouveaux angles pouvait dégrader ce que le réseau avait déjà appris.\n\nIl me fallait donc conserver le principe d’une couleur dépendante de la caméra, mais supprimer le gros réseau partagé.",
+          "medias": []
+        },
+        {
+          "title": "Version 2 — Un mini-modèle dans chaque texel",
+          "description": "La V2 inverse complètement l’approche.\nAu lieu d’avoir un réseau qui connaît tout le modèle, chaque texel de chaque primitive possède son propre petit modèle indépendant.\n\nUn mini-modèle contient 36 coefficients : neuf bases directionnelles et trois informations liées à la position locale du mesh, chacune produisant les trois couleurs RGB.\nLa direction de la caméra est combinée à la normale du pixel, puis transformée en plusieurs bases proches du principe des harmoniques sphériques. Le mini-modèle peut ainsi apprendre qu’un texel doit être clair de face, sombre de côté ou prendre une autre couleur depuis un angle précis.\n\nLes coefficients sont rangés dans une texture `RGBA16F` sous la forme d’un atlas 4 × 3.\nIl n’existe plus de couches entièrement connectées ni de décodeur partagé entre les pixels. Pendant le rendu, le fragment shader lit les quatre mini-modèles voisins, calcule leur couleur puis interpole le résultat pour éviter un rendu pixelisé.\n\nLe modèle conserve quand même les informations utiles du GLB d’origine, notamment l’alpha cutout et les normal maps.",
+          "medias": []
+        },
+        {
+          "title": "Entraîner la V2 — Modifier uniquement les texels observés",
+          "description": "L’entraînement de la V2 est local.\nLorsqu’un exemple correspond à un texel, seuls les coefficients de ce texel sont modifiés. Tous les autres restent exactement dans leur état précédent.\n\nCela évite une grande partie du problème d’oubli de la V1.\nJe peux ajouter une nouvelle vue sans demander à un réseau global de réapprendre tout le personnage. Les zones qui ne sont pas visibles dans cette vue ne sont pas touchées.\n\nLe programme déduplique aussi les exemples selon la primitive, le texel, la normale, la direction de vue et la position locale. Pour une projection issue de ComfyUI, la profondeur de la caméra est utilisée afin de vérifier qu’un texel est réellement visible avant de lui attribuer la couleur générée.\n\nIl existe également un mode « texture à plat » qui encode directement la texture d’origine dans le terme constant des mini-modèles. Dans ce cas, la couleur est reproduite sans approximation et reste identique depuis toutes les directions. Cette base peut ensuite être enrichie progressivement avec des vues dépendantes de la caméra.",
+          "medias": []
+        },
+        {
+          "title": "Rendu temps réel — Le réseau devient un shader",
+          "description": "La grande différence de la V2 apparaît au moment du rendu.\nLa V1 devait envoyer tous les pixels de l’écran dans LibTorch. La V2 n’a plus besoin de faire tourner un réseau neuronal général pendant l’affichage : les coefficients sont déjà dans une texture GPU et le shader n’exécute que quelques multiplications pour le texel concerné.\n\nLe rendu devient donc extrêmement fluide.\nSa capacité ne dépend plus de la taille d’un modèle central, mais de la résolution de la texture neuronale. Chaque pixel étant indépendant, ajouter du détail à un endroit ne consomme pas de capacité dans les autres zones.\n\nLa contrepartie est la taille des textures.\nUne texture neuronale contient environ douze fois plus de données qu’une texture RGB classique. Le fichier final est donc plus lourd, mais ce coût reste prévisible et surtout il n’augmente pas le temps de calcul comme dans la V1.\n\nPour mon objectif, cet échange est beaucoup plus intéressant : je préfère un modèle plus lourd sur le disque mais capable d’être affiché en temps réel dans une scène animée.",
+          "medias": []
+        },
+        {
+          "title": "Export GLB et intégration Unity",
+          "description": "La V2 peut exporter directement un GLB neuronal.\nLe programme crée une copie du modèle original et ajoute les atlas dans une extension personnalisée nommée `PROJECTORAI_neural_texture`. Les géométries, matériaux, textures classiques et morph targets restent présents dans le fichier.\n\nJ’ai ensuite créé l’intégration Unity correspondante.\nUn importeur extrait les atlas neuronaux contenus dans le GLB, puis un composant les applique aux différentes parties du modèle. Le shader URP `ProjectorAI/Neural Rendering` relit les 36 coefficients, utilise la normale et la caméra Unity, puis reproduit le même calcul que le viewer C++.\n\nCela prouve que la technique n’est pas limitée au prototype d’entraînement.\nLe modèle peut être préparé dans l’outil, exporté, puis utilisé dans un vrai moteur de production sans LibTorch ni CUDA au moment du rendu.",
+          "medias": []
+        },
+        {
+          "title": "État actuel — Vers une intégration dans ProjectorAI",
+          "description": "La V2 a résolu les deux défauts qui bloquaient la première version : la latence et la capacité du réseau partagé.\nLe rendu est maintenant temps réel et chaque texel peut apprendre indépendamment de tous les autres.\n\nIl reste encore plusieurs sujets à améliorer : réduire la taille des atlas, mieux interpoler les angles jamais vus, gérer plus proprement les coutures UV et trouver le meilleur équilibre entre la résolution, le nombre de vues et le temps d’entraînement.\n\nL’étape suivante est d’intégrer ce système dans [projet=projectorai]ProjectorAI[/projet].\nLes projecteurs du logiciel pourront alors produire les vues avec ComfyUI, entraîner directement les textures neuronales et exporter un modèle prêt à être utilisé dans Moderaworld.\n\nLa V1 reste importante parce qu’elle a validé l’idée. Mais la V2 est la première version qui me semble réellement compatible avec un anime complet.",
+          "medias": []
+        }
+      ],
+      "medias": []
+    },
+    {
       "id": "regain-the-world",
       "title": "Regain The World",
       "date": "2019 – 2020",
