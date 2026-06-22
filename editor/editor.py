@@ -708,7 +708,12 @@ class ProjectsEditor(ctk.CTk):
         self.center.columnconfigure(0, weight=1)
         for r in (0, 1, 2, 3, 4, 5, 6, 7, 8):
             self.center.rowconfigure(r, weight=0)
-        self.center.rowconfigure(8, weight=1)
+
+        # La description et la galerie se partagent l'espace vertical restant.
+        # Si seule la galerie est extensible, Tkinter l'écrase presque à zéro
+        # dès que la hauteur demandée par la description devient trop grande.
+        self.center.rowconfigure(7, weight=3, minsize=180)
+        self.center.rowconfigure(8, weight=2, minsize=180)
 
         self.p_id = LabeledEntry(self.center, "ID")
         self.p_title = LabeledEntry(self.center, "Titre")

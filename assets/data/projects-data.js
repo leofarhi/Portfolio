@@ -352,8 +352,8 @@ window.PROJECTS_DATA = {
       "category": [
         "AI"
       ],
-      "icon": "",
-      "media": "",
+      "icon": "assets/projects/NeuralRendering/icon.jpg",
+      "media": "assets/projects/NeuralRendering/Demo.mp4",
       "description": "Neural Rendering est un projet de recherche que j’ai commencé pour résoudre un problème rencontré sur [projet=moderaworld]Moderaworld[/projet] : même avec une très bonne texture et un shader toon, un modèle 3D ressemble encore à un modèle 3D.\n\nDans une animation dessinée à la main, le rendu n’est pas physiquement stable.\nLes contours, les ombres, les proportions et parfois même les couleurs changent selon l’angle pour produire l’image la plus lisible ou la plus belle. Une texture 3D classique ne peut pas faire cela : un point du modèle garde la même couleur, quelle que soit la caméra.\n\nMon objectif est donc de créer un modèle 3D capable d’apprendre son apparence selon le point de vue.\nJe me suis inspiré des NeRF, qui utilisent un réseau de neurones pour prédire la couleur et la densité d’un point de l’espace selon la direction de la caméra. Mais je n’ai pas repris leur fonctionnement tel quel : je conserve la géométrie, les UV et l’armature du modèle GLB. Seule la manière de produire sa couleur devient neuronale.\n\nJ’ai développé deux versions très différentes.\nLa V1 colorise l’image entière en post-processing avec un gros réseau partagé. La V2 déplace au contraire l’intelligence dans la texture : chaque texel possède son propre mini-modèle, exécuté directement par le shader.",
       "sections": [
         {
@@ -364,12 +364,20 @@ window.PROJECTS_DATA = {
         {
           "title": "Première piste — Du Gaussian Splatting vers les NeRF",
           "description": "Avant d’arriver au Neural Rendering, j’ai expérimenté avec le 3D Gaussian Splatting.\nCette technique représente une scène avec un grand nombre de points déformables plutôt qu’avec des triangles. Une gaussienne peut être étirée, orientée et rendue plus ou moins visible selon la caméra. Cela permet de reproduire des détails qui n’existent que depuis certains angles.\n\nLe résultat était intéressant, mais mal adapté à un personnage animé.\nLa qualité dépend directement du nombre de points, les fichiers PLY deviennent vite lourds et surtout les gaussiennes ne sont pas naturellement attachées au squelette du modèle. Les faire suivre proprement une animation aurait demandé de reconstruire une grande partie du système.\n\nJe me suis alors intéressé aux NeRF.\nUn NeRF apprend une fonction continue : on lui donne une position dans l’espace et une direction de vue, puis le réseau prédit une couleur et une densité. Une image est construite en envoyant un rayon dans la scène pour chaque pixel.\n\nDans mon cas, je n’avais pas besoin de reconstruire la géométrie, puisque le modèle 3D existait déjà. J’ai donc gardé le mesh et remplacé uniquement le calcul de sa couleur.",
-          "medias": []
+          "medias": [
+            "assets/projects/NeuralRendering/medias/GaussianSplatting.png"
+          ]
         },
         {
           "title": "Version 1 — Un réseau neuronal en post-processing",
           "description": "La première version fonctionne comme un filtre neuronal appliqué après le rendu.\nLe moteur affiche d’abord le modèle dans plusieurs buffers qui ne contiennent pas sa couleur finale, mais des informations permettant d’identifier chaque pixel :\n\n[enum=1]• ses coordonnées UV,[/enum]\n\n[enum=1]• sa normale par rapport à la caméra,[/enum]\n\n[enum=1]• l’identité de la primitive du mesh.[/enum]\n\nCes huit valeurs passent dans un encodage de Fourier. Les coordonnées UV sont transformées avec plusieurs fréquences de sinus et de cosinus, ce qui aide le réseau à apprendre des détails fins plutôt qu’une simple couleur moyenne.\n\nLe modèle LibTorch utilise ensuite une architecture `40 → 256 → 256 → 256 → 256 → 3` avec une connexion résiduelle. Les trois valeurs de sortie correspondent à la couleur RGB du pixel.\nCUDA est utilisé pour l’entraînement et l’inférence lorsqu’il est disponible.\n\nUne fois le G-buffer généré, chaque pixel visible de l’image traverse ce réseau, puis le résultat est réinjecté en post-processing.",
-          "medias": []
+          "medias": [
+            "assets/projects/NeuralRendering/medias/Render1.png",
+            "assets/projects/NeuralRendering/medias/Render2.png",
+            "assets/projects/NeuralRendering/medias/Render3.png",
+            "assets/projects/NeuralRendering/medias/Render4.png",
+            "assets/projects/NeuralRendering/medias/Render5.png"
+          ]
         },
         {
           "title": "Entraîner la V1 — Apprendre depuis plusieurs vues",
@@ -384,7 +392,10 @@ window.PROJECTS_DATA = {
         {
           "title": "Version 2 — Un mini-modèle dans chaque texel",
           "description": "La V2 inverse complètement l’approche.\nAu lieu d’avoir un réseau qui connaît tout le modèle, chaque texel de chaque primitive possède son propre petit modèle indépendant.\n\nUn mini-modèle contient 36 coefficients : neuf bases directionnelles et trois informations liées à la position locale du mesh, chacune produisant les trois couleurs RGB.\nLa direction de la caméra est combinée à la normale du pixel, puis transformée en plusieurs bases proches du principe des harmoniques sphériques. Le mini-modèle peut ainsi apprendre qu’un texel doit être clair de face, sombre de côté ou prendre une autre couleur depuis un angle précis.\n\nLes coefficients sont rangés dans une texture `RGBA16F` sous la forme d’un atlas 4 × 3.\nIl n’existe plus de couches entièrement connectées ni de décodeur partagé entre les pixels. Pendant le rendu, le fragment shader lit les quatre mini-modèles voisins, calcule leur couleur puis interpole le résultat pour éviter un rendu pixelisé.\n\nLe modèle conserve quand même les informations utiles du GLB d’origine, notamment l’alpha cutout et les normal maps.",
-          "medias": []
+          "medias": [
+            "assets/projects/NeuralRendering/medias/RenderComfyUI.png",
+            "assets/projects/NeuralRendering/medias/RenderComfyUI 2.png"
+          ]
         },
         {
           "title": "Entraîner la V2 — Modifier uniquement les texels observés",
@@ -394,7 +405,9 @@ window.PROJECTS_DATA = {
         {
           "title": "Rendu temps réel — Le réseau devient un shader",
           "description": "La grande différence de la V2 apparaît au moment du rendu.\nLa V1 devait envoyer tous les pixels de l’écran dans LibTorch. La V2 n’a plus besoin de faire tourner un réseau neuronal général pendant l’affichage : les coefficients sont déjà dans une texture GPU et le shader n’exécute que quelques multiplications pour le texel concerné.\n\nLe rendu devient donc extrêmement fluide.\nSa capacité ne dépend plus de la taille d’un modèle central, mais de la résolution de la texture neuronale. Chaque pixel étant indépendant, ajouter du détail à un endroit ne consomme pas de capacité dans les autres zones.\n\nLa contrepartie est la taille des textures.\nUne texture neuronale contient environ douze fois plus de données qu’une texture RGB classique. Le fichier final est donc plus lourd, mais ce coût reste prévisible et surtout il n’augmente pas le temps de calcul comme dans la V1.\n\nPour mon objectif, cet échange est beaucoup plus intéressant : je préfère un modèle plus lourd sur le disque mais capable d’être affiché en temps réel dans une scène animée.",
-          "medias": []
+          "medias": [
+            "assets/projects/NeuralRendering/medias/ImgKeys.png"
+          ]
         },
         {
           "title": "Export GLB et intégration Unity",
@@ -407,7 +420,10 @@ window.PROJECTS_DATA = {
           "medias": []
         }
       ],
-      "medias": []
+      "medias": [
+        "assets/projects/NeuralRendering/medias/FullTuto.mp4",
+        "assets/projects/NeuralRendering/medias/GifEx.gif"
+      ]
     },
     {
       "id": "regain-the-world",
