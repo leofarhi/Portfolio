@@ -200,7 +200,10 @@ window.PROJECTS_DATA = {
           "medias": []
         }
       ],
-      "medias": ["assets/projects/UniversalMP/medias/Video1.mp4","assets/projects/UniversalMP/medias/Video2.mp4"]
+      "medias": [
+        "assets/projects/UniversalMP/medias/Video1.mp4",
+        "assets/projects/UniversalMP/medias/Video2.mp4"
+      ]
     },
     {
       "id": "zelda-totk-multiplayer-mod",
@@ -211,8 +214,8 @@ window.PROJECTS_DATA = {
         "Game Development",
         "AI"
       ],
-      "icon": "",
-      "media": "",
+      "icon": "assets/projects/zelda-totk-multiplayer-mod/icon.jpg",
+      "media": "assets/projects/zelda-totk-multiplayer-mod/Video.mp4",
       "description": "Zelda TOTK Multiplayer Mod est un véritable mod multijoueur pour The Legend of Zelda: Tears of the Kingdom.\nContrairement à [projet=universalmp]UniversalMP[/projet], le joueur distant n’est pas un modèle dessiné par-dessus l’image. Le mod crée un vrai acteur dans le moteur du jeu, puis contrôle sa position, sa rotation et son squelette avec les données reçues sur le réseau.\n\nChaque joueur continue d’exécuter sa propre instance de TOTK, mais il voit l’autre sous la forme d’un acteur de Zelda réellement présent dans son monde. Le personnage est rendu par le jeu lui-même, utilise son système d’animation et suit le même pipeline graphique que les autres acteurs.\n\nComme le code source de TOTK n’est pas disponible, j’ai dû retrouver moi-même les fonctions liées au spawn, aux transformations, aux chargements et au squelette. Le projet réunit donc un mod C++ injecté avec ExLaunch, un travail important de reverse engineering ARM64, une passerelle Windows, un protocole réseau et une version modifiée de Yuzu.",
       "sections": [
         {
@@ -228,7 +231,10 @@ window.PROJECTS_DATA = {
         {
           "title": "Les agents LLM — Transformer une décompilation immense en pistes exploitables",
           "description": "Analyser manuellement tout le binaire de TOTK aurait pris un temps énorme.\nJ’ai donc construit un pipeline utilisant plusieurs agents LLM pour m’aider à trier et reconstruire une partie du code décompilé.\n\nDes scripts découpent les sorties de Ghidra en centaines de rapports, extraient les appels entre fonctions, les chaînes de caractères, les accès mémoire, les offsets et les valeurs de retour. Les agents travaillent ensuite sur ces morceaux pour :\n\n[enum=1]• proposer le rôle probable des fonctions,[/enum]\n\n[enum=1]• reconstruire des structures d’acteurs, de joueurs et de NPC,[/enum]\n\n[enum=1]• retrouver les chaînes d’appels autour d’un comportement précis,[/enum]\n\n[enum=1]• comparer plusieurs fonctions qui manipulent les mêmes offsets,[/enum]\n\n[enum=1]• produire une documentation plus lisible que la décompilation brute.[/enum]\n\nLes agents ne décident pas seuls qu’une adresse est correcte.\nLeurs résultats servent surtout à réduire la zone de recherche et à proposer des candidats. Je vérifie ensuite les passages importants dans l’assembleur AArch64, puis directement pendant l’exécution avec GDB et des hooks de test.\n\nCette combinaison m’a permis de passer d’un binaire presque illisible à une documentation exploitable sur le spawn, les transformations et le pipeline d’animation.",
-          "medias": []
+          "medias": [
+            "assets/projects/zelda-totk-multiplayer-mod/imgs/Files.png",
+            "assets/projects/zelda-totk-multiplayer-mod/imgs/ExFile.png"
+          ]
         },
         {
           "title": "Le mod ExLaunch — Exécuter mon propre C++ dans TOTK",
@@ -248,7 +254,9 @@ window.PROJECTS_DATA = {
         {
           "title": "Le squelette — Reproduire les mouvements du joueur distant",
           "description": "Synchroniser seulement la position ferait glisser Zelda sur le sol sans reproduire les mouvements de Link.\nJe voulais transmettre la pose complète : jambes, bras, torse, tête et changements de posture.\n\nJ’ai retrouvé la fonction bas niveau qui écrit chaque os du squelette, puis une seconde route où la pose complète est prête juste avant son utilisation par le rendu.\nLe mod capture alors les matrices locales du squelette de Link et les publie dans le canal réseau.\n\nLes squelettes de Link et de Zelda ne sont pas identiques.\nIls n’ont ni le même nombre d’os, ni toujours les mêmes proportions. Copier toutes les matrices directement déformait donc le personnage. J’ai créé une table de correspondance entre les deux rigs et je transfère principalement la rotation des os, tout en conservant les translations locales propres à Zelda.\n\nCertains mouvements, comme l’accroupissement, nécessitent tout de même un déplacement vertical du corps. Je calcule alors seulement le delta utile par rapport à la pose de référence et je l’applique séparément.\n\nLes poses reçues sont enfin interpolées avant d’être écrites dans le squelette de Zelda. Le résultat reste fluide même si les paquets arrivent avec un rythme irrégulier.",
-          "medias": []
+          "medias": [
+            "assets/projects/zelda-totk-multiplayer-mod/imgs/Squelette.gif"
+          ]
         },
         {
           "title": "Le pont mémoire — Relier le mod ARM64 au programme Windows",
@@ -258,7 +266,10 @@ window.PROJECTS_DATA = {
         {
           "title": "Le réseau — UDP, Steam P2P et interpolation",
           "description": "La position et le squelette n’ont pas les mêmes contraintes réseau.\nUne transformation est petite et doit être envoyée souvent. Une pose complète contient plusieurs centaines de matrices et ne tient pas proprement dans un seul paquet UDP.\n\nJ’ai donc créé un protocole binaire avec plusieurs types de paquets.\nLes transformations sont envoyées directement avec leur numéro de séquence. Les squelettes sont découpés en fragments, numérotés, puis réassemblés uniquement lorsque tous les morceaux du même snapshot sont arrivés.\nLes anciens paquets et les doublons sont ignorés.\n\nJ’ai testé deux modes de connexion : un serveur relais UDP et Steam Networking.\nLa version Steam permet de créer une room, afficher les salons disponibles, rejoindre un autre joueur et inviter un ami sans avoir à configurer manuellement les ports du routeur.\n\nCôté réception, les snapshots sont conservés dans de petites files temporelles.\nLe programme affiche volontairement un état légèrement en retard afin de pouvoir interpoler entre deux paquets connus. Les téléportations trop importantes sont détectées et appliquées immédiatement, tandis que les déplacements normaux et les poses du squelette sont lissés.",
-          "medias": []
+          "medias": [
+            "assets/projects/zelda-totk-multiplayer-mod/imgs/UDP.png",
+            "assets/projects/zelda-totk-multiplayer-mod/imgs/P2P.png"
+          ]
         },
         {
           "title": "Yuzu modifié — Intégrer le gateway directement à l’émulateur",
@@ -268,12 +279,16 @@ window.PROJECTS_DATA = {
         {
           "title": "Se retrouver dans Hyrule — Marqueur, distance et chargements",
           "description": "Même avec un joueur distant correctement synchronisé, le monde de TOTK est immense.\nSi les deux personnes s’éloignent, il devient difficile de savoir où retrouver l’autre et le jeu peut supprimer l’acteur devenu trop lointain.\n\nJ’ai donc réutilisé un marqueur rouge de la carte.\nLorsqu’il est présent, le mod bloque sa suppression automatique puis met à jour sa position avec celle du joueur distant. Le marqueur suit ainsi l’autre personne sur la carte sans nécessiter une nouvelle interface propre au jeu.\n\nLe système prend aussi la distance en compte avant de recréer Zelda.\nSi le joueur distant est trop loin, le mod attend plutôt que de faire apparaître un acteur dans une zone qui ne devrait pas être chargée. Il peut également téléporter le joueur local vers la position distante pour faciliter les tests et les retrouvailles.\n\nCes fonctions sont moins spectaculaires que le squelette ou le réseau, mais elles sont indispensables pour que le prototype reste utilisable en dehors d’une petite zone de démonstration.",
-          "medias": []
+          "medias": [
+            "assets/projects/zelda-totk-multiplayer-mod/imgs/Balise.png"
+          ]
         },
         {
           "title": "État actuel — Un vrai joueur, pas encore un monde entièrement partagé",
           "description": "Le projet sait aujourd’hui créer un acteur réel dans TOTK, suivre son cycle de vie, lui appliquer la position, la rotation et le squelette d’un autre joueur, puis conserver cette synchronisation à travers une connexion UDP ou Steam P2P.\n\nCe n’est pas encore un mode coopération complet.\nLes deux instances possèdent toujours leurs propres ennemis, objets, quêtes et événements. Synchroniser tout Hyrule demanderait d’identifier beaucoup d’autres systèmes internes et de décider quelle instance contrôle chaque élément du monde.\n\nLa différence avec UniversalMP reste malgré tout fondamentale : Zelda n’est pas une image ajoutée après le rendu. Elle existe dans les structures du jeu, possède un vrai squelette et passe par les fonctions de TOTK.\n\nAu départ, je voulais simplement remplacer mon overlay par un vrai personnage. J’ai fini par modifier le jeu, l’émulateur et toute la chaîne entre les deux. Le mod est encore un prototype, mais cette fois je n’imite plus un joueur à l’extérieur du jeu : j’en crée un directement à l’intérieur.",
-          "medias": []
+          "medias": [
+            "assets/projects/zelda-totk-multiplayer-mod/imgs/img.png"
+          ]
         }
       ],
       "medias": []
