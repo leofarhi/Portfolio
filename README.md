@@ -278,3 +278,11 @@ Les données ne permettent pas d’identifier précisément une personne. Elles 
 Ce dépôt n’est pas seulement une vitrine statique. Il sert aussi de carnet technique : chaque page projet essaye d’expliquer le problème de départ, les choix faits, les limites rencontrées et ce que le projet m’a appris.
 
 Le portfolio évolue donc en même temps que mes projets.
+
+## Crédits
+
+La base visuelle du portfolio vient de [codewithsadee/vcard-personal-portfolio](https://github.com/codewithsadee/vcard-personal-portfolio).
+
+Le projet a ensuite été énormément modifié côté fonctionnement : chargement des projets depuis un fichier de données, pages projet détaillées, galeries média, liens internes, éditeur Python, adaptation GitHub Pages, gestion des gros médias, analytics, etc.
+
+En pratique, seule la base visuelle et une partie du style d’origine ont été conservées.
