@@ -439,6 +439,10 @@
     replaceTextareaRange(textarea, value);
   }
 
+  function insertFormatTag(textarea, tag, fallback) {
+    wrapTextareaSelection(textarea, `[${tag}]`, `[/${tag}]`, fallback);
+  }
+
   function promptText(label, fallback) {
     const value = prompt(label, fallback);
     if (value === null) return null;
@@ -497,6 +501,10 @@
     if (textToolsMenu) return textToolsMenu;
 
     const tools = [
+      { label: 'Gras', hint: '[b]', icon: 'text-outline', action: (textarea) => insertFormatTag(textarea, 'b', 'texte en gras') },
+      { label: 'Italique', hint: '[i]', icon: 'text-outline', action: (textarea) => insertFormatTag(textarea, 'i', 'texte en italique') },
+      { label: 'Souligné', hint: '[u]', icon: 'text-outline', action: (textarea) => insertFormatTag(textarea, 'u', 'texte souligné') },
+      { label: 'Barré', hint: '[s]', icon: 'text-outline', action: (textarea) => insertFormatTag(textarea, 's', 'texte barré') },
       { label: 'Enum niveau 1', hint: '[enum=1]', icon: 'list-outline', action: (textarea) => insertEnumTag(textarea, 1) },
       { label: 'Enum niveau 2', hint: '[enum=2]', icon: 'return-down-forward-outline', action: (textarea) => insertEnumTag(textarea, 2) },
       { label: 'Lien externe', hint: '[url]', icon: 'link-outline', action: insertUrlTag },

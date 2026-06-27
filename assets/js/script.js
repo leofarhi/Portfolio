@@ -187,6 +187,27 @@ document.addEventListener('DOMContentLoaded', showFromHash);
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#039;');
 
+  function applyInlineFormatting(html) {
+    const formats = [
+      [/\[b\]([\s\S]*?)\[\/b\]/gi, '<strong>$1</strong>'],
+      [/\[u\]([\s\S]*?)\[\/u\]/gi, '<u>$1</u>'],
+      [/\[i\]([\s\S]*?)\[\/i\]/gi, '<em>$1</em>'],
+      [/\[s\]([\s\S]*?)\[\/s\]/gi, '<del>$1</del>']
+    ];
+
+    let output = html;
+
+    for (let pass = 0; pass < 3; pass++) {
+      const before = output;
+      formats.forEach(([pattern, replacement]) => {
+        output = output.replace(pattern, replacement);
+      });
+      if (output === before) break;
+    }
+
+    return output;
+  }
+
   function bbcodeInlinePreserve(src) {
     const links = [];
 
@@ -239,6 +260,7 @@ document.addEventListener('DOMContentLoaded', showFromHash);
     });
 
     let esc = escapeHtml(replaced);
+    esc = applyInlineFormatting(esc);
     esc = esc.replace(/\uE000(\d+)\uE001/g, (_m, i) => links[Number(i)]);
     return esc;
   }

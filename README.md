@@ -147,6 +147,15 @@ Si aucune icône n’est renseignée, le portfolio affiche un placeholder “Vis
 
 Les descriptions acceptent quelques balises simples.
 
+### Mise en forme
+
+```txt
+[b]Texte en gras[/b]
+[i]Texte en italique[/i]
+[u]Texte souligné[/u]
+[s]Texte barré[/s]
+```
+
 ### Lien vers un autre projet
 
 ```txt

@@ -530,6 +530,11 @@ main {
 
 .about-text p { margin-bottom: 15px; }
 
+.about-text strong {
+  color: var(--white-2);
+  font-weight: var(--fw-600);
+}
+
 #experience-years {
   display: inline;
   white-space: nowrap;
