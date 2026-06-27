@@ -430,7 +430,7 @@
         </header>
 
         <section class="about-text">
-          <p id="pj-description"></p>
+          <div id="pj-description"></div>
         </section>
 
         <figure class="project-hero" id="pj-hero" style="display:none">
@@ -590,8 +590,21 @@
     document.head.appendChild(el);
   </script>
 
-  <!-- Cloudflare Web Analytics -->
-  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"ea4b23a0fda941cbb04ae2a080eebb8a"}'></script>
+  <script src="./assets/js/editor-mode.js"></script>
+
+  <!-- Cloudflare Web Analytics - désactivé en local -->
+  <script>
+    (() => {
+      const localHosts = new Set(['localhost', '127.0.0.1', '::1']);
+      if (localHosts.has(location.hostname)) return;
+
+      const script = document.createElement('script');
+      script.defer = true;
+      script.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+      script.dataset.cfBeacon = JSON.stringify({ token: 'ea4b23a0fda941cbb04ae2a080eebb8a' });
+      document.body.appendChild(script);
+    })();
+  </script>
   <!-- End Cloudflare Web Analytics -->
 
 </body>

@@ -481,10 +481,23 @@ document.addEventListener('DOMContentLoaded', showFromHash);
     } else {
       el.galleryWrap.style.display = 'none';
     }
+
+    if (window.PortfolioEditor && typeof window.PortfolioEditor.enhanceDetail === 'function') {
+      window.PortfolioEditor.enhanceDetail(project, { scheduleProjectTitleFit });
+    }
   }
 
-  function loadDataFromInline() {
-    if (STATE.data) return STATE.data;
+  function loadDataFromInline(force = false) {
+    if (STATE.data && !force) return STATE.data;
+    STATE.cache.clear();
+
+    if (window.PortfolioEditor && typeof window.PortfolioEditor.getData === 'function') {
+      const editorData = window.PortfolioEditor.getData();
+      STATE.data = editorData.projects || [];
+      STATE.data.forEach(p => STATE.cache.set(p.id, p));
+      return STATE.data;
+    }
+
     const inline = document.getElementById('projects-json');
     if (!inline || !inline.textContent.trim()) {
       STATE.data = [];
@@ -549,6 +562,7 @@ document.addEventListener('DOMContentLoaded', showFromHash);
 
 
   function onProjectTileClick(e) {
+    if (e.target.closest('[data-editor-delete-project]')) return;
     const li = e.currentTarget;
     const id = li.getAttribute('data-project-id');
     if (!id) return;
@@ -598,7 +612,8 @@ document.addEventListener('DOMContentLoaded', showFromHash);
   window.Portfolio = Object.assign(window.Portfolio || {}, {
     openProjectById,
     bindTiles: bindProjectLinks,
-    resetDetail: resetProjectDetail
+    resetDetail: resetProjectDetail,
+    refreshDataCache: () => loadDataFromInline(true)
   });
 })();
 
@@ -631,6 +646,16 @@ document.addEventListener('DOMContentLoaded', showFromHash);
   };
 
   function readProjects() {
+    if (window.PortfolioEditor && typeof window.PortfolioEditor.getData === 'function') {
+      const data = window.PortfolioEditor.getData();
+      const arr = data.projects || [];
+      arr.forEach(p => {
+        if (!p.medias && p.images) p.medias = p.images;
+        if (!p.media && p.image) p.media = p.image;
+      });
+      return arr;
+    }
+
     const inline = document.getElementById('projects-json');
     if (!inline || !inline.textContent.trim()) return [];
     try {
@@ -689,6 +714,9 @@ document.addEventListener('DOMContentLoaded', showFromHash);
     root.list.innerHTML = projects.map(projectItemHTML).join('');
     if (window.Portfolio && typeof window.Portfolio.bindTiles === 'function') {
       window.Portfolio.bindTiles();
+    }
+    if (window.PortfolioEditor && typeof window.PortfolioEditor.enhanceGrid === 'function') {
+      window.PortfolioEditor.enhanceGrid();
     }
   }
 
@@ -780,15 +808,25 @@ document.addEventListener('DOMContentLoaded', showFromHash);
     });
   }
 
-  function initGrid() {
+  function reloadGrid() {
     if (!root.list) return;
     const projects = readProjects();
     renderProjects(projects);
     renderFilters(collectCategories(projects));
-    bindFilters();
-    bindProjectClicks();
     applyFilter('all');
   }
+
+  function initGrid() {
+    if (!root.list) return;
+    reloadGrid();
+    bindFilters();
+    bindProjectClicks();
+  }
+
+  window.PortfolioGrid = Object.assign(window.PortfolioGrid || {}, {
+    reload: reloadGrid,
+    readProjects
+  });
 
   document.addEventListener('DOMContentLoaded', initGrid);
 })();

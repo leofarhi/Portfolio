@@ -195,6 +195,34 @@ python editor/editor.py
 
 L’éditeur lit et réécrit automatiquement `assets/data/projects-data.js`.
 
+### Méthode web locale : éditer depuis le portfolio
+
+Un mode édition local existe aussi directement dans le site.
+
+Lancement :
+
+```bash
+python editor/server.py
+```
+
+Puis ouvrir :
+
+```txt
+http://127.0.0.1:8000/?edit=1#portfolio
+```
+
+Ce mode ajoute des boutons d’édition uniquement en local :
+
+- création d’un nouveau projet ;
+- suppression d’un projet depuis sa carte ;
+- édition du titre, de la date, de la durée, de la description, des tags, des sections, de l’icône et des médias depuis la page projet.
+
+Les modifications sont envoyées au serveur Python local, qui réécrit `assets/data/projects-data.js`.
+
+La sélection de médias passe aussi par ce serveur local : il ouvre l’explorateur de fichiers et refuse les fichiers qui ne se trouvent pas dans le dossier du portfolio.
+
+Sur la version GitHub Pages publiée, ce mode ne s’active pas.
+
 ## Tester localement
 
 Depuis la racine du dépôt :
@@ -283,6 +311,6 @@ Le portfolio évolue donc en même temps que mes projets.
 
 La base visuelle du portfolio vient de [codewithsadee/vcard-personal-portfolio](https://github.com/codewithsadee/vcard-personal-portfolio).
 
-Le projet a ensuite été énormément modifié côté fonctionnement : chargement des projets depuis un fichier de données, pages projet détaillées, galeries média, liens internes, éditeur Python, adaptation GitHub Pages, gestion des gros médias, analytics, etc.
+Le projet a ensuite été énormément modifié côté fonctionnement : chargement des projets depuis un fichier de données, pages projet détaillées, galeries média, liens internes, éditeur Python, etc...
 
 En pratique, seule la base visuelle et une partie du style d’origine ont été conservées.

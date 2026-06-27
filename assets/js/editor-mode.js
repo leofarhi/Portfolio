@@ -1,0 +1,923 @@
+'use strict';
+
+(function () {
+  const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '::1']);
+  const params = new URLSearchParams(location.search);
+  const enabled = LOCAL_HOSTS.has(location.hostname) && params.get('edit') === '1';
+
+  let dataCache = null;
+  let saveTimer = null;
+  let gridRefreshTimer = null;
+  let statusEl = null;
+  let saveChain = Promise.resolve();
+
+  const deepClone = (obj) => JSON.parse(JSON.stringify(obj));
+
+  function normalizeData(data) {
+    if (!data || typeof data !== 'object') data = {};
+    if (!Array.isArray(data.projects)) data.projects = [];
+
+    data.projects.forEach((project) => {
+      if (!Array.isArray(project.category)) {
+        project.category = project.category ? [project.category] : [];
+      }
+      if (!Array.isArray(project.sections)) project.sections = [];
+      if (!Array.isArray(project.medias)) project.medias = [];
+      if (!project.id && project.title) project.id = makeProjectId(project.title);
+      if (!project.title && project.id) project.title = project.id;
+    });
+
+    return data;
+  }
+
+  function readInlineData() {
+    const inline = document.getElementById('projects-json');
+
+    if (inline && inline.textContent.trim()) {
+      try {
+        return normalizeData(JSON.parse(inline.textContent));
+      } catch (error) {
+        console.error('[Portfolio editor] Impossible de lire projects-json.', error);
+      }
+    }
+
+    if (window.PROJECTS_DATA) {
+      return normalizeData(deepClone(window.PROJECTS_DATA));
+    }
+
+    return normalizeData({ projects: [] });
+  }
+
+  function getData() {
+    if (!dataCache) dataCache = readInlineData();
+    return dataCache;
+  }
+
+  function syncInlineData() {
+    const data = getData();
+    let inline = document.getElementById('projects-json');
+
+    if (!inline) {
+      inline = document.createElement('script');
+      inline.type = 'application/json';
+      inline.id = 'projects-json';
+      document.head.appendChild(inline);
+    }
+
+    inline.textContent = JSON.stringify(data, null, 2);
+    window.PROJECTS_DATA = data;
+
+    if (window.Portfolio && typeof window.Portfolio.refreshDataCache === 'function') {
+      window.Portfolio.refreshDataCache();
+    }
+  }
+
+  function makeProjectId(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9_-]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  const isVideoPath = (src) => /\.(mp4|webm|ogg|mov)$/i.test(String(src || ''));
+
+  async function pickMediaPath() {
+    setStatus('Ouverture de l’explorateur...', 'saving');
+
+    try {
+      const response = await fetch('/api/pick-media', { method: 'POST' });
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok || result.error) {
+        throw new Error(result.error || `Erreur HTTP ${response.status}`);
+      }
+
+      if (result.cancelled) {
+        setStatus('Sélection annulée', 'info');
+        return null;
+      }
+
+      if (!result.path) {
+        throw new Error('Aucun chemin média reçu.');
+      }
+
+      setStatus('Média sélectionné', 'ok');
+      return result.path;
+    } catch (error) {
+      console.error('[Portfolio editor] Sélection média impossible.', error);
+      setStatus('Sélection impossible', 'error');
+      alert(error.message || 'Impossible de sélectionner ce média.');
+      return null;
+    }
+  }
+
+  function findProject(id) {
+    return getData().projects.find((project) => project.id === id) || null;
+  }
+
+  function setStatus(message, type = 'info') {
+    if (!statusEl) return;
+    statusEl.textContent = message;
+    statusEl.dataset.status = type;
+  }
+
+  function refreshGridSoon() {
+    clearTimeout(gridRefreshTimer);
+    gridRefreshTimer = setTimeout(() => {
+      if (window.PortfolioGrid && typeof window.PortfolioGrid.reload === 'function') {
+        window.PortfolioGrid.reload();
+      }
+    }, 180);
+  }
+
+  function saveNow() {
+    if (!enabled) return Promise.resolve();
+
+    clearTimeout(saveTimer);
+    syncInlineData();
+    setStatus('Sauvegarde...', 'saving');
+
+    const payload = JSON.stringify(getData());
+
+    saveChain = saveChain
+      .catch(() => {})
+      .then(async () => {
+        const response = await fetch('/api/projects', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: payload
+        });
+
+        if (!response.ok) {
+          const text = await response.text().catch(() => '');
+          throw new Error(text || `Erreur HTTP ${response.status}`);
+        }
+
+        setStatus('Sauvegardé', 'ok');
+      })
+      .catch((error) => {
+        console.error('[Portfolio editor] Sauvegarde impossible.', error);
+        setStatus('Non sauvegardé — serveur local absent ?', 'error');
+      });
+
+    return saveChain;
+  }
+
+  function scheduleSave({ refreshGrid = false } = {}) {
+    if (!enabled) return;
+
+    syncInlineData();
+    setStatus('Modifications locales...', 'dirty');
+
+    if (refreshGrid) refreshGridSoon();
+
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveNow, 650);
+  }
+
+  function createEditorToolbar() {
+    if (!enabled || document.getElementById('portfolio-editor-toolbar')) return;
+
+    const portfolio = document.querySelector('[data-page="portfolio"]');
+    const header = portfolio?.querySelector('header');
+    if (!portfolio || !header) return;
+
+    const toolbar = document.createElement('div');
+    toolbar.id = 'portfolio-editor-toolbar';
+    toolbar.className = 'portfolio-editor-toolbar';
+    toolbar.innerHTML = `
+      <div>
+        <span class="portfolio-editor-badge">Mode édition local</span>
+        <span class="portfolio-editor-status" data-status="ok">Prêt</span>
+      </div>
+      <button type="button" class="portfolio-editor-primary" id="portfolio-editor-create">
+        + Créer un projet
+      </button>
+    `;
+
+    header.insertAdjacentElement('afterend', toolbar);
+    statusEl = toolbar.querySelector('.portfolio-editor-status');
+    toolbar.querySelector('#portfolio-editor-create')?.addEventListener('click', createProject);
+  }
+
+  async function createProject() {
+    const rawId = prompt('ID du nouveau projet :');
+    if (rawId === null) return;
+
+    const id = makeProjectId(rawId);
+    if (!id) {
+      alert('ID invalide.');
+      return;
+    }
+
+    const data = getData();
+    if (data.projects.some((project) => project.id === id)) {
+      alert(`Le projet "${id}" existe déjà.`);
+      return;
+    }
+
+    const project = {
+      id,
+      title: id,
+      date: '',
+      duration: '',
+      category: [],
+      icon: '',
+      media: '',
+      description: '',
+      sections: [],
+      medias: []
+    };
+
+    data.projects.unshift(project);
+    syncInlineData();
+
+    if (window.PortfolioGrid && typeof window.PortfolioGrid.reload === 'function') {
+      window.PortfolioGrid.reload();
+    }
+
+    await saveNow();
+
+    history.pushState(null, '', `#project=${encodeURIComponent(id)}`);
+    if (window.Portfolio && typeof window.Portfolio.openProjectById === 'function') {
+      window.Portfolio.openProjectById(id);
+    }
+  }
+
+  async function deleteProject(id) {
+    const data = getData();
+    const index = data.projects.findIndex((project) => project.id === id);
+    if (index < 0) return;
+
+    const project = data.projects[index];
+    const label = project.title || project.id;
+    if (!confirm(`Supprimer le projet "${label}" ?`)) return;
+
+    data.projects.splice(index, 1);
+    syncInlineData();
+
+    if (window.PortfolioGrid && typeof window.PortfolioGrid.reload === 'function') {
+      window.PortfolioGrid.reload();
+    }
+
+    if (location.hash === `#project=${encodeURIComponent(id)}`) {
+      history.pushState(null, '', '#portfolio');
+      if (typeof window.renderSection === 'function') window.renderSection('portfolio');
+    }
+
+    await saveNow();
+  }
+
+  function enhanceGrid() {
+    if (!enabled) return;
+    createEditorToolbar();
+
+    document.querySelectorAll('.project-item[data-project-id]').forEach((item) => {
+      if (item.querySelector('[data-editor-delete-project]')) return;
+
+      const id = item.getAttribute('data-project-id');
+      const figure = item.querySelector('.project-img');
+      if (!id || !figure) return;
+
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'project-delete-btn';
+      button.setAttribute('data-editor-delete-project', id);
+      button.setAttribute('aria-label', `Supprimer ${id}`);
+      button.innerHTML = '<ion-icon name="trash-outline" aria-hidden="true"></ion-icon>';
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        deleteProject(id);
+      });
+
+      figure.appendChild(button);
+    });
+  }
+
+  function ensureProjectInData(project) {
+    if (!project?.id) return null;
+
+    const data = getData();
+    let editableProject = data.projects.find((item) => item.id === project.id);
+
+    if (!editableProject) {
+      editableProject = normalizeData({ projects: [deepClone(project)] }).projects[0];
+      data.projects.push(editableProject);
+    }
+
+    return editableProject;
+  }
+
+  function makeContentEditable(element, placeholder, onInput) {
+    if (!element) return;
+
+    element.setAttribute('contenteditable', 'true');
+    element.setAttribute('spellcheck', 'true');
+    element.dataset.placeholder = placeholder;
+    element.classList.add('portfolio-editor-editable');
+
+    element.oninput = () => {
+      onInput(element.textContent.trim());
+      scheduleSave({ refreshGrid: true });
+    };
+
+    element.onblur = () => saveNow();
+  }
+
+  function autoResizeTextarea(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = `${Math.max(180, textarea.scrollHeight)}px`;
+  }
+
+  function enhanceDescription(project) {
+    const desc = document.getElementById('pj-description');
+    if (!desc) return;
+
+    desc.innerHTML = '';
+
+    const textarea = document.createElement('textarea');
+    textarea.className = 'portfolio-editor-textarea';
+    textarea.placeholder = 'Description du projet...';
+    textarea.value = project.description || '';
+    textarea.addEventListener('input', () => {
+      project.description = textarea.value;
+      autoResizeTextarea(textarea);
+      scheduleSave();
+    });
+    textarea.addEventListener('blur', () => saveNow());
+
+    desc.appendChild(textarea);
+    autoResizeTextarea(textarea);
+  }
+
+  async function rerenderProject(project) {
+    syncInlineData();
+    if (window.Portfolio && typeof window.Portfolio.openProjectById === 'function') {
+      await window.Portfolio.openProjectById(project.id);
+    }
+  }
+
+  function ensureIconButton(project) {
+    const meta = document.getElementById('pj-meta');
+    if (!meta) return;
+
+    document.getElementById('pj-editor-change-icon')?.remove();
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.id = 'pj-editor-change-icon';
+    button.className = 'portfolio-editor-inline-btn';
+    button.innerHTML = `
+      <ion-icon name="image-outline" aria-hidden="true"></ion-icon>
+      Changer l’icône
+    `;
+
+    button.addEventListener('click', async () => {
+      const path = await pickMediaPath();
+      if (!path) return;
+
+      project.icon = path;
+      scheduleSave({ refreshGrid: true });
+      await saveNow();
+    });
+
+    meta.appendChild(button);
+  }
+
+  function clearHeroEditorControls(heroWrap) {
+    heroWrap.querySelectorAll('[data-editor-hero-control], .portfolio-editor-hero-empty').forEach((node) => {
+      node.remove();
+    });
+    heroWrap.classList.remove('portfolio-editor-hero-placeholder');
+  }
+
+  function createMediaButton(className, iconName, label) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = className;
+    button.setAttribute('aria-label', label);
+    button.innerHTML = `<ion-icon name="${iconName}" aria-hidden="true"></ion-icon>`;
+    return button;
+  }
+
+  function enhanceHeroMedia(project) {
+    const heroWrap = document.getElementById('pj-hero');
+    const heroImg = document.getElementById('pj-hero-img');
+    if (!heroWrap) return;
+
+    clearHeroEditorControls(heroWrap);
+
+    const currentMedia = project.media || project.image || '';
+    heroWrap.style.display = '';
+
+    if (currentMedia) {
+      const deleteButton = createMediaButton(
+        'portfolio-editor-media-action danger',
+        'trash-outline',
+        'Supprimer le média principal'
+      );
+      deleteButton.setAttribute('data-editor-hero-control', '');
+      deleteButton.addEventListener('click', async () => {
+        if (!confirm('Supprimer le média principal ?')) return;
+
+        project.media = '';
+        project.image = '';
+        scheduleSave({ refreshGrid: true });
+        await saveNow();
+        await rerenderProject(project);
+      });
+
+      heroWrap.appendChild(deleteButton);
+      return;
+    }
+
+    const oldVideo = heroWrap.querySelector('video');
+    if (oldVideo) oldVideo.remove();
+    if (heroImg) {
+      heroImg.removeAttribute('src');
+      heroImg.style.display = 'none';
+    }
+
+    heroWrap.classList.add('portfolio-editor-hero-placeholder');
+
+    const empty = document.createElement('div');
+    empty.className = 'portfolio-editor-hero-empty';
+    empty.setAttribute('data-editor-hero-control', '');
+    empty.innerHTML = `
+      <button type="button" class="portfolio-editor-primary">
+        <ion-icon name="add-circle-outline" aria-hidden="true"></ion-icon>
+        Ajouter le média principal
+      </button>
+    `;
+
+    empty.querySelector('button').addEventListener('click', async () => {
+      const path = await pickMediaPath();
+      if (!path) return;
+
+      project.media = path;
+      scheduleSave({ refreshGrid: true });
+      await saveNow();
+      await rerenderProject(project);
+    });
+
+    heroWrap.appendChild(empty);
+  }
+
+  function renderEditableMediaList(medias, label) {
+    const mediaItems = Array.isArray(medias) ? medias : [];
+
+    return `
+      <div class="portfolio-editor-section-medias">
+        <div class="portfolio-editor-section-medias-head">
+          <span>${escapeHtml(label)}</span>
+          <button type="button" class="portfolio-editor-section-add-media" data-media-add aria-label="Ajouter un média">
+            <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+        <div class="portfolio-editor-section-media-list">
+          ${mediaItems.map((src, mediaIndex) => {
+            const safeSrc = escapeAttr(src);
+            const isVideo = isVideoPath(src);
+            const media = isVideo
+              ? `<video src="${safeSrc}" muted playsinline preload="metadata"></video>`
+              : `<img src="${safeSrc}" alt="">`;
+
+            return `
+              <figure class="portfolio-editor-section-media" data-media-index="${mediaIndex}">
+                ${media}
+                <button type="button" class="portfolio-editor-section-media-delete" data-media-delete aria-label="Supprimer ce média">
+                  <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+                </button>
+                <div class="portfolio-editor-section-media-move">
+                  <button type="button" data-media-left aria-label="Déplacer à gauche" ${mediaIndex === 0 ? 'disabled' : ''}>&lt;-</button>
+                  <button type="button" data-media-right aria-label="Déplacer à droite" ${mediaIndex === mediaItems.length - 1 ? 'disabled' : ''}>-&gt;</button>
+                </div>
+              </figure>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function bindEditableMediaList(container, medias, onChange) {
+    container.querySelector('[data-media-add]')?.addEventListener('click', async () => {
+      const path = await pickMediaPath();
+      if (!path) return;
+
+      medias.push(path);
+      onChange();
+    });
+
+    container.querySelectorAll('.portfolio-editor-section-media').forEach((mediaItem) => {
+      const mediaIndex = Number(mediaItem.getAttribute('data-media-index'));
+      if (!Number.isInteger(mediaIndex)) return;
+
+      mediaItem.querySelector('[data-media-delete]')?.addEventListener('click', () => {
+        medias.splice(mediaIndex, 1);
+        onChange();
+      });
+
+      mediaItem.querySelector('[data-media-left]')?.addEventListener('click', () => {
+        if (mediaIndex <= 0) return;
+        const [media] = medias.splice(mediaIndex, 1);
+        medias.splice(mediaIndex - 1, 0, media);
+        onChange();
+      });
+
+      mediaItem.querySelector('[data-media-right]')?.addEventListener('click', () => {
+        if (mediaIndex >= medias.length - 1) return;
+        const [media] = medias.splice(mediaIndex, 1);
+        medias.splice(mediaIndex + 1, 0, media);
+        onChange();
+      });
+    });
+  }
+
+  function enhanceProjectGallery(project) {
+    const gallery = document.getElementById('pj-gallery');
+    if (!gallery) return;
+
+    if (!Array.isArray(project.medias)) project.medias = project.images || [];
+    if (!Array.isArray(project.medias)) project.medias = [];
+
+    gallery.style.display = '';
+    gallery.innerHTML = `
+      <h3 class="h3">Galerie</h3>
+      <div class="portfolio-editor-main-gallery">
+        ${renderEditableMediaList(project.medias, 'Galerie principale du projet')}
+      </div>
+    `;
+
+    bindEditableMediaList(gallery, project.medias, () => {
+      enhanceProjectGallery(project);
+      scheduleSave();
+    });
+  }
+
+  function ensureSectionsToolbar(project, hooks) {
+    const sectionsContainer = document.getElementById('pj-sections');
+    if (!sectionsContainer) return null;
+
+    let toolbar = document.getElementById('pj-editor-sections-toolbar');
+    if (!toolbar) {
+      toolbar = document.createElement('div');
+      toolbar.id = 'pj-editor-sections-toolbar';
+      toolbar.className = 'portfolio-editor-sections-toolbar';
+      sectionsContainer.insertAdjacentElement('beforebegin', toolbar);
+    }
+
+    toolbar.innerHTML = '<h3 class="h3">Sections</h3>';
+
+    return toolbar;
+  }
+
+  function ensureAddSectionButton(project, hooks) {
+    const sectionsContainer = document.getElementById('pj-sections');
+    if (!sectionsContainer) return null;
+
+    let footer = document.getElementById('pj-editor-add-section-wrap');
+    if (!footer) {
+      footer = document.createElement('div');
+      footer.id = 'pj-editor-add-section-wrap';
+      footer.className = 'portfolio-editor-add-section-wrap';
+      sectionsContainer.insertAdjacentElement('afterend', footer);
+    }
+
+    footer.innerHTML = `
+      <button type="button" class="portfolio-editor-primary" id="pj-editor-add-section">
+        <ion-icon name="add-circle-outline" aria-hidden="true"></ion-icon>
+        Ajouter une section
+      </button>
+    `;
+
+    footer.querySelector('#pj-editor-add-section')?.addEventListener('click', () => {
+      project.sections.push({
+        title: 'Nouvelle section',
+        description: '',
+        medias: []
+      });
+
+      renderSectionsEditor(project, hooks);
+      scheduleSave();
+    });
+
+    return footer;
+  }
+
+  function moveSection(project, fromIndex, toIndex, hooks) {
+    if (toIndex < 0 || toIndex >= project.sections.length) return;
+
+    const [section] = project.sections.splice(fromIndex, 1);
+    project.sections.splice(toIndex, 0, section);
+    renderSectionsEditor(project, hooks);
+    scheduleSave();
+  }
+
+  function deleteSection(project, index, hooks) {
+    const section = project.sections[index];
+    const label = section?.title || `Section ${index + 1}`;
+    if (!confirm(`Supprimer "${label}" ?`)) return;
+
+    project.sections.splice(index, 1);
+    renderSectionsEditor(project, hooks);
+    scheduleSave();
+  }
+
+  function renderSectionMedias(section) {
+    const medias = section.medias || section.images || [];
+    const mediaItems = Array.isArray(medias) ? medias : [];
+
+    return `
+      <div class="portfolio-editor-section-medias">
+        <div class="portfolio-editor-section-medias-head">
+          <span>Médias de la section</span>
+          <button type="button" class="portfolio-editor-section-add-media" data-section-add-media aria-label="Ajouter un média">
+            <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+        <div class="portfolio-editor-section-media-list">
+          ${mediaItems.map((src, mediaIndex) => {
+            const safeSrc = escapeAttr(src);
+            const isVideo = isVideoPath(src);
+            const media = isVideo
+              ? `<video src="${safeSrc}" muted playsinline preload="metadata"></video>`
+              : `<img src="${safeSrc}" alt="">`;
+
+            return `
+              <figure class="portfolio-editor-section-media" data-section-media-index="${mediaIndex}">
+                ${media}
+                <button type="button" class="portfolio-editor-section-media-delete" data-media-delete aria-label="Supprimer ce média">
+                  <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+                </button>
+                <div class="portfolio-editor-section-media-move">
+                  <button type="button" data-media-left aria-label="Déplacer à gauche" ${mediaIndex === 0 ? 'disabled' : ''}>&lt;-</button>
+                  <button type="button" data-media-right aria-label="Déplacer à droite" ${mediaIndex === mediaItems.length - 1 ? 'disabled' : ''}>-&gt;</button>
+                </div>
+              </figure>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderSectionsEditor(project, hooks = {}) {
+    if (!Array.isArray(project.sections)) project.sections = [];
+
+    const container = document.getElementById('pj-sections');
+    if (!container) return;
+
+    ensureSectionsToolbar(project, hooks);
+    ensureAddSectionButton(project, hooks);
+    container.innerHTML = '';
+
+    if (!project.sections.length) {
+      const empty = document.createElement('p');
+      empty.className = 'portfolio-editor-empty';
+      empty.textContent = 'Aucune section pour l’instant.';
+      container.appendChild(empty);
+      return;
+    }
+
+    project.sections.forEach((section, index) => {
+      if (!section || typeof section !== 'object') {
+        section = project.sections[index] = { title: '', description: '', medias: [] };
+      }
+      if (!Array.isArray(section.medias)) section.medias = section.images || [];
+
+      const card = document.createElement('section');
+      card.className = 'project-section portfolio-editor-section-card';
+      card.innerHTML = `
+        <div class="portfolio-editor-section-header">
+          <span class="portfolio-editor-section-index">Section ${index + 1}</span>
+          <div class="portfolio-editor-section-actions">
+            <button type="button" class="portfolio-editor-section-btn" data-section-up aria-label="Monter la section" ${index === 0 ? 'disabled' : ''}>
+              <ion-icon name="arrow-up-outline" aria-hidden="true"></ion-icon>
+            </button>
+            <button type="button" class="portfolio-editor-section-btn" data-section-down aria-label="Descendre la section" ${index === project.sections.length - 1 ? 'disabled' : ''}>
+              <ion-icon name="arrow-down-outline" aria-hidden="true"></ion-icon>
+            </button>
+            <button type="button" class="portfolio-editor-section-btn danger" data-section-delete aria-label="Supprimer la section">
+              <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+            </button>
+          </div>
+        </div>
+
+        <label class="portfolio-editor-label">Titre</label>
+        <input class="portfolio-editor-input portfolio-editor-section-title" type="text" value="${escapeAttr(section.title || '')}" placeholder="Titre de la section">
+
+        <label class="portfolio-editor-label">Description</label>
+        <textarea class="portfolio-editor-textarea portfolio-editor-section-description" placeholder="Description de la section...">${escapeHtml(section.description || '')}</textarea>
+
+        ${renderSectionMedias(section)}
+      `;
+
+      const titleInput = card.querySelector('.portfolio-editor-section-title');
+      const descInput = card.querySelector('.portfolio-editor-section-description');
+
+      titleInput.addEventListener('input', () => {
+        section.title = titleInput.value;
+        scheduleSave();
+      });
+      titleInput.addEventListener('blur', () => saveNow());
+
+      descInput.addEventListener('input', () => {
+        section.description = descInput.value;
+        autoResizeTextarea(descInput);
+        scheduleSave();
+      });
+      descInput.addEventListener('blur', () => saveNow());
+      autoResizeTextarea(descInput);
+
+      card.querySelector('[data-section-add-media]')?.addEventListener('click', async () => {
+        const path = await pickMediaPath();
+        if (!path) return;
+
+        section.medias.push(path);
+        renderSectionsEditor(project, hooks);
+        scheduleSave();
+      });
+
+      card.querySelectorAll('.portfolio-editor-section-media').forEach((mediaItem) => {
+        const mediaIndex = Number(mediaItem.getAttribute('data-section-media-index'));
+        if (!Number.isInteger(mediaIndex)) return;
+
+        mediaItem.querySelector('[data-media-delete]')?.addEventListener('click', () => {
+          section.medias.splice(mediaIndex, 1);
+          renderSectionsEditor(project, hooks);
+          scheduleSave();
+        });
+
+        mediaItem.querySelector('[data-media-left]')?.addEventListener('click', () => {
+          if (mediaIndex <= 0) return;
+          const [media] = section.medias.splice(mediaIndex, 1);
+          section.medias.splice(mediaIndex - 1, 0, media);
+          renderSectionsEditor(project, hooks);
+          scheduleSave();
+        });
+
+        mediaItem.querySelector('[data-media-right]')?.addEventListener('click', () => {
+          if (mediaIndex >= section.medias.length - 1) return;
+          const [media] = section.medias.splice(mediaIndex, 1);
+          section.medias.splice(mediaIndex + 1, 0, media);
+          renderSectionsEditor(project, hooks);
+          scheduleSave();
+        });
+      });
+
+      card.querySelector('[data-section-up]')?.addEventListener('click', () => {
+        moveSection(project, index, index - 1, hooks);
+      });
+
+      card.querySelector('[data-section-down]')?.addEventListener('click', () => {
+        moveSection(project, index, index + 1, hooks);
+      });
+
+      card.querySelector('[data-section-delete]')?.addEventListener('click', () => {
+        deleteSection(project, index, hooks);
+      });
+
+      container.appendChild(card);
+    });
+  }
+
+  function renderTags(project) {
+    const header = document.querySelector('.project-detail-header');
+    if (!header) return;
+
+    let panel = document.getElementById('pj-editor-tags');
+    if (!panel) {
+      panel = document.createElement('section');
+      panel.id = 'pj-editor-tags';
+      panel.className = 'portfolio-editor-tags';
+      header.insertAdjacentElement('afterend', panel);
+    }
+
+    const categories = Array.isArray(project.category) ? project.category : [];
+    panel.innerHTML = `
+      <label class="portfolio-editor-label">Tags du projet</label>
+      <div class="portfolio-editor-tag-list">
+        ${categories.map((tag) => `
+          <button type="button" class="portfolio-editor-tag" data-editor-remove-tag="${escapeAttr(tag)}">
+            <span>${escapeHtml(tag)}</span>
+            <span aria-hidden="true">×</span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="portfolio-editor-tag-form">
+        <input type="text" id="pj-editor-new-tag" placeholder="Ajouter un tag">
+        <button type="button" id="pj-editor-add-tag">Ajouter</button>
+      </div>
+    `;
+
+    panel.querySelectorAll('[data-editor-remove-tag]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const tag = button.getAttribute('data-editor-remove-tag');
+        project.category = categories.filter((item) => item !== tag);
+        renderTags(project);
+        scheduleSave({ refreshGrid: true });
+      });
+    });
+
+    const input = panel.querySelector('#pj-editor-new-tag');
+    const addButton = panel.querySelector('#pj-editor-add-tag');
+
+    const addTag = () => {
+      const tag = String(input.value || '').trim();
+      if (!tag) return;
+      if (!project.category.includes(tag)) project.category.push(tag);
+      input.value = '';
+      renderTags(project);
+      scheduleSave({ refreshGrid: true });
+    };
+
+    addButton.addEventListener('click', addTag);
+    input.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      addTag();
+    });
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  function escapeAttr(value) {
+    return escapeHtml(value).replaceAll('`', '&#096;');
+  }
+
+  function enhanceDetail(project, hooks = {}) {
+    if (!enabled) return;
+
+    const editableProject = ensureProjectInData(project);
+    if (!editableProject) return;
+
+    document.body.classList.add('portfolio-editor-mode');
+
+    const title = document.getElementById('pj-title');
+    const meta = document.getElementById('pj-meta');
+    const dateWrap = document.getElementById('pj-date-wrap');
+    const durationWrap = document.getElementById('pj-duration-wrap');
+    const date = document.getElementById('pj-date');
+    const duration = document.getElementById('pj-duration');
+
+    if (meta) meta.hidden = false;
+    if (dateWrap) dateWrap.hidden = false;
+    if (durationWrap) durationWrap.hidden = false;
+
+    if (title && title.textContent !== editableProject.title) {
+      title.textContent = editableProject.title || editableProject.id || '';
+    }
+    if (date && date.textContent !== (editableProject.date || '')) date.textContent = editableProject.date || '';
+    if (duration && duration.textContent !== (editableProject.duration || '')) duration.textContent = editableProject.duration || '';
+
+    makeContentEditable(title, 'Titre du projet', (value) => {
+      editableProject.title = value || editableProject.id;
+      hooks.scheduleProjectTitleFit?.();
+    });
+
+    makeContentEditable(date, 'Date', (value) => {
+      editableProject.date = value;
+    });
+
+    makeContentEditable(duration, 'Durée', (value) => {
+      editableProject.duration = value;
+    });
+
+    ensureIconButton(editableProject);
+    enhanceHeroMedia(editableProject);
+    enhanceProjectGallery(editableProject);
+    renderTags(editableProject);
+    enhanceDescription(editableProject);
+    renderSectionsEditor(editableProject, hooks);
+    hooks.scheduleProjectTitleFit?.();
+  }
+
+  window.PortfolioEditor = {
+    enabled,
+    getData,
+    saveNow,
+    enhanceGrid,
+    enhanceDetail
+  };
+
+  if (!enabled) return;
+
+  document.body.classList.add('portfolio-editor-mode');
+
+  document.addEventListener('DOMContentLoaded', () => {
+    getData();
+    createEditorToolbar();
+    enhanceGrid();
+  });
+})();
