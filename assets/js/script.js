@@ -678,7 +678,7 @@ document.addEventListener('DOMContentLoaded', showFromHash);
 
 
   function onProjectTileClick(e) {
-    if (e.target.closest('[data-editor-delete-project]')) return;
+    if (e.target.closest('.portfolio-editor-project-controls, [data-editor-delete-project]')) return;
     const li = e.currentTarget;
     const id = li.getAttribute('data-project-id');
     if (!id) return;
@@ -914,6 +914,7 @@ document.addEventListener('DOMContentLoaded', showFromHash);
 
   function bindProjectClicks() {
     root.list?.addEventListener('click', (e) => {
+      if (e.target.closest('.portfolio-editor-project-controls, [data-editor-delete-project]')) return;
       const item = e.target.closest('.project-item[data-project-id]');
       if (!item) return;
       e.preventDefault();

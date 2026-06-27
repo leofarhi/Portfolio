@@ -279,30 +279,72 @@
     await saveNow();
   }
 
+  function moveProject(id, direction) {
+    const data = getData();
+    const projects = data.projects || [];
+    const index = projects.findIndex((project) => project.id === id);
+    const nextIndex = index + direction;
+
+    if (index < 0 || nextIndex < 0 || nextIndex >= projects.length) return;
+
+    const [project] = projects.splice(index, 1);
+    projects.splice(nextIndex, 0, project);
+    syncInlineData();
+
+    if (window.PortfolioGrid && typeof window.PortfolioGrid.reload === 'function') {
+      window.PortfolioGrid.reload();
+    }
+
+    scheduleSave();
+  }
+
   function enhanceGrid() {
     if (!enabled) return;
     createEditorToolbar();
 
     document.querySelectorAll('.project-item[data-project-id]').forEach((item) => {
-      if (item.querySelector('[data-editor-delete-project]')) return;
+      if (item.querySelector('.portfolio-editor-project-controls')) return;
 
       const id = item.getAttribute('data-project-id');
       const figure = item.querySelector('.project-img');
       if (!id || !figure) return;
 
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'project-delete-btn';
-      button.setAttribute('data-editor-delete-project', id);
-      button.setAttribute('aria-label', `Supprimer ${id}`);
-      button.innerHTML = '<ion-icon name="trash-outline" aria-hidden="true"></ion-icon>';
-      button.addEventListener('click', (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        deleteProject(id);
+      const data = getData();
+      const projects = data.projects || [];
+      const projectIndex = projects.findIndex((project) => project.id === id);
+      const canMoveUp = projectIndex > 0;
+      const canMoveDown = projectIndex >= 0 && projectIndex < projects.length - 1;
+
+      const controls = document.createElement('div');
+      controls.className = 'portfolio-editor-project-controls';
+      controls.innerHTML = `
+        <button type="button" class="portfolio-editor-project-control" data-editor-move-project="-1" aria-label="Monter ${escapeAttr(id)}" ${canMoveUp ? '' : 'disabled'}>
+          <ion-icon name="arrow-up-outline" aria-hidden="true"></ion-icon>
+        </button>
+        <button type="button" class="portfolio-editor-project-control" data-editor-move-project="1" aria-label="Descendre ${escapeAttr(id)}" ${canMoveDown ? '' : 'disabled'}>
+          <ion-icon name="arrow-down-outline" aria-hidden="true"></ion-icon>
+        </button>
+        <button type="button" class="portfolio-editor-project-control danger" data-editor-delete-project="${escapeAttr(id)}" aria-label="Supprimer ${escapeAttr(id)}">
+          <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+        </button>
+      `;
+
+      controls.querySelectorAll('button').forEach((button) => {
+        button.addEventListener('click', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+
+          if (button.hasAttribute('data-editor-delete-project')) {
+            deleteProject(id);
+            return;
+          }
+
+          const direction = Number(button.getAttribute('data-editor-move-project'));
+          if (direction) moveProject(id, direction);
+        });
       });
 
-      figure.appendChild(button);
+      figure.appendChild(controls);
     });
   }
 
@@ -790,6 +832,38 @@
     activePageByProject.set(project.id, index);
   }
 
+  function renamePage(project, index, hooks) {
+    const pages = getProjectPages(project);
+    const page = pages[index];
+    if (!page) return;
+
+    const currentName = page.name || `Page ${index + 1}`;
+    const rawName = prompt('Nouveau nom de la page :', currentName);
+    if (rawName === null) return;
+
+    const name = rawName.trim();
+    if (!name) {
+      alert('Le nom de la page ne peut pas être vide.');
+      return;
+    }
+
+    page.name = name;
+    renderProjectPagesEditor(project, hooks);
+    scheduleSave();
+  }
+
+  function movePage(project, fromIndex, toIndex, hooks) {
+    const pages = getProjectPages(project);
+    if (fromIndex < 0 || toIndex < 0 || fromIndex >= pages.length || toIndex >= pages.length) return;
+
+    const [page] = pages.splice(fromIndex, 1);
+    pages.splice(toIndex, 0, page);
+    setActivePageIndex(project, toIndex);
+    renderProjectPagesEditor(project, hooks);
+    renderSectionsEditor(project, hooks);
+    scheduleSave();
+  }
+
   function renderProjectPagesEditor(project, hooks = {}) {
     const tabsContainer = document.getElementById('pj-page-tabs');
     if (!tabsContainer) return;
@@ -809,12 +883,23 @@
         <div class="portfolio-editor-page-tabs">
           ${pages.map((page, index) => `
             <div class="portfolio-editor-page-tab ${index === activeIndex ? 'active' : ''}">
-              <button type="button" data-editor-page-select="${index}">
+              <button type="button" class="portfolio-editor-page-select" data-editor-page-select="${index}">
                 ${escapeHtml(page.name || `Page ${index + 1}`)}
               </button>
-              <button type="button" class="portfolio-editor-page-delete" data-editor-page-delete="${index}" aria-label="Supprimer cette page">
-                <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
-              </button>
+              <div class="portfolio-editor-page-actions">
+                <button type="button" class="portfolio-editor-page-action" data-editor-page-left="${index}" aria-label="Déplacer la page à gauche" ${index === 0 ? 'disabled' : ''}>
+                  <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>
+                </button>
+                <button type="button" class="portfolio-editor-page-action" data-editor-page-right="${index}" aria-label="Déplacer la page à droite" ${index === pages.length - 1 ? 'disabled' : ''}>
+                  <ion-icon name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+                </button>
+                <button type="button" class="portfolio-editor-page-action" data-editor-page-rename="${index}" aria-label="Renommer cette page">
+                  <ion-icon name="pencil-outline" aria-hidden="true"></ion-icon>
+                </button>
+                <button type="button" class="portfolio-editor-page-action danger" data-editor-page-delete="${index}" aria-label="Supprimer cette page">
+                  <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+                </button>
+              </div>
             </div>
           `).join('')}
         </div>
@@ -838,6 +923,27 @@
         setActivePageIndex(project, Number(button.getAttribute('data-editor-page-select')));
         renderProjectPagesEditor(project, hooks);
         renderSectionsEditor(project, hooks);
+      });
+    });
+
+    tabsContainer.querySelectorAll('[data-editor-page-left]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const index = Number(button.getAttribute('data-editor-page-left'));
+        movePage(project, index, index - 1, hooks);
+      });
+    });
+
+    tabsContainer.querySelectorAll('[data-editor-page-right]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const index = Number(button.getAttribute('data-editor-page-right'));
+        movePage(project, index, index + 1, hooks);
+      });
+    });
+
+    tabsContainer.querySelectorAll('[data-editor-page-rename]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const index = Number(button.getAttribute('data-editor-page-rename'));
+        renamePage(project, index, hooks);
       });
     });
 

@@ -1160,30 +1160,63 @@ main {
   font-size: 16px;
 }
 
-.project-delete-btn {
+.portfolio-editor-project-controls {
   position: absolute;
   top: 10px;
   right: 10px;
   z-index: 4;
+  display: flex;
+  gap: 6px;
+}
+
+.portfolio-editor-project-control,
+.project-delete-btn {
   width: 36px;
   height: 36px;
   display: flex;
   justify-content: center;
   align-items: center;
   color: var(--white-2);
-  background: hsla(0, 50%, 34%, 0.88);
-  border: 1px solid hsla(0, 75%, 68%, 0.45);
+  background: hsla(240, 2%, 12%, 0.88);
+  border: 1px solid var(--jet);
   border-radius: 10px;
   box-shadow: var(--shadow-2);
-  transition: transform var(--transition-1), background var(--transition-1);
+  transition:
+    transform var(--transition-1),
+    background var(--transition-1),
+    border-color var(--transition-1),
+    opacity var(--transition-1);
 }
 
+.portfolio-editor-project-control:hover:not(:disabled),
+.portfolio-editor-project-control:focus:not(:disabled),
 .project-delete-btn:hover,
 .project-delete-btn:focus {
-  background: hsl(0, 55%, 42%);
+  border-color: var(--orange-yellow-crayola);
+  background: var(--onyx);
   transform: scale(1.06);
 }
 
+.portfolio-editor-project-control:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+.portfolio-editor-project-control.danger,
+.project-delete-btn {
+  background: hsla(0, 50%, 34%, 0.88);
+  border-color: hsla(0, 75%, 68%, 0.45);
+}
+
+.portfolio-editor-project-control.danger:hover,
+.portfolio-editor-project-control.danger:focus,
+.project-delete-btn:hover,
+.project-delete-btn:focus {
+  background: hsl(0, 55%, 42%);
+  border-color: hsla(0, 75%, 68%, 0.75);
+}
+
+.portfolio-editor-project-control ion-icon,
 .project-delete-btn ion-icon {
   color: var(--white-2);
   font-size: 19px;
@@ -1650,34 +1683,60 @@ main {
   transform: translateY(1px);
 }
 
-.portfolio-editor-page-tab > button:first-child {
+.portfolio-editor-page-select {
   color: var(--light-gray-70);
   padding: 10px 14px;
   font-size: var(--fs-6);
   transition: color var(--transition-1);
 }
 
-.portfolio-editor-page-tab:hover > button:first-child,
-.portfolio-editor-page-tab:focus-within > button:first-child {
+.portfolio-editor-page-tab:hover .portfolio-editor-page-select,
+.portfolio-editor-page-tab:focus-within .portfolio-editor-page-select {
   color: var(--orange-yellow-crayola);
 }
 
-.portfolio-editor-page-tab.active > button:first-child {
+.portfolio-editor-page-tab.active .portfolio-editor-page-select {
   color: var(--orange-yellow-crayola);
 }
 
-.portfolio-editor-page-delete {
-  width: 34px;
+.portfolio-editor-page-actions {
+  display: inline-flex;
+  border-left: 1px solid var(--jet);
+}
+
+.portfolio-editor-page-action {
+  width: 32px;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: hsl(0, 75%, 72%);
-  border-left: 1px solid var(--jet);
-  transition: background var(--transition-1), color var(--transition-1);
+  color: var(--light-gray-70);
+  transition:
+    background var(--transition-1),
+    color var(--transition-1),
+    opacity var(--transition-1);
 }
 
-.portfolio-editor-page-delete:hover,
-.portfolio-editor-page-delete:focus {
+.portfolio-editor-page-action + .portfolio-editor-page-action {
+  border-left: 1px solid var(--jet);
+}
+
+.portfolio-editor-page-action:hover:not(:disabled),
+.portfolio-editor-page-action:focus:not(:disabled) {
+  color: var(--orange-yellow-crayola);
+  background: var(--onyx);
+}
+
+.portfolio-editor-page-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.28;
+}
+
+.portfolio-editor-page-action.danger {
+  color: hsl(0, 75%, 72%);
+}
+
+.portfolio-editor-page-action.danger:hover,
+.portfolio-editor-page-action.danger:focus {
   color: var(--white-2);
   background: hsl(0, 50%, 32%);
 }
