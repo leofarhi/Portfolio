@@ -73,6 +73,7 @@ document.addEventListener('DOMContentLoaded', showFromHash);
     desc: document.getElementById('pj-description'),
     heroWrap: document.getElementById('pj-hero'),
     heroImg: document.getElementById('pj-hero-img'),
+    pageTabs: document.getElementById('pj-page-tabs'),
     sections: document.getElementById('pj-sections'),
     galleryWrap: document.getElementById('pj-gallery'),
     thumbs: document.getElementById('pj-thumbs'),
@@ -107,6 +108,7 @@ document.addEventListener('DOMContentLoaded', showFromHash);
     el.heroWrap.style.display = 'none';
 
     // Sections & galerie
+    el.pageTabs.innerHTML = '';
     el.sections.innerHTML = '';
     el.galleryWrap.style.display = 'none';
 
@@ -417,6 +419,59 @@ document.addEventListener('DOMContentLoaded', showFromHash);
 
   const hasMedias = (arr) => Array.isArray(arr) && arr.length > 0;
 
+  function renderProjectSections(sections) {
+    el.sections.innerHTML = '';
+
+    if (!Array.isArray(sections) || !sections.length) return;
+
+    sections.forEach(s => {
+      const sec = document.createElement('section');
+      sec.className = 'project-section';
+      const titleHTML = s.title ? `<h3 class="h3">${escapeHtml(s.title)}</h3>` : '';
+      const descHTML  = s.description ? `<div class="about-text">${parseDescription(s.description)}</div>` : '';
+      sec.innerHTML = `${titleHTML}${descHTML}`;
+
+      const medias = s.medias || s.images || [];
+      if (hasMedias(medias)) sec.appendChild(createThumbs(medias));
+
+      el.sections.appendChild(sec);
+    });
+  }
+
+  function renderProjectPageTabs(projectPages) {
+    if (!el.pageTabs) return;
+
+    el.pageTabs.innerHTML = '';
+    if (!Array.isArray(projectPages) || !projectPages.length) {
+      renderProjectSections([]);
+      return;
+    }
+
+    const tabs = document.createElement('div');
+    tabs.className = 'project-page-tabs';
+
+    const showPage = (index) => {
+      const page = projectPages[index];
+      tabs.querySelectorAll('[data-project-page-tab]').forEach((button, buttonIndex) => {
+        button.classList.toggle('active', buttonIndex === index);
+      });
+      renderProjectSections(page.sections);
+    };
+
+    projectPages.forEach((page, index) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = index === 0 ? 'active' : '';
+      button.setAttribute('data-project-page-tab', '');
+      button.textContent = page.name || `Page ${index + 1}`;
+      button.addEventListener('click', () => showPage(index));
+      tabs.appendChild(button);
+    });
+
+    el.pageTabs.appendChild(tabs);
+    showPage(0);
+  }
+
   function renderProject(project) {
     if (!project) return;
 
@@ -455,21 +510,7 @@ document.addEventListener('DOMContentLoaded', showFromHash);
       }
     }
 
-    el.sections.innerHTML = '';
-    if (Array.isArray(project.sections) && project.sections.length) {
-      project.sections.forEach(s => {
-        const sec = document.createElement('section');
-        sec.className = 'project-section';
-        const titleHTML = s.title ? `<h3 class="h3">${escapeHtml(s.title)}</h3>` : '';
-        const descHTML  = s.description ? `<div class="about-text">${parseDescription(s.description)}</div>` : '';
-        sec.innerHTML = `${titleHTML}${descHTML}`;
-
-        const medias = s.medias || s.images || [];
-        if (hasMedias(medias)) sec.appendChild(createThumbs(medias));
-
-        el.sections.appendChild(sec);
-      });
-    }
+    renderProjectPageTabs(project.pages);
 
     const globalMedias = project.medias || project.images || [];
     el.thumbs.innerHTML = '';
@@ -542,11 +583,11 @@ document.addEventListener('DOMContentLoaded', showFromHash);
           duration: '',
           description: '',
           media: src,
-          sections: [],
+          pages: [{ name: 'Contexte', sections: [] }],
           medias: src ? [src] : []
         };
       } else {
-        project = { id, title: id, date: '', duration: '', description: '', sections: [], medias: [] };
+        project = { id, title: id, date: '', duration: '', description: '', pages: [{ name: 'Contexte', sections: [] }], medias: [] };
       }
     }
 

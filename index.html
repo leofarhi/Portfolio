@@ -442,6 +442,7 @@
           <div class="project-thumbs has-scrollbar" id="pj-thumbs"></div>
         </section>
 
+        <div id="pj-page-tabs"></div>
         <div id="pj-sections"></div>
       </article>
 
@@ -572,11 +573,14 @@
         if (p.image)  p.image  = toRaw(p.image);
         if (Array.isArray(p.images)) p.images = p.images.map(toRaw);
 
-        // sections
-        if (Array.isArray(p.sections)) {
-          p.sections.forEach(s => {
-            if (Array.isArray(s.medias)) s.medias = s.medias.map(toRaw);
-            if (Array.isArray(s.images)) s.images = s.images.map(toRaw); // compat éventuelle
+        // pages projet
+        if (Array.isArray(p.pages)) {
+          p.pages.forEach(page => {
+            if (!Array.isArray(page.sections)) return;
+            page.sections.forEach(s => {
+              if (Array.isArray(s.medias)) s.medias = s.medias.map(toRaw);
+              if (Array.isArray(s.images)) s.images = s.images.map(toRaw); // compat éventuelle
+            });
           });
         }
       });

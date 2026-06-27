@@ -54,8 +54,27 @@ def validate_projects_data(data: object) -> None:
         if "category" in project and not isinstance(project["category"], list):
             raise ValueError(f"Le champ category de {project_id} doit être une liste.")
 
-        if "sections" in project and not isinstance(project["sections"], list):
-            raise ValueError(f"Le champ sections de {project_id} doit être une liste.")
+        pages = project.get("pages")
+        if not isinstance(pages, list):
+            raise ValueError(f"Le champ pages de {project_id} doit être une liste.")
+
+        for page_index, page in enumerate(pages):
+            if not isinstance(page, dict):
+                raise ValueError(f"La page #{page_index} de {project_id} n'est pas un objet.")
+
+            if not isinstance(page.get("name"), str) or not page["name"].strip():
+                raise ValueError(f"La page #{page_index} de {project_id} n'a pas de nom valide.")
+
+            sections = page.get("sections")
+            if not isinstance(sections, list):
+                raise ValueError(f"Le champ sections de la page {page_index} de {project_id} doit être une liste.")
+
+            for section_index, section in enumerate(sections):
+                if not isinstance(section, dict):
+                    raise ValueError(f"La section #{section_index} de la page {page_index} de {project_id} n'est pas un objet.")
+
+                if "medias" in section and not isinstance(section["medias"], list):
+                    raise ValueError(f"Le champ medias de la section {section_index} de {project_id} doit être une liste.")
 
         if "medias" in project and not isinstance(project["medias"], list):
             raise ValueError(f"Le champ medias de {project_id} doit être une liste.")

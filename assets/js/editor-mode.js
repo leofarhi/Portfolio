@@ -10,6 +10,7 @@
   let gridRefreshTimer = null;
   let statusEl = null;
   let saveChain = Promise.resolve();
+  const activePageByProject = new Map();
 
   const deepClone = (obj) => JSON.parse(JSON.stringify(obj));
 
@@ -21,7 +22,12 @@
       if (!Array.isArray(project.category)) {
         project.category = project.category ? [project.category] : [];
       }
-      if (!Array.isArray(project.sections)) project.sections = [];
+      if (!Array.isArray(project.pages)) project.pages = [];
+      project.pages.forEach((page) => {
+        if (!page || typeof page !== 'object') return;
+        if (!page.name || typeof page.name !== 'string') page.name = 'Contexte';
+        if (!Array.isArray(page.sections)) page.sections = [];
+      });
       if (!Array.isArray(project.medias)) project.medias = [];
       if (!project.id && project.title) project.id = makeProjectId(project.title);
       if (!project.title && project.id) project.title = project.id;
@@ -227,7 +233,7 @@
       icon: '',
       media: '',
       description: '',
-      sections: [],
+      pages: [{ name: 'Contexte', sections: [] }],
       medias: []
     };
 
@@ -558,6 +564,98 @@
     });
   }
 
+  function getProjectPages(project) {
+    if (!Array.isArray(project.pages)) project.pages = [];
+    return project.pages;
+  }
+
+  function getActivePageIndex(project) {
+    const pages = getProjectPages(project);
+    if (!pages.length) return -1;
+
+    const savedIndex = activePageByProject.get(project.id) ?? 0;
+    const index = Math.min(Math.max(savedIndex, 0), pages.length - 1);
+    activePageByProject.set(project.id, index);
+    return index;
+  }
+
+  function getActivePage(project) {
+    const index = getActivePageIndex(project);
+    return index >= 0 ? project.pages[index] : null;
+  }
+
+  function setActivePageIndex(project, index) {
+    activePageByProject.set(project.id, index);
+  }
+
+  function renderProjectPagesEditor(project, hooks = {}) {
+    const tabsContainer = document.getElementById('pj-page-tabs');
+    if (!tabsContainer) return;
+
+    const pages = getProjectPages(project);
+    const activeIndex = getActivePageIndex(project);
+
+    tabsContainer.innerHTML = `
+      <div class="portfolio-editor-pages">
+        <div class="portfolio-editor-pages-head">
+          <h3 class="h3">Pages</h3>
+          <button type="button" class="portfolio-editor-primary" id="pj-editor-add-page">
+            <ion-icon name="add-circle-outline" aria-hidden="true"></ion-icon>
+            Ajouter une page
+          </button>
+        </div>
+        <div class="portfolio-editor-page-tabs">
+          ${pages.map((page, index) => `
+            <div class="portfolio-editor-page-tab ${index === activeIndex ? 'active' : ''}">
+              <button type="button" data-editor-page-select="${index}">
+                ${escapeHtml(page.name || `Page ${index + 1}`)}
+              </button>
+              <button type="button" class="portfolio-editor-page-delete" data-editor-page-delete="${index}" aria-label="Supprimer cette page">
+                <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+              </button>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+
+    tabsContainer.querySelector('#pj-editor-add-page')?.addEventListener('click', () => {
+      const rawName = prompt('Nom de la nouvelle page :', 'Installation');
+      if (rawName === null) return;
+
+      const name = rawName.trim() || `Page ${pages.length + 1}`;
+      pages.push({ name, sections: [] });
+      setActivePageIndex(project, pages.length - 1);
+      renderProjectPagesEditor(project, hooks);
+      renderSectionsEditor(project, hooks);
+      scheduleSave();
+    });
+
+    tabsContainer.querySelectorAll('[data-editor-page-select]').forEach((button) => {
+      button.addEventListener('click', () => {
+        setActivePageIndex(project, Number(button.getAttribute('data-editor-page-select')));
+        renderProjectPagesEditor(project, hooks);
+        renderSectionsEditor(project, hooks);
+      });
+    });
+
+    tabsContainer.querySelectorAll('[data-editor-page-delete]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const index = Number(button.getAttribute('data-editor-page-delete'));
+        const page = pages[index];
+        if (!page) return;
+        if (!confirm(`Supprimer la page "${page.name || `Page ${index + 1}`}" ?`)) return;
+
+        pages.splice(index, 1);
+        const nextIndex = Math.min(index, pages.length - 1);
+        setActivePageIndex(project, nextIndex);
+        renderProjectPagesEditor(project, hooks);
+        renderSectionsEditor(project, hooks);
+        scheduleSave();
+      });
+    });
+  }
+
   function ensureSectionsToolbar(project, hooks) {
     const sectionsContainer = document.getElementById('pj-sections');
     if (!sectionsContainer) return null;
@@ -595,7 +693,13 @@
     `;
 
     footer.querySelector('#pj-editor-add-section')?.addEventListener('click', () => {
-      project.sections.push({
+      const page = getActivePage(project);
+      if (!page) {
+        alert('Crée d’abord une page.');
+        return;
+      }
+
+      page.sections.push({
         title: 'Nouvelle section',
         description: '',
         medias: []
@@ -608,21 +712,23 @@
     return footer;
   }
 
-  function moveSection(project, fromIndex, toIndex, hooks) {
-    if (toIndex < 0 || toIndex >= project.sections.length) return;
+  function moveSection(project, page, fromIndex, toIndex, hooks) {
+    if (!page || toIndex < 0 || toIndex >= page.sections.length) return;
 
-    const [section] = project.sections.splice(fromIndex, 1);
-    project.sections.splice(toIndex, 0, section);
+    const [section] = page.sections.splice(fromIndex, 1);
+    page.sections.splice(toIndex, 0, section);
     renderSectionsEditor(project, hooks);
     scheduleSave();
   }
 
-  function deleteSection(project, index, hooks) {
-    const section = project.sections[index];
+  function deleteSection(project, page, index, hooks) {
+    if (!page) return;
+
+    const section = page.sections[index];
     const label = section?.title || `Section ${index + 1}`;
     if (!confirm(`Supprimer "${label}" ?`)) return;
 
-    project.sections.splice(index, 1);
+    page.sections.splice(index, 1);
     renderSectionsEditor(project, hooks);
     scheduleSave();
   }
@@ -666,16 +772,26 @@
   }
 
   function renderSectionsEditor(project, hooks = {}) {
-    if (!Array.isArray(project.sections)) project.sections = [];
-
     const container = document.getElementById('pj-sections');
     if (!container) return;
+
+    const page = getActivePage(project);
 
     ensureSectionsToolbar(project, hooks);
     ensureAddSectionButton(project, hooks);
     container.innerHTML = '';
 
-    if (!project.sections.length) {
+    if (!page) {
+      const empty = document.createElement('p');
+      empty.className = 'portfolio-editor-empty';
+      empty.textContent = 'Aucune page pour l’instant.';
+      container.appendChild(empty);
+      return;
+    }
+
+    if (!Array.isArray(page.sections)) page.sections = [];
+
+    if (!page.sections.length) {
       const empty = document.createElement('p');
       empty.className = 'portfolio-editor-empty';
       empty.textContent = 'Aucune section pour l’instant.';
@@ -683,9 +799,9 @@
       return;
     }
 
-    project.sections.forEach((section, index) => {
+    page.sections.forEach((section, index) => {
       if (!section || typeof section !== 'object') {
-        section = project.sections[index] = { title: '', description: '', medias: [] };
+        section = page.sections[index] = { title: '', description: '', medias: [] };
       }
       if (!Array.isArray(section.medias)) section.medias = section.images || [];
 
@@ -698,7 +814,7 @@
             <button type="button" class="portfolio-editor-section-btn" data-section-up aria-label="Monter la section" ${index === 0 ? 'disabled' : ''}>
               <ion-icon name="arrow-up-outline" aria-hidden="true"></ion-icon>
             </button>
-            <button type="button" class="portfolio-editor-section-btn" data-section-down aria-label="Descendre la section" ${index === project.sections.length - 1 ? 'disabled' : ''}>
+            <button type="button" class="portfolio-editor-section-btn" data-section-down aria-label="Descendre la section" ${index === page.sections.length - 1 ? 'disabled' : ''}>
               <ion-icon name="arrow-down-outline" aria-hidden="true"></ion-icon>
             </button>
             <button type="button" class="portfolio-editor-section-btn danger" data-section-delete aria-label="Supprimer la section">
@@ -770,15 +886,15 @@
       });
 
       card.querySelector('[data-section-up]')?.addEventListener('click', () => {
-        moveSection(project, index, index - 1, hooks);
+        moveSection(project, page, index, index - 1, hooks);
       });
 
       card.querySelector('[data-section-down]')?.addEventListener('click', () => {
-        moveSection(project, index, index + 1, hooks);
+        moveSection(project, page, index, index + 1, hooks);
       });
 
       card.querySelector('[data-section-delete]')?.addEventListener('click', () => {
-        deleteSection(project, index, hooks);
+        deleteSection(project, page, index, hooks);
       });
 
       container.appendChild(card);
@@ -899,6 +1015,7 @@
     enhanceProjectGallery(editableProject);
     renderTags(editableProject);
     enhanceDescription(editableProject);
+    renderProjectPagesEditor(editableProject, hooks);
     renderSectionsEditor(editableProject, hooks);
     hooks.scheduleProjectTitleFit?.();
   }

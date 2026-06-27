@@ -849,6 +849,36 @@ main {
   font-weight: var(--fw-300);
 }
 
+.project-page-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 28px 0 18px;
+  padding: 12px;
+  border: 1px solid var(--jet);
+  border-radius: 14px;
+  background: var(--bg-gradient-jet);
+  box-shadow: var(--shadow-1);
+}
+
+.project-page-tabs button {
+  color: var(--light-gray);
+  background: var(--onyx);
+  border: 1px solid var(--jet);
+  border-radius: 999px;
+  padding: 8px 13px;
+  font-size: var(--fs-6);
+  transition: color var(--transition-1), border-color var(--transition-1), background var(--transition-1);
+}
+
+.project-page-tabs button:hover,
+.project-page-tabs button:focus,
+.project-page-tabs button.active {
+  color: var(--smoky-black);
+  background: var(--orange-yellow-crayola);
+  border-color: var(--orange-yellow-crayola);
+}
+
 
 
 /*-----------------------------------*\
@@ -1383,6 +1413,73 @@ main {
   opacity: 0.25;
 }
 
+.portfolio-editor-pages {
+  margin: 28px 0 18px;
+  padding: 14px;
+  border: 1px solid var(--jet);
+  border-radius: 14px;
+  background: var(--bg-gradient-jet);
+  box-shadow: var(--shadow-1);
+}
+
+.portfolio-editor-pages-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.portfolio-editor-pages-head .h3 {
+  margin-bottom: 0;
+}
+
+.portfolio-editor-page-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.portfolio-editor-page-tab {
+  display: inline-flex;
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid var(--jet);
+  border-radius: 999px;
+  background: var(--onyx);
+  transition: border-color var(--transition-1);
+}
+
+.portfolio-editor-page-tab.active {
+  border-color: var(--orange-yellow-crayola);
+}
+
+.portfolio-editor-page-tab > button:first-child {
+  color: var(--light-gray);
+  padding: 8px 12px;
+  font-size: var(--fs-6);
+}
+
+.portfolio-editor-page-tab.active > button:first-child {
+  color: var(--orange-yellow-crayola);
+}
+
+.portfolio-editor-page-delete {
+  width: 34px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: hsl(0, 75%, 72%);
+  border-left: 1px solid var(--jet);
+  transition: background var(--transition-1), color var(--transition-1);
+}
+
+.portfolio-editor-page-delete:hover,
+.portfolio-editor-page-delete:focus {
+  color: var(--white-2);
+  background: hsl(0, 50%, 32%);
+}
+
 @media (max-width: 580px) {
   .portfolio-editor-toolbar,
   .portfolio-editor-tag-form {
@@ -1407,6 +1504,11 @@ main {
 
   .portfolio-editor-section-actions {
     justify-content: flex-end;
+  }
+
+  .portfolio-editor-pages-head {
+    align-items: stretch;
+    flex-direction: column;
   }
 }
 

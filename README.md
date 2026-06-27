@@ -52,7 +52,7 @@ Le site est volontairement simple :
 - **HTML** pour la structure ;
 - **CSS** pour l’interface, le responsive et les animations ;
 - **JavaScript vanilla** pour la navigation, les filtres, les pages projet et la galerie média ;
-- **Python + CustomTkinter** pour l’éditeur local ;
+- **Python** pour le serveur local du mode édition ;
 - **GitHub Pages** pour l’hébergement ;
 - **Git LFS** pour certains gros fichiers vidéo ;
 - **Cloudflare Web Analytics** pour les statistiques d’audience.
@@ -75,9 +75,9 @@ Portfolio/
 │   │   └── projects-data.js
 │   ├── images/
 │   └── projects/
-└── editor/
-    ├── editor.py
-    └── ctk_listbox.py
+├── editor/
+│   └── server.py
+└── launch-local.bat
 ```
 
 ### Fichiers principaux
@@ -89,7 +89,8 @@ Portfolio/
 | `assets/js/script.js` | Navigation, filtres, rendu des projets, modales média |
 | `assets/data/projects-data.js` | Données de tous les projets |
 | `assets/projects/` | Images, vidéos et médias des projets |
-| `editor/editor.py` | Éditeur local pour modifier `projects-data.js` |
+| `editor/server.py` | Serveur local du mode édition web |
+| `launch-local.bat` | Lance le portfolio en local, en mode normal ou éditeur |
 
 ## Fonctionnement des projets
 
@@ -113,7 +114,12 @@ window.PROJECTS_DATA = {
       "icon": "assets/projects/Project/icon.jpg",
       "media": "assets/projects/Project/main.mp4",
       "description": "Description courte du projet.",
-      "sections": [],
+      "pages": [
+        {
+          "name": "Contexte",
+          "sections": []
+        }
+      ],
       "medias": []
     }
   ]
@@ -132,7 +138,7 @@ window.PROJECTS_DATA = {
 | `icon` | Visuel de la carte projet |
 | `media` | Média principal affiché en haut de la page projet |
 | `description` | Texte d’introduction |
-| `sections` | Sections détaillées de la page projet |
+| `pages` | Onglets internes du projet, chacun contenant ses propres sections |
 | `medias` | Galerie générale du projet |
 
 Si aucune icône n’est renseignée, le portfolio affiche un placeholder “Visuel en préparation”, afin d’éviter les cartes vides ou cassées.
@@ -177,24 +183,6 @@ Deux méthodes sont possibles.
 4. Vérifier que les chemins commencent bien par `assets/...`.
 5. Tester localement le portfolio.
 
-### Méthode confortable : utiliser l’éditeur
-
-L’éditeur permet de modifier les projets avec une interface graphique.
-
-Installation minimale :
-
-```bash
-pip install customtkinter
-```
-
-Lancement :
-
-```bash
-python editor/editor.py
-```
-
-L’éditeur lit et réécrit automatiquement `assets/data/projects-data.js`.
-
 ### Méthode web locale : éditer depuis le portfolio
 
 Un mode édition local existe aussi directement dans le site.
@@ -215,7 +203,7 @@ Ce mode ajoute des boutons d’édition uniquement en local :
 
 - création d’un nouveau projet ;
 - suppression d’un projet depuis sa carte ;
-- édition du titre, de la date, de la durée, de la description, des tags, des sections, de l’icône et des médias depuis la page projet.
+- édition du titre, de la date, de la durée, de la description, des tags, des pages, des sections, de l’icône et des médias depuis la page projet.
 
 Les modifications sont envoyées au serveur Python local, qui réécrit `assets/data/projects-data.js`.
 
