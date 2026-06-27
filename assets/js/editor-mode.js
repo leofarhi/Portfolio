@@ -11,6 +11,9 @@
   let statusEl = null;
   let saveChain = Promise.resolve();
   const activePageByProject = new Map();
+  let textToolsMenu = null;
+  let activeTextToolsTextarea = null;
+  let activeTextToolsRange = null;
 
   const deepClone = (obj) => JSON.parse(JSON.stringify(obj));
 
@@ -338,6 +341,204 @@
     textarea.style.height = `${Math.max(180, textarea.scrollHeight)}px`;
   }
 
+  function getTextareaRange(textarea) {
+    const start = textarea.selectionStart ?? textarea.value.length;
+    const end = textarea.selectionEnd ?? start;
+
+    return {
+      start,
+      end,
+      text: textarea.value.slice(start, end)
+    };
+  }
+
+  function getActiveTextToolsRange(textarea) {
+    if (activeTextToolsTextarea === textarea && activeTextToolsRange) {
+      return activeTextToolsRange;
+    }
+
+    return getTextareaRange(textarea);
+  }
+
+  function replaceTextareaRange(textarea, value, selectionStart = null, selectionEnd = null) {
+    const range = getActiveTextToolsRange(textarea);
+    textarea.setRangeText(value, range.start, range.end, 'end');
+
+    const fallbackCaret = range.start + value.length;
+    textarea.focus({ preventScroll: true });
+    textarea.setSelectionRange(
+      selectionStart ?? fallbackCaret,
+      selectionEnd ?? fallbackCaret
+    );
+
+    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    activeTextToolsRange = getTextareaRange(textarea);
+  }
+
+  function wrapTextareaSelection(textarea, before, after, fallback) {
+    const range = getActiveTextToolsRange(textarea);
+    const selectedText = range.text || fallback;
+    const value = `${before}${selectedText}${after}`;
+    const selectionStart = range.start + before.length;
+    const selectionEnd = selectionStart + selectedText.length;
+
+    replaceTextareaRange(textarea, value, selectionStart, selectionEnd);
+  }
+
+  function insertEnumTag(textarea, level) {
+    const range = getActiveTextToolsRange(textarea);
+    const selectedText = range.text || 'Nouvel element';
+    const value = selectedText
+      .replaceAll('\r\n', '\n')
+      .split('\n')
+      .map((line) => line.trim() ? `[enum=${level}]${line}[/enum]` : '')
+      .join('\n');
+
+    replaceTextareaRange(textarea, value);
+  }
+
+  function promptText(label, fallback) {
+    const value = prompt(label, fallback);
+    if (value === null) return null;
+    return value.trim();
+  }
+
+  function insertUrlTag(textarea) {
+    const range = getActiveTextToolsRange(textarea);
+    const url = promptText('URL du lien :', 'https://');
+    if (!url) return;
+
+    const label = range.text || promptText('Texte affiché :', 'Lien');
+    if (label === null) return;
+
+    replaceTextareaRange(textarea, `[url=${url}]${label || 'Lien'}[/url]`);
+  }
+
+  function insertProjectTag(textarea) {
+    const range = getActiveTextToolsRange(textarea);
+    const projectId = promptText('ID du projet :', '');
+    if (!projectId) return;
+
+    const label = range.text || promptText('Texte affiché :', projectId);
+    if (label === null) return;
+
+    replaceTextareaRange(textarea, `[projet=${projectId}]${label || projectId}[/projet]`);
+  }
+
+  function insertButtonTag(textarea) {
+    const range = getActiveTextToolsRange(textarea);
+    const url = promptText('URL du bouton :', 'https://');
+    if (!url) return;
+
+    const label = range.text || promptText('Texte du bouton :', 'Voir le lien');
+    if (label === null) return;
+
+    replaceTextareaRange(textarea, `[button=${url}]${label || 'Voir le lien'}[/button]`);
+  }
+
+  function insertProjectButtonTag(textarea) {
+    const range = getActiveTextToolsRange(textarea);
+    const projectId = promptText('ID du projet :', '');
+    if (!projectId) return;
+
+    const label = range.text || promptText('Texte du bouton :', projectId);
+    if (label === null) return;
+
+    replaceTextareaRange(textarea, `[button-projet=${projectId}]${label || projectId}[/button-projet]`);
+  }
+
+  function hideTextToolsMenu() {
+    if (textToolsMenu) textToolsMenu.hidden = true;
+  }
+
+  function ensureTextToolsMenu() {
+    if (textToolsMenu) return textToolsMenu;
+
+    const tools = [
+      { label: 'Enum niveau 1', hint: '[enum=1]', icon: 'list-outline', action: (textarea) => insertEnumTag(textarea, 1) },
+      { label: 'Enum niveau 2', hint: '[enum=2]', icon: 'return-down-forward-outline', action: (textarea) => insertEnumTag(textarea, 2) },
+      { label: 'Lien externe', hint: '[url]', icon: 'link-outline', action: insertUrlTag },
+      { label: 'Lien projet', hint: '[projet]', icon: 'git-branch-outline', action: insertProjectTag },
+      { label: 'Bouton externe', hint: '[button]', icon: 'open-outline', action: insertButtonTag },
+      { label: 'Bouton projet', hint: '[button-projet]', icon: 'albums-outline', action: insertProjectButtonTag }
+    ];
+
+    textToolsMenu = document.createElement('div');
+    textToolsMenu.className = 'portfolio-editor-text-tools-menu';
+    textToolsMenu.hidden = true;
+    textToolsMenu.setAttribute('role', 'menu');
+    textToolsMenu.innerHTML = `
+      <div class="portfolio-editor-text-tools-title">Insérer</div>
+      ${tools.map((tool, index) => `
+        <button type="button" role="menuitem" data-text-tool="${index}">
+          <ion-icon name="${tool.icon}" aria-hidden="true"></ion-icon>
+          <span>${tool.label}</span>
+          <small>${tool.hint}</small>
+        </button>
+      `).join('')}
+    `;
+
+    textToolsMenu.querySelectorAll('[data-text-tool]').forEach((button) => {
+      button.addEventListener('mousedown', (event) => event.preventDefault());
+      button.addEventListener('click', () => {
+        const textarea = activeTextToolsTextarea;
+        const tool = tools[Number(button.getAttribute('data-text-tool'))];
+        hideTextToolsMenu();
+        if (!textarea || !tool) return;
+        tool.action(textarea);
+      });
+    });
+
+    document.body.appendChild(textToolsMenu);
+
+    document.addEventListener('click', (event) => {
+      if (!textToolsMenu || textToolsMenu.hidden) return;
+      if (textToolsMenu.contains(event.target)) return;
+      hideTextToolsMenu();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') hideTextToolsMenu();
+    });
+
+    window.addEventListener('scroll', hideTextToolsMenu, true);
+    window.addEventListener('resize', hideTextToolsMenu);
+
+    return textToolsMenu;
+  }
+
+  function showTextToolsMenu(textarea, x, y) {
+    const menu = ensureTextToolsMenu();
+
+    activeTextToolsTextarea = textarea;
+    activeTextToolsRange = getTextareaRange(textarea);
+
+    menu.hidden = false;
+    menu.style.left = '0px';
+    menu.style.top = '0px';
+
+    const rect = menu.getBoundingClientRect();
+    const left = Math.min(Math.max(12, x), window.innerWidth - rect.width - 12);
+    const top = Math.min(Math.max(12, y), window.innerHeight - rect.height - 12);
+
+    menu.style.left = `${left}px`;
+    menu.style.top = `${top}px`;
+  }
+
+  function bindDescriptionTextTools(textarea) {
+    if (!textarea || textarea.dataset.textToolsBound === '1') return;
+
+    textarea.dataset.textToolsBound = '1';
+    textarea.classList.add('portfolio-editor-description-textarea');
+    textarea.addEventListener('contextmenu', (event) => {
+      if (!enabled) return;
+
+      event.preventDefault();
+      textarea.focus({ preventScroll: true });
+      showTextToolsMenu(textarea, event.clientX, event.clientY);
+    });
+  }
+
   function enhanceDescription(project) {
     const desc = document.getElementById('pj-description');
     if (!desc) return;
@@ -356,6 +557,7 @@
     textarea.addEventListener('blur', () => saveNow());
 
     desc.appendChild(textarea);
+    bindDescriptionTextTools(textarea);
     autoResizeTextarea(textarea);
   }
 
@@ -848,6 +1050,7 @@
       });
       descInput.addEventListener('blur', () => saveNow());
       autoResizeTextarea(descInput);
+      bindDescriptionTextTools(descInput);
 
       card.querySelector('[data-section-add-media]')?.addEventListener('click', async () => {
         const path = await pickMediaPath();

@@ -190,8 +190,32 @@ document.addEventListener('DOMContentLoaded', showFromHash);
   function bbcodeInlinePreserve(src) {
     const links = [];
 
+    // --- [button=...]...[/button]
+    let replaced = String(src).replace(/\[button=(.+?)\](.+?)\[\/button\]/gi, (_m, href, text) => {
+      const h = String(href || '').trim();
+      const t = String(text || '').trim();
+      const safeHref = escapeHtml(h);
+      const safeText = escapeHtml(t);
+      const ok = /^(https?:\/\/|\/)/i.test(h);
+      const a = `<a href="${ok ? safeHref : '#'}" class="pj-button-link" target="_blank" rel="noopener noreferrer">${safeText}</a>`;
+      links.push(a);
+      return `\uE000${links.length - 1}\uE001`;
+    });
+
+    // --- [button-projet=ID]Nom[/button-projet]
+    replaced = replaced.replace(/\[button-projet=(.+?)\](.+?)\[\/button-projet\]/gi, (_m, id, text) => {
+      const pid = String(id || '').trim();
+      const t = escapeHtml(String(text || '').trim());
+
+      const a =
+        `<a href="#project=${encodeURIComponent(pid)}" class="pj-button-link" data-open-project="${pid}">${t}</a>`;
+
+      links.push(a);
+      return `\uE000${links.length - 1}\uE001`;
+    });
+
     // --- [url=...]...[/url]
-    let replaced = String(src).replace(/\[url=(.+?)\](.+?)\[\/url\]/gi, (_m, href, text) => {
+    replaced = replaced.replace(/\[url=(.+?)\](.+?)\[\/url\]/gi, (_m, href, text) => {
       const h = String(href || '').trim();
       const t = String(text || '').trim();
       const safeHref = escapeHtml(h);

@@ -114,6 +114,36 @@ img, ion-icon, a, button, time, span { display: block; }
   display: inline;
 }
 
+.about-text .pj-button-link {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  max-width: 100%;
+  margin: 4px 6px 4px 0;
+  padding: 8px 13px;
+  color: var(--smoky-black);
+  background: var(--orange-yellow-crayola);
+  border: 1px solid var(--orange-yellow-crayola);
+  border-radius: 12px;
+  font-size: var(--fs-6);
+  font-weight: var(--fw-500);
+  line-height: 1.3;
+  box-shadow: var(--shadow-1);
+  transition:
+    color var(--transition-1),
+    background var(--transition-1),
+    border-color var(--transition-1),
+    transform var(--transition-1);
+}
+
+.about-text .pj-button-link:hover,
+.about-text .pj-button-link:focus {
+  color: var(--orange-yellow-crayola);
+  background: var(--eerie-black-2);
+  border-color: var(--orange-yellow-crayola);
+  transform: translateY(-1px);
+}
+
 button {
   font: inherit;
   background: none;
@@ -1004,6 +1034,61 @@ main {
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+}
+
+.portfolio-editor-text-tools-menu {
+  position: fixed;
+  z-index: 40;
+  width: 240px;
+  padding: 8px;
+  border: 1px solid var(--jet);
+  border-radius: 14px;
+  background: hsl(240, 2%, 12%);
+  box-shadow: var(--shadow-5);
+}
+
+.portfolio-editor-text-tools-menu[hidden] {
+  display: none;
+}
+
+.portfolio-editor-text-tools-title {
+  padding: 6px 8px 9px;
+  color: var(--light-gray-70);
+  font-size: 12px;
+  font-weight: var(--fw-500);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.portfolio-editor-text-tools-menu button {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  color: var(--light-gray);
+  border-radius: 10px;
+  font-size: var(--fs-6);
+  transition:
+    color var(--transition-1),
+    background var(--transition-1);
+}
+
+.portfolio-editor-text-tools-menu button:hover,
+.portfolio-editor-text-tools-menu button:focus {
+  color: var(--orange-yellow-crayola);
+  background: var(--onyx);
+}
+
+.portfolio-editor-text-tools-menu ion-icon {
+  color: var(--orange-yellow-crayola);
+  font-size: 17px;
+}
+
+.portfolio-editor-text-tools-menu small {
+  color: var(--light-gray-70);
+  font-size: 11px;
 }
 
 .portfolio-editor-badge,

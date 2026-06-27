@@ -161,6 +161,13 @@ Ce lien ouvre directement la page du projet correspondant.
 [url=https://github.com/leofarhi]Mon GitHub[/url]
 ```
 
+### Bouton
+
+```txt
+[button=https://github.com/leofarhi]Voir mon GitHub[/button]
+[button-projet=neural-rendering]Voir Neural Rendering[/button-projet]
+```
+
 ### Liste à puces
 
 ```txt
