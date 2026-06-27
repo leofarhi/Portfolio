@@ -419,22 +419,33 @@ document.addEventListener('DOMContentLoaded', showFromHash);
 
   const hasMedias = (arr) => Array.isArray(arr) && arr.length > 0;
 
-  function renderProjectSections(sections) {
+  function renderProjectSections(sections, footer = null) {
     el.sections.innerHTML = '';
 
-    if (!Array.isArray(sections) || !sections.length) return;
+    if (Array.isArray(sections) && sections.length) {
+      sections.forEach(s => {
+        const sec = document.createElement('section');
+        sec.className = 'project-section';
+        const titleHTML = s.title ? `<h3 class="h3">${escapeHtml(s.title)}</h3>` : '';
+        const descHTML  = s.description ? `<div class="about-text">${parseDescription(s.description)}</div>` : '';
+        sec.innerHTML = `${titleHTML}${descHTML}`;
 
-    sections.forEach(s => {
-      const sec = document.createElement('section');
-      sec.className = 'project-section';
-      const titleHTML = s.title ? `<h3 class="h3">${escapeHtml(s.title)}</h3>` : '';
-      const descHTML  = s.description ? `<div class="about-text">${parseDescription(s.description)}</div>` : '';
-      sec.innerHTML = `${titleHTML}${descHTML}`;
+        const medias = s.medias || s.images || [];
+        if (hasMedias(medias)) sec.appendChild(createThumbs(medias));
 
-      const medias = s.medias || s.images || [];
-      if (hasMedias(medias)) sec.appendChild(createThumbs(medias));
+        el.sections.appendChild(sec);
+      });
+    }
 
-      el.sections.appendChild(sec);
+    if (footer) el.sections.appendChild(footer);
+  }
+
+  function scrollToProjectPageStart() {
+    const target = el.pageTabs || el.sections;
+    if (!target) return;
+
+    requestAnimationFrame(() => {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   }
 
@@ -450,12 +461,52 @@ document.addEventListener('DOMContentLoaded', showFromHash);
     const tabs = document.createElement('div');
     tabs.className = 'project-page-tabs';
 
-    const showPage = (index) => {
+    const getPageName = (page, index) => page?.name || `Page ${index + 1}`;
+
+    const createPageNavButton = (index, direction) => {
+      const page = projectPages[index];
+      const name = getPageName(page, index);
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = `project-page-nav-btn ${direction === 'prev' ? 'project-page-nav-prev' : 'project-page-nav-next'}`;
+      button.setAttribute('aria-label', `Aller a la page ${name}`);
+
+      if (direction === 'prev') {
+        button.innerHTML = `
+          <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>
+          <span>${escapeHtml(name)}</span>
+        `;
+      } else {
+        button.innerHTML = `
+          <span>${escapeHtml(name)}</span>
+          <ion-icon name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+        `;
+      }
+
+      button.addEventListener('click', () => showPage(index, true));
+      return button;
+    };
+
+    const createProjectPageNav = (index) => {
+      if (projectPages.length < 2) return null;
+
+      const nav = document.createElement('nav');
+      nav.className = 'project-page-nav';
+      nav.setAttribute('aria-label', 'Navigation entre les pages du projet');
+
+      if (index > 0) nav.appendChild(createPageNavButton(index - 1, 'prev'));
+      if (index < projectPages.length - 1) nav.appendChild(createPageNavButton(index + 1, 'next'));
+
+      return nav;
+    };
+
+    const showPage = (index, shouldScroll = false) => {
       const page = projectPages[index];
       tabs.querySelectorAll('[data-project-page-tab]').forEach((button, buttonIndex) => {
         button.classList.toggle('active', buttonIndex === index);
       });
-      renderProjectSections(page.sections);
+      renderProjectSections(page.sections, createProjectPageNav(index));
+      if (shouldScroll) scrollToProjectPageStart();
     };
 
     projectPages.forEach((page, index) => {
@@ -463,8 +514,8 @@ document.addEventListener('DOMContentLoaded', showFromHash);
       button.type = 'button';
       button.className = index === 0 ? 'active' : '';
       button.setAttribute('data-project-page-tab', '');
-      button.textContent = page.name || `Page ${index + 1}`;
-      button.addEventListener('click', () => showPage(index));
+      button.textContent = getPageName(page, index);
+      button.addEventListener('click', () => showPage(index, false));
       tabs.appendChild(button);
     });
 
